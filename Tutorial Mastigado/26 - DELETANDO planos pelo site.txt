@@ -1,0 +1,23 @@
+Para que entendamos melhor os passos aqui, é recomendado que os passos do tutorial 23 já tenha sido feitos.
+
+A idéia é simples: O botão/link de deletar um objeto tem que ter sido renderizado dentro do FOR de renderização do CARD html de contexto, porque desta forma, quando clicarmos no link href, ele já terá o ID do elemento associado à ele.
+
+- Dentro do FOR do CARD do plano que queremos deletar: (passamos o id do elemento)
+
+	<form action="{% url 'deletar_plano' elemento.id %}" method="POST">
+             {% csrf_token %}
+             <input class="myButton botao-apagar" type="submit" value="Deletar">
+        </form>
+
+- na urls.py do app que desejarmos:
+
+	path('deleta/<int:elemento_id>',views.deleta_plano, name='deletar_plano'),
+
+- na views.py
+
+	def deleta_plano(request, elemento_id):
+    		plano = get_object_or_404(Plano_de_acao, pk=elemento_id)
+    		plano.delete()
+    
+
+    	return redirect('pagina_planos_de_acao')

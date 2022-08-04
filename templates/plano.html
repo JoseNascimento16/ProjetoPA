@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+{{ chave_tipo_usuario|json_script:"id-tipo-usuario" }}
+
+<div class="box-plano1">
+    <div class="box-plano1-1">
+        <h5><i class="fas fa-chart-bar fa-2x margem-icones-menu"></i>PLANO: {{ chave_planos.ano_referencia }}    >    ORDENS</h5>
+    </div>
+
+    {% if messages %}
+        <ul class="ul-mensagens">
+            {% for message in messages %}
+            <li{% if message.tags %} class="alert alert-{{ message.tags }} li-mensagens"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+            
+    <div class="box-plano1-2">
+        <h5>Ordem</h5>
+        <h5>Descrição</h5>
+        <h5>Prazo inicial</h5>
+        <h5>Prazo final</h5>
+        <h5>Resultados esperados</h5>
+        <h5 class="flex-02"></h5>
+        <h5 class="flex-02"></h5>
+    </div>
+    <div class="div-cards-planos">
+            {% if chave_ordens2 %}
+            {% for plano in chave_planos2 %}
+            {% for elemento in chave_ordens2 %}
+            <div class="cards-planos">
+                <p class="clear-2 itens-cards-planos">
+                    <a href="{% url 'entra_na_ordem' elemento.id %}">
+                            Nº {{ elemento.identificacao_numerica }}
+                    </a>
+                </p>
+                <p class="clear-2 itens-cards-planos">
+                    <a href="#">
+                        {{ elemento.descricao_do_problema }}
+                    </a>
+                </p>
+                <p class="clear-2 itens-cards-planos">
+                    <a href="#">
+                        {% if elemento.prazo_execucao_inicial is not None %}
+                            {{ elemento.prazo_execucao_inicial }}
+                        {% else %}
+                        -
+                        {% endif %}
+                    </a>
+                </p>
+                <p class="clear-2 itens-cards-planos">
+                    <a href="#">
+                        {% if elemento.prazo_execucao_final is not None %}
+                            {{ elemento.prazo_execucao_final }}
+                        {% else %}
+                        -
+                        {% endif %}
+                    </a>
+                </p>
+                <p class="clear-2 itens-cards-planos">
+                    <a href="#">
+                        {{ elemento.resultados_esperados }}
+                    </a>
+                </p>
+                <p class="clear-2 itens-cards-planos flex-02">
+                    <a href="{% url 'abrindo_edicao_ordem' plano.id elemento.id %}" method="POST">
+                        <i class="fas fa-edit margem-icones-menu"></i>
+                    </a>
+                </p>
+                <p class="clear-2 itens-cards-planos flex-02">
+                    {% if chave_planos2 %}
+                    {% for plano in chave_planos2 %}
+                    <a href="{% url 'deletar_ordem' plano.id elemento.id %}" method="POST"  onclick="return confirm('Deseja realmente apagar esta ordem?')">
+                        <i class="fa fa-trash lixeira" aria-hidden="true"></i>
+                    </a>
+                    {% endfor %}
+                    {% endif %}
+                </p>
+            </div>
+            {% endfor %}
+            {% endfor %}
+            {% else %}
+            <div class="cards-planos">
+                <p class="clear-2 itens-cards-planos">
+                    Este plano de ação ainda não possui ordens
+                </p>
+            </div>
+            {% endif %}
+            {% if user.classificacao.tipo_de_acesso == 'Escola' %}
+            <div class="box-botao-cadastro1">
+                {% for plano in chave_planos2 %}
+                <a id="id_a_href" class="myButton" href="{% url 'nova_ordem' plano.id 'gera' %}" >Nova ordem</a>
+                {% endfor %}
+            </div>
+            {% endif %}
+    </div>
+</div>
+
+
+{% include 'partials/modal-partial.html' %}
+{% include 'partials/modal-partial-edicao.html' %}
+
+
+
+
+{% endblock %}
+
+
+        

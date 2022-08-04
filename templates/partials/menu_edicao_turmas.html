@@ -1,0 +1,106 @@
+{% load static %}
+{% load definir_acoes %}
+<!-- MENU -->
+<div class="classe-div-menu-lateral-edicao">
+    <div class="classe-menu-lateral1-edicao borda1"><span class="span-menu">Menu de edição</span></div>
+    <div class="classe-menu-lateral1-edicao borda1"><span class="span-menu">Plano: {{ chave_planos.ano_referencia }}</span></div>
+
+        
+        {% if user.classificacao.tipo_de_acesso == 'Escola' %}
+        <ul class="classe-menu-lateral1-edicao itens clear-edicao turmas-menu"><a class="item-principal-menu-edicao" href="#"><i class="fa fa fa-tasks margem-icones-menu"></i>Turmas<i class="arrow fa fa-angle-right pull-right setinha"></i></a>
+            <ul class="sub-menu-edicao sub-menu-turmas-edicao">
+
+                <!-- MODIFICA CADA TURMA -->
+                {% for turma in chave_turmas %}
+                
+                <li class="sub-menu-item-edicao"><a href="{% url 'adicionando_removendo_turma' chave_planos.id turma.id %}" class="desabilita-js" method="POST">- {{turma.nome}}      <i class="fas fa-exchange-alt"></i></a>
+                </li>
+
+                {% endfor %}
+
+            </ul>
+        </ul>
+
+        {% if chave_planos.tipo_fia %}
+
+        <ul class="classe-menu-lateral1-edicao itens clear-edicao"><a class="item-principal-menu-edicao ordens-menu" href="#"><i class="fa fa fa-tasks margem-icones-menu"></i>Ordem principal</a>
+            <a class="item-principal-menu-edicao sinal-ordens-js desabilita-js" href="#" id="id-abre-ordem1-fia"><i class="fas fa-edit margem-icones-menu pull-right"></i></a>
+            <span id="id-tooltip5-menu" class="tooltiptext5-tabela">Alterar!</span>
+
+            <ul class="sub-menu-edicao sub-menu-edicao-ordens">
+                {% if chave_ordens_extra %}
+                    {% for ordem_extra in chave_ordens_extra %}
+                    <li class="sub-menu-item-edicao"><a href="#" class="desabilita-js" method="POST">Ordem {{ordem_extra.valor_numerico}}</a><a class="item-principal-menu-edicao sinal-ordens-js desabilita-js" href="{% url 'chama_altera_extra_fia' chave_planos.id 'sim' ordem_extra.id %}"><i class="fas fa-edit margem-icones-menu pull-right"></i></a></li>
+                    {% endfor %}
+                    <a class="myButton_small a-ordem_extra desabilita-js" href="{% url 'chama_cria_extra_fia' chave_planos.id 'sim' %}" style="text-decoration: none;">Adicionar ordem extra</a>
+                {% else %}
+                    <a class="myButton_small a-ordem_extra desabilita-js" href="{% url 'chama_cria_extra_fia' chave_planos.id 'sim' %}" style="text-decoration: none;">Adicionar ordem extra</a>
+                {% endif %}
+            </ul>
+
+        </ul>
+
+        {% endif %}
+
+        <ul class="classe-menu-lateral1-edicao itens clear-edicao border-none display-none mensagem-cinza">A situação atual do plano não permite que ele seja modificado!</ul>
+
+        {% endif %}
+
+
+
+        {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
+        <ul class="classe-menu-lateral1-edicao itens clear-edicao"><a class="item-principal-menu-edicao" href="#"><i class="fa fa fa-tasks margem-icones-menu"></i>Sugestões em:<i class="arrow fa fa-angle-right pull-right setinha"></i></a>
+            <ul class="sub-menu-edicao sub-menu-edicao-ordens">
+                {% for elemento in chave_lista2_codigos %}
+                <li class="sub-menu-item-edicao"><a href="#" method="POST">Código: {{elemento}}      <i class="fa-solid fa-check"></i></a>
+                </li>
+                {% endfor %}
+                {% for elemento in chave_ordens_com_correcao %}
+                <li class="sub-menu-item-edicao"><a href="#" method="POST">Ordem: {{elemento}}      <i class="fa-solid fa-check"></i></a>
+                </li>
+                {% endfor %}
+            </ul>
+            <ul class="sub-menu-edicao mensagem-menu-js">
+                <h5 class="fonte-h5">As sugestões são opcionais  <i class="fa-solid fa-lightbulb"></i></h4>
+            </ul>
+        </ul>
+
+        <div class="box-botao-cadastro1">
+            
+            {% if not chave_planos.pre_analise_despesa and chave_planos.devolvido == False and chave_planos.tipo_fia == False %}
+            <ul class="sub-menu-edicao botao-concluir-js">
+                <form action="{% url 'chamando_concluir_sugestao' chave_planos.id 'despesa' %}" method="POST" onclick="return confirm('Confirma que já sugeriu todas as correções necessárias para este documento? Esta ação não poderá ser desfeita! ')">
+                    {% csrf_token %}
+                    <input class="myButton" type="submit" value="Concluir">
+                </form>
+            </ul>
+            {% elif not chave_planos.pre_analise_fia and chave_planos.devolvido == False and chave_planos.tipo_fia == True %}
+            <ul class="sub-menu-edicao botao-concluir-js">
+                <form action="{% url 'chamando_concluir_sugestao' chave_planos.id 'fia' %}" method="POST" onclick="return confirm('Confirma que já sugeriu todas as correções necessárias para este documento? Esta ação não poderá ser desfeita! ')">
+                    {% csrf_token %}
+                    <input class="myButton" type="submit" value="Concluir">
+                </form>
+            </ul>
+            {% else %}
+            <ul class="sub-menu-edicao">
+                <h4 class="cor-aviso-h4">As sugestões de correção para o documento já foram concluídas!   <i class="fa-solid fa-check"></i></h4>
+            </ul>
+            <ul class="sub-menu-edicao">
+                <div class="box-botao-cadastro1">
+                    <a href="{% url 'pagina_planos_de_acao' %}" class="myButton a-cadastros">Voltar</a>
+                </div>
+            </ul>
+            {% endif %}
+
+            <ul class="classe-menu-lateral1-edicao itens clear-edicao border-none display-none mensagem-verde-js">A situação atual do plano não permite que ele seja modificado!</ul>
+
+        </div>
+
+        {% endif %}
+        
+
+      
+</div>
+
+
+<!-- FIM MENU -->

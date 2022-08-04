@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+{{ chave_tipo_usuario|json_script:"id-tipo-usuario" }}
+
+<div class="box-geral-cadastros">
+
+    <div class="box-cadastro1">
+        <div class="box-plano1-1">
+            {% if user.classificacao.tipo_de_acesso == 'Escola' %}
+            <h5><i class="fas fa-graduation-cap margem-icones-menu"></i>TURMAS CADASTRADAS</h5>
+            {% endif %}
+        </div>
+
+        {% if messages %}
+        <ul class="ul-mensagens">
+            {% for message in messages %}
+            <li{% if message.tags %} class="alert alert-{{ message.tags }} li-mensagens"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        <div class="box-plano1-2">
+            {% if user.classificacao.tipo_de_acesso == 'Escola' %}
+            <h5>Nome da turma:</h5>
+            <h5>Quantidade de alunos:</h5>
+            <h5></h5>
+            {% endif %}
+        </div>
+        {% if user.classificacao.tipo_de_acesso == 'Escola' %}
+        {% if chave_turmas_cadastradas %}
+        {% for elemento in chave_turmas_cadastradas %}  
+        <div class="div-cards-planos">
+            <div class="cards-planos">
+                <p class="clear-2 itens-cards-planos">
+                    <a href="#">
+                        <i class="fas fa-graduation-cap margem-icones-menu"></i> {{elemento.nome}}
+                    </a>
+                </p>
+                <p class="clear-2 itens-cards-planos">
+                    <a href="#">
+                        <i class="fas fa-user margem-icones-menu"></i></i> {{elemento.quantidade_alunos}}
+                    </a>
+                </p>
+                <p class="clear-2 itens-cards-planos">
+                    <a href="{% url 'deletando_turma' elemento.id %}" method="POST" onclick="return confirm('Deseja realmente excluir a turma: {{ elemento.nome }} ?')">
+                        <i class="fa fa-trash lixeira" aria-hidden="true"></i>
+                    </a>
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+            <div class="cards-planos">
+                <p class="clear-2 itens-cards-planos">
+                    - Ainda não há turmas cadastradas...
+                </p>
+            </div>
+    
+        {% endif %}
+        {% endif %}
+    </div>
+    
+    {% if user.classificacao.tipo_de_acesso == 'Escola' %}
+    <div class="box-botao-cadastro1">
+        <!-- <a id="chama-form-cadastro-turmas" class="myButton a-cadastros">Cadastrar turma</a> -->
+        <a class="myButton a-cadastros" href="{% url 'cadastrando_turmas_abre_form' chave_user_id.id 'abriu' %}">Cadastrar turma</a>
+    </div>
+    {% endif %}
+</div>
+
+{% include 'partials/modal-partial.html' %}
+
+
+
+
+{% endblock %}
+
+
+        

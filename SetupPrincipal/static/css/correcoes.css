@@ -1,0 +1,72 @@
+.box-correcao1-2{
+    display: flex;
+    color: rgb(101, 101, 102);
+    justify-content: center;
+    margin: 15px;
+}
+
+.box-correcao1-2 h5{
+    flex: 1;
+    margin: 22px 0 5px 0;
+    border-bottom: 1px solid black;
+}
+
+.box-correcao1-2-menor{
+    display: flex;
+    flex-direction: column;
+    color: rgb(101, 101, 102);
+    margin: 0 5px 15px 5px;
+    background-color: rgba(46, 137, 255, 0.137);
+    width: auto;
+    max-width: 500px;
+    min-width: 300px;
+    border: 1px solid rgba(20, 22, 112, 0.705);
+    border-radius: 4px;
+    box-shadow: 2px 2px 9px 3px rgb(0 0 0 / 40%);
+}
+
+.box-correcao1-2-menor h5{
+    flex: 1;
+    margin: 5px 0 5px 4px;
+    /* border-bottom: 1px solid black; */
+}
+
+.cards-correcoes{
+    width: 100%;
+    /* border: 1px solid black; */
+    display: flex;
+    flex-wrap: wrap;
+    /* justify-content: space-evenly; */
+    /* overflow-x: auto; */
+    /* position: relative; */
+    /* align-items: baseline; */
+
+    /* width: 1200px; */
+}
+
+.cabecalho{
+    background-color: rgba(248, 140, 38, 0.452);
+    border-bottom: 1px solid black;
+}
+
+.textarea-cards{
+    margin: 0 4px 4px 4px;
+    width: auto;
+    height: 120px;
+    padding: 5px;
+}
+
+.cards-botao-corrigir{
+    margin: 0 4px 4px 4px ;
+}
+
+.form-botao-verificar{
+    display: flex;
+    justify-content: flex-end;
+}
+
+.form-botao-voltar{
+    display: flex;
+    justify-content: flex-start;
+    margin: 5px;
+}

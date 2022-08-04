@@ -1,0 +1,17 @@
+Se tivermos uma URL do tipo:
+
+	path('plano/<int:elemento_id>/ordens',views.plano, name='chamando_1_plano'),
+
+e no final de uma views dermos um REDIRECT do tipo:
+
+	return redirect('chamando_1_plano')
+
+Provavelmente receberemos um erro ao processar esta URL. Isso acontece porque a URL está esperando um parâmetro do tipo INT, porém este REDIRECT chama a URL sem enviar nenhum parametro.
+
+Para resolver isso temos que enviar o parâmetro junto com o REDIRECT:
+
+	return redirect('chamando_1_plano', elemento_id=Plano.id)
+
+## Perceba que o trecho "elemento_id" coincide com o nome do parametro int na URL
+
+## O trecho Plano.id tem que coincidir com o tipo de parametro da URL, neste caso "Plano.id" é um INT, se na URL ao inves de termos um <int:....> tivermos um <str:....>, o parametro teria que ser algo do tipo "Plano.nome".

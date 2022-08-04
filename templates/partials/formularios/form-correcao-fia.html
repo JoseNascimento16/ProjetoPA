@@ -1,0 +1,40 @@
+{% load static %}
+{% load widget_tweaks %}
+
+{% if chave_contexto_corrigir_fia %}
+<div class="div-form-correcao-acao" style="display: block;">
+{% else %}
+<div class="div-form-correcao-acao">
+{% endif %}
+    <div class="titulo-modal">
+        {% if not chave_ordem_fia_a_corrigir.possui_sugestao_correcao %}
+        <h2>Sugestão de correção</h2>
+        {% else %}
+        <h2>Alterar correção</h2>
+        {% endif %}
+    </div>
+    <div class="classe-form-modal">
+        <form id="form_correcao_fia" class="form-modal" action="{% url 'chamando_cria_altera_correcao_fia' chave_planos.id chave_ordem_fia_a_corrigir.id %}" method="POST">
+        {% csrf_token %}
+        <!-- EDITAR A CHAVE ABAIXO -->
+        {% for elemento in chave_form_correcao_fia.visible_fields %}
+        <div class="linha-input linha-input-coluna">
+            <label class="label-input label-input-form-django" for="{{ elemento.id_for_label }}">{{ elemento.label }}</label>
+            {{elemento|add_class:'input-input'}}
+        </div>
+        {% for error in elemento.errors %}
+        <section class="alert alert-danger" role="alert"> {{ elemento.errors }} </section>
+        {% endfor %}
+
+        {% endfor %}
+        <div class="linha-submit">
+            {% if chave_ordem_fia_a_corrigir.possui_sugestao_correcao and chave_ordem_fia_a_corrigir.valor_numerico == 1 %}
+            <input class="myButton myButton_form_correcoes" type="submit" value="Excluir" formaction="{% url 'chamando_deleta_correcao_fia' chave_planos.id chave_ordem_fia_a_corrigir.id 'modelo_fia'%}"></input>
+            {% elif chave_ordem_fia_a_corrigir.possui_sugestao_correcao and chave_ordem_fia_a_corrigir.valor_numerico > 1 %}
+            <input class="myButton myButton_form_correcoes" type="submit" value="Excluir" formaction="{% url 'chamando_deleta_correcao_fia' chave_planos.id chave_ordem_fia_a_corrigir.id 'extra_fia'%}"></input>
+            {% endif %}
+            <input class="myButton myButton_form_correcoes" type="submit" value="Confirmar"></input>
+        </div>
+        </form>
+    </div>
+</div>

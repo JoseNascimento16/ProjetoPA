@@ -1,0 +1,15 @@
+Quando houver um link qualquer:
+
+<li class=""><a href="#">Home</a></li>
+
+Basta usarmos o código python no href:
+
+<li class=""><a href="{% url 'chamando_dashboard' %}">Home</a></li>
+
+-------------------------
+
+Perceba que "chamando_dashboard" chama o "name" do path lá em nome_do_app > urls.py
+
+path('',views.dashboard, name='chamando_dashboard'),
+
+Que por sua vez, chama a views.dashboard, que irá nos redirecionar para a pagina correta.

@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+
+<div class="box-plano1">
+
+    <div class="box-plano1-1">
+
+        <h5><i class="fas fa-chart-bar margem-icones-menu"></i>Plano > {{instancia_plano.ano_referencia}}</h5>
+
+    </div>
+    
+    <div class="box-plano1-2">
+        <h5>Histórico:</h5>
+        <h5>Por:</h5>
+        <h5 style="flex: 0.6;">Quando:</h5>
+    </div>
+    <div class="div-cards-planos">
+        {% if log_plano %}
+        {% for log in log_plano %}
+            <div class="cards-planos">
+
+                <p class="clear-2 itens-cards-planos">
+                    <a href="#" class="cursor-default">
+                        - {{ log.message }}
+                    </a>
+                </p>
+
+                <p class="clear-2 itens-cards-planos">
+                    <a href="#" class="cursor-default">
+                        <i class="fa fa-user margem-icones-menu"></i>{{ log.initiator }}
+                    </a>
+                </p>
+
+                <p class="clear-2 itens-cards-planos" style="flex: 0.6;">
+                    <a href="#" class="cursor-default">
+                        <i class="far fa-clock margem-icones-menu"></i>{{ log.timestamp }}
+                    </a>
+                </p>
+                
+            </div>
+        {% endfor %}
+        {% else %}
+        <div class="cards-planos">
+            <p class="clear-2 itens-cards-planos">
+                - Ainda não há logs disponíveis para este plano.
+            </p>
+        </div>
+        {% endif %}
+
+    </div>
+
+    <!-- ##### Pagination ##### -->
+    <section class="top-catagory-area section-padding-20-0">
+        <div class="classe-pagination">
+            
+            <ul class="pagination">
+                {% if log_plano.has_previous %}
+                    {% if not chave_var_pesquisa %}
+                    <li class="page-item">
+                        <a href="?page={{log_plano.previous_page_number}}" class="page-link">&laquo;</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item">
+                        <a href="?page={{log_plano.previous_page_number}}&q={{chave_valor_pesquisa|urlencode}}" class="page-link">&laquo;</a>
+                    </li>
+                    {% endif %}
+                {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link">&laquo;</a>
+                </li>
+                {% endif %}
+                
+                <li class="page-item active">
+                    <a class="page-link a-clear-href" style="cursor: default;">{{log_plano.number}}</a>
+                </li>
+            
+                {% if log_plano.has_next %}
+                    {% if not chave_var_pesquisa %}
+                    <li class="page-item">
+                        <a href="?page={{log_plano.next_page_number}}" class="page-link">&raquo;</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item">
+                        <a href="?page={{log_plano.next_page_number}}&q={{chave_valor_pesquisa|urlencode}}" class="page-link">&raquo;</a>
+                    </li>
+                    {% endif %}
+                {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link">&raquo;</a>
+                </li>
+                {% endif %}
+                
+            </ul>
+            
+        </div>
+    </section>
+    <!-- ##### Pagination End ##### -->
+
+</div>
+
+
+
+{% include 'partials/modal-partial.html' %}
+
+{% endblock %}
+
+
+        

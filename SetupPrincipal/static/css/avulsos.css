@@ -1,0 +1,46 @@
+.margem-left-5{
+    margin-left: 5px;
+}
+.margem-left-10{
+    margin-left: 10px;
+}
+
+.a-black{
+    color: black;
+}
+
+.display-none{
+    display: none;
+}
+
+.display_none{
+    display: none;
+}
+
+.display-flex{
+    display: flex;
+}
+
+.flex-0-55{
+    flex: 0.55;
+}
+
+.flex-0-4{
+    flex: 0.4;
+}
+
+.border-0{
+    border: 0 !important;
+}
+
+.rotate-90{
+    transform: rotate(90deg);
+    -webkit-transform: rotate(90deg); 
+    -moz-transform:    rotate(90deg); 
+    -ms-transform:     rotate(90deg); 
+    -o-transform:      rotate(90deg);
+}
+
+.cursor-default{
+    cursor: default;
+}

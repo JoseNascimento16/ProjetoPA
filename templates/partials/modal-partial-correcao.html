@@ -1,0 +1,54 @@
+{% load static %}
+
+<!-- este modal-partial esta posicionado em cada pagina.html que precise dele -->
+
+{% if chave_contexto_extra_corrigir or chave_contexto_extra_corrigir_despesas or chave_contexto_corrigindo_acao or chave_contexto_corrigindo_despesa or chave_contexto_abre_form_datas or chave_contexto_corrigir_fia or chave_corrigindo_modelo_fia or chave_corrigindo_extra_fia %}
+<div class="modelo-modal" style="display: flex;">
+{% else %}
+<div class="modelo-modal">
+{% endif %}
+    {% if chave_contexto_corrigindo_acao or chave_contexto_corrigindo_despesa %}
+    <div class="fundo-modal" style="overflow-y: auto;">
+    {% else %}
+    <div class="fundo-modal-correcao">
+    {% endif %}
+        <div class="corpo-modal">
+            <div class="fechar-modal">
+                <a href="#"><i class="fas fa-times fa-2x fecha-modal"></i></a>
+            </div>
+            
+            <!-- Todos os partials de formularios devem estar aqui -->
+
+            
+
+            {% if chave_contexto_abre_form_datas %}
+            {% include 'partials/formularios/form-cadastra-datas.html' %}
+            {% endif %}
+
+            {% if chave_contexto_extra_corrigir %}
+            {% include 'partials/formularios/form-correcao-acao.html' %}
+            {% endif %}
+
+            {% if chave_contexto_extra_corrigir_despesas %}
+            {% include 'partials/formularios/form-correcao-despesas.html' %}
+            {% endif %}
+
+            {% if chave_contexto_corrigir_fia %}
+            {% include 'partials/formularios/form-correcao-fia.html' %}
+            {% endif %}
+
+            {% if chave_contexto_corrigindo_acao %}
+            {% include 'partials/formularios/form-corrigindo-acao.html' %}
+            {% endif %}
+
+            {% if chave_contexto_corrigindo_despesa %}
+            {% include 'partials/formularios/form-corrigindo-despesa.html' %}
+            {% endif %}
+
+            {% if chave_corrigindo_modelo_fia or chave_corrigindo_extra_fia %}
+            {% include 'partials/formularios/form-corrigindo-fia.html' %}
+            {% endif %}
+
+        </div>
+    </div>
+  </div>

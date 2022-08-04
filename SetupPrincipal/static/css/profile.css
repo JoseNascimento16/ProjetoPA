@@ -1,0 +1,97 @@
+.box-profile1-1{
+    display: flex;
+    flex-direction: row;
+    color: rgb(101, 101, 102);
+    margin-top: 10px;
+}
+
+    .box-profile1-1 a:hover{
+        text-decoration: none;
+    }
+
+    .classe-icone-perfil{
+        background-color: rgba(202, 200, 200, 0.664);
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    .box-profile1-1-1{
+        color: rgb(251, 251, 255);
+        /* background-color: rgb(74, 74, 75); */
+    }
+
+        .box-profile1-1-1 i{
+            font-size: 7em;
+        }
+
+        .box-profile1-1-1 p{
+            padding-left: 22px;
+        }
+
+        .box-profile1-1-1 a{
+            padding-left: 22px;
+        }
+
+    .box-profile1-1-2{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        color: rgb(101, 101, 102);
+        margin-left: 20px;
+    }
+
+        .box-profile1-1-2 h5{
+            align-self: center;
+            margin: 10px 0 10px 0;
+            font-size: 14px;
+        }
+
+        .box-profile1-1-2 p{
+            font-size: 0.9em;
+            margin: 10px 0 11px 0;
+        }
+
+        .box-profile1-1-2 a{
+            align-self: center;
+            font-size: 0.9em;
+            margin: 10px 0 10px 0;
+        }
+
+            .box-profile1-1-2 a:hover{
+                text-decoration: none;
+            }
+
+        .box-profile1-1-2-1{
+            display: flex;
+            flex-direction: row;
+            /* justify-content: center; */
+            color: rgb(101, 101, 102);
+            /* margin-left: 20px; */
+        }
+
+.box-profile1-2{
+    display: flex;
+    flex-direction: row;
+    color: rgb(101, 101, 102);
+    border-bottom: 1px solid rgba(20, 22, 112, 0.705);
+}
+    .box-profile1-2 h5{
+        align-self: center;
+        margin: 10px 0 10px 0;
+        font-size: 14px;
+    }
+
+    .box-profile1-2 p{
+        font-size: 0.9em;
+        margin: 10px 0 11px 0;
+    }
+
+    .box-profile1-2 a{
+        align-self: center;
+        font-size: 0.9em;
+        margin: 10px 0 10px 0;
+    }
+
+        .box-profile1-2 a:hover{
+            text-decoration: none;
+        }

@@ -1,0 +1,26 @@
+{% load static %}
+{% load widget_tweaks %}
+
+<div class="div-confirma-devolve">
+    <div class="titulo-modal titulo-modal-devolve">
+        <h4>Alteração de cargo</h4>
+        <div style="flex: 0.5;" class="fechar-modal">
+            <a href="#"><i class="fas fa-times fa-2x fecha-modal"></i></a>
+        </div>
+    </div>
+    <div class="classe-form-modal">
+        <form class="form-modal" action="{% url 'altera_cargo' chave_elemento_id 'edita' %}" method="POST">
+            {% csrf_token %}
+            <p style="font-size: 1 em;">Defina o tipo de cargo. Funcionários de "Alto cargo" terão de assinar planos e poderão cadastrar escolas e funcionários.</p>
+            {% for elemento in chave_form_altera_cargo.visible_fields %}
+            <div class="linha-input2 linha-input-row">
+                <label style="width: 200px;" class="label-input2 label-input-form-django flex-0-55" for="{{ elemento.id_for_label }}">{{ elemento.label }}</label>
+                {{elemento|add_class:'input-input'}}
+            </div>
+            {% endfor %}
+            <div class="linha-submit">
+                <input class="myButton" type="submit" value="Confirmar">
+            </div>
+        </form>
+    </div>
+</div>

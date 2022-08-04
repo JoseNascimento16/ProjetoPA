@@ -1,0 +1,45 @@
+{% load static %}
+{% load widget_tweaks %}
+
+{% if chave_corrigindo_modelo_fia or chave_corrigindo_extra_fia %}
+<div class="div-form-codigo" style="display: block;">
+{% else %}
+<div class="div-form-codigo">
+{% endif %}
+
+    <div class="titulo-modal">
+        <h2>Corrigindo documento</h2>
+        <h4>FIA - Formulário de Inclusão de Ações</h4>
+    </div>
+    <div class="classe-form-modal">
+        <form id="form_corrigindo_despesa" class="form-modal" action="{% url 'corrigindo_fia' chave_plano.id chave_especifica_objeto.ordem_associada %}" method="POST" onsubmit="return confirm('Ao finalizar você confirma que já analisou e corrigiu (quando aplicável) as correções sugeridas. Deseja concluir esta correção?')">
+
+                <!-- campo da sugestão de correção -->
+                {% for correcao in chave_correcao_ordem_especifica %}
+                <div class="linha-input linha-input-row sugestao-correcao-form">
+                    <label class="label-input label-input-form-django" for="{{ correcao.id_for_label }}">Sugestões de correção:</label>
+                    <textarea disabled="True" class="input-input" cols="30" rows="4">{{correcao.sugestao}}</textarea>
+                </div>
+                {% endfor %}
+            
+            {% csrf_token %}
+
+            {% for elemento in chave_do_form.visible_fields %}
+                <div class="linha-input linha-input-row">
+                    <label class="label-input label-input-form-django" for="{{ elemento.id_for_label }}">{{ elemento.label }}</label>
+                    {{elemento|add_class:'input-input'}}
+                </div>
+                {% for error in elemento.errors %}
+                <section class="alert alert-danger" role="alert"> {{ elemento.errors }} </section>
+                {% endfor %}
+        
+            {% endfor %}
+            <div class="linha-submit myButton_form_margem">
+                <input class="myButton" type="submit" value="Finalizar"></input>
+            </div>
+        </form>
+    </div>
+
+    
+
+</div>

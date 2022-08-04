@@ -1,0 +1,38 @@
+As opções a seguir definem a posição onde queremos a quebra de linha, ou seja, onde ele poderá pular para a proxima pagina:
+	
+	## css ##
+	/* tr { page-break-inside:avoid; page-break-after:avoid } */
+	/* div { page-break-inside:avoid; page-break-after:avoid } */
+	/* table { page-break-inside:avoid; page-break-after:avoid } */
+	/* .classe-qualquer { page-break-inside:avoid; page-break-after:avoid } */
+
+	- opções: avoid, auto, always.
+
+	- Vale ressaltar que estas opções só funcionam adequadamente em elementos do tipo display:block
+	- Uma tabela não é do tipo display:block, portanto só usei o avoid para evitar quebrar inside, mesmo assim, com bugs.
+
+##################################################
+
+Podemos também inserir elementos/linhas em branco para causar um efeito de espaçamento, porém este método é um Hard-coding e deve ser usado com cautela. No nosso caso, deixei a cargo do usuario inserir estes elementos de maneira dinâmica caso fosse necessário.
+Para isso podemos usar qualquer tag html disponível em branco (ou com background cor branca). No nosso caso, como estamos tratando de uma tabela, tivemos que usar tr e td (com bordas laterais brancas) para adicionar linhas em branco e dar um efeito de estarem invisíveis.
+E como adicional, estas linhas em branco, foram determinadas como display:none, e só são mostradas (display:block) no layout de impressão (quando clicamos no botao de impressao, essas linhas são adicionadas, e são removidas automaticamente caso cancelemos a janela de impressão).
+
+            <tr class="pagebreak tr-extra display-none">
+                 <td style="border: none;"> 
+                 </td>
+            </tr>
+
+##################################################
+
+Outras opções:
+
+<tr style="background-color: rgb(255, 255, 255); height: 10pc; border: none;">
+  <td style="border: none;">
+  </td>
+</tr>
+            
+<div class="pagebreak"> </div>
+
+<td style="break-after:page"> </td> 
+
+<div style="break-after:page"> </div> 

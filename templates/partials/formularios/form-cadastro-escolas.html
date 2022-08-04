@@ -1,0 +1,30 @@
+{% load static %}
+{% load widget_tweaks %}
+
+{% if contexto_extra_form_escolas %}
+<div class="div-form-cadastro-escolas" style="display: block;">
+{% else %}
+<div class="div-form-cadastro-escolas">
+{% endif %}
+    <div class="titulo-modal">
+        <h2>Cadastro de Escolas</h2>
+    </div>
+    <div class="classe-form-modal">
+        <form class="form-modal" action="{% url 'cadastrar_escolas' user.id %}" method="POST">
+        {% csrf_token %}
+        {% for elemento in chave_form_cadastro_escolas.visible_fields %}
+        <div class="linha-input linha-input-row">
+            <label class="label-input label-input-form-django" for="{{ elemento.id_for_label }}">{{ elemento.label }}</label>
+            {{elemento|add_class:'input-input'}}
+        </div>
+        {% for error in elemento.errors %}
+        <section class="alert alert-danger" role="alert"> {{ elemento.errors }} </section>
+        {% endfor %}
+
+        {% endfor %}
+        <div class="linha-submit">
+            <input class="myButton" type="submit" value="Cadastrar"></input>
+        </div>
+        </form>
+    </div>
+</div>

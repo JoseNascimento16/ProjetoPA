@@ -1,0 +1,64 @@
+O uso da função Many_to_many é muito util quando queremos associar um ou varios objetos à um ou vários objetos.
+
+Ele cria na base de dados uma nova tabela para isso. Precisamos saber que ele inclui na relação, o objeto inteiro, portanto podemos acessar os atributos destes objetos.
+
+Ex:Imagine que temos uma classe de planos:
+
+class Plano_de_acao(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    ano_referencia = models.CharField(max_length=50)
+    situacao = models.CharField(default='Em desenvolvimento', max_length=50)
+    data_de_criação = models.DateField(default=date.today, blank=True)
+
+e uma classe de Turmas que pode ter uma relação de many_to_many com varios planos:
+
+class Turmas_plano(models.Model):
+    plano_associado = models.ManyToManyField(Plano_de_acao)
+    nome = models.CharField(max_length=100)
+    quantidade_alunos = models.IntegerField()
+
+Ou seja, 1 objeto "Turmas_plano" pode possuir varios objetos "Plano_de_acao" atraves do seu atributo "plano_associado"
+
+#####################################
+
+Diferente de uma relação OneToOneField, um objeto ManyToMany é criado da seguinte forma
+
+1 - Criamos o objeto normalmente, porém o atributo (ManyToMany) é criado separadamente:
+
+Instancia_QuerySet = Turmas_plano.objects.create(nome='turma1',quantidade_alunos='10')
+*instancia_plano = get_object_or_404(Plano_de_acao, pk=7)
+Instancia_QuerySet.plano_associado.add(instancia_plano) <<<<<<<<<<<
+
+*Perceba que precisamos informar qual é o objeto Plano_de_acao que queremos adicionar à tabela
+** Note a presença do comando ".add"
+
+####################################
+
+Para recuperar essas informações no banco de dados precisamos usar 2 FORs:
+
+plano_objeto = get_object_or_404(Plano_de_acao, pk=elemento_id)
+turmas_associadas = Turmas_plano.objects.filter(plano_associado=plano_objeto)
+
+for turma in turmas_associadas:
+    for plano in turma.plano_associado.all():
+        print(plano.id)
+
+* Perceba que tivemos que definir o objeto PLANO no nosso exemplo, pois estamos usando um filtro
+* De todas as turmas, vamos buscar aquelas que tem relação com o PLANO especifico
+* No nosso exemplo estamos interessados no ID dos planos associados a cada turma.
+
+###############################
+
+No template fica assim:
+
+{% for turma in turmas_associadas %}
+    {% for plano in turma.plano_associado.all %}
+	{{plano.id}}
+    {% endfor %}
+{% endfor %}
+
+* Perceba que não usamos os () no comando .all
+
+
+
+

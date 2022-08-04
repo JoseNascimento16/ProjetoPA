@@ -1,0 +1,39 @@
+Os passos aqui são similares aos passos do tutorial de deletar.
+
+A idéia é simples: O botão/link de editar um objeto tem que ter sido renderizado dentro do FOR de renderização do CARD html de contexto, porque desta forma, quando clicarmos no link href, ele já terá o ID do elemento associado à ele.
+
+- Dentro do FOR do CARD do plano que queremos editar: (passamos o id do elemento)
+
+	<form action="{% url 'editar_plano' elemento.id %}" method="POST">
+             {% csrf_token %}
+             <input class="myButton botao-editar" type="submit" value="Editar">
+        </form>
+
+- na urls.py do app que desejarmos:
+
+	path('edita/<int:elemento_id>',views.edita_plano, name='editar_plano'),
+
+- na views.py
+
+	def edita_plano(request, elemento_id):
+    		if request.method == 'POST':
+        		captura_plano = get_object_or_404(Plano_de_acao, pk=elemento_id)
+        		captura_plano.situacao = 'Pendente'
+        		captura_plano.save()
+
+    		return redirect('pagina_planos_de_acao')
+
+Neste caso, só mudamos 1 único atributo do objeto que pegamos, mas poderíamos ter mudado outros atributos também.
+
+### Ao invez de fazermos isso via BOTÃO, poderiamos também utilizar um formulário (Tutorial 17), daí usariamos as informações do formulário para servirem de conteudo num código do tipo:
+
+  	if request.method == 'POST':
+		plano_id = request.POST['elemento_id']
+	        r = Plano_de_acao.objects.get(pk=plano_id)
+        	r.ano_referencia = request.POST['nome_1']
+	        r.descricao = request.POST['nome_2']
+		r.save()
+
+   	return redirect('pagina_planos_de_acao')
+
+

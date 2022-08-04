@@ -1,0 +1,16 @@
+Com este formato, podemos mostrar somente alguns valores do objeto para serem mostrados no formulário.
+No nosso caso, somente 3 opções dentre os mais de 20 objetos de Classificação serão mostrados.
+
+campo = forms.ModelChoiceField(
+	queryset=Classificacao.objects.filter(tipo_de_acesso='Func_sec'),
+	empty_label="------------",
+	label='Novo corretor:',
+	widget=forms.Select)
+
+    class Meta:
+
+        model = Plano_de_acao
+        fields = ['campo']
+        .
+	.
+	.

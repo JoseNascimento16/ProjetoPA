@@ -1,0 +1,23 @@
+{% load static %}
+{% load widget_tweaks %}
+
+<div class="div-confirma-devolve">
+    <div class="titulo-modal">
+        <h2>Cadastro de assinatura</h2>
+    </div>
+    <div class="classe-form-modal">
+        <form class="form-modal" id="form-canvas" action="{% url 'cadastra_assinatura' user.id %}" method="POST">
+            {% csrf_token %}
+            
+            <canvas id="canvas" width="350" height="115" style="border: 1px solid black; position: relative;"></canvas>
+            <div id="coord"></div>
+            <button class="myButton clear-canvas" type="button" style="margin-right: 10px">Limpar</button>
+
+            <div class="linha-submit">
+                <input type="hidden" name="canvasData" id="input_hidden_canvas">
+                <input class="myButton" type="submit" value="Confirmar"  onclick="save_canvas()">
+            </div>
+        </form>
+        
+    </div>
+</div>

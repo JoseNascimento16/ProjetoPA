@@ -1,0 +1,29 @@
+No nosso exemplo temos um form que puxa um choicesfield de um modelo de User. 
+Acontece que nesse modelo de User ele é um foreignKey e portanto é um REQUIRED field.
+
+Se quisermos preencher um form e ter a opção de deixar em BRANCO (------) o form não deixa.
+
+Para bypassar isso, faremos o seguinte:
+
+em forms.py:
+
+class My_Form(forms.ModelForm):
+
+    class Meta:
+
+        model = ...
+        fields = ['corretor_plano']
+        labels = { 'corretor_plano':'Novo corretor:' }
+        widgets = ...
+        
+    ##  
+    def __init__(self, *args, **kwargs):
+        super(My_Form, self).__init__(*args, **kwargs)
+        self.fields['corretor_plano'].required = False
+
+    def clean(self):
+        return self.cleaned_data
+
+## Ou seja, definimos que na inicialização do form, o campo "corretor_plano" terá seu status de REQUIRED em FALSO
+
+E assim podemos preencher este campo no formulário podendo escolher a opção (------)

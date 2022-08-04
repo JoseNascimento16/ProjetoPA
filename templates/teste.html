@@ -1,0 +1,8 @@
+{% for item in plano.classificacao_set.all %}
+    {% if item.user == plano.usuario %}
+    <td colspan="2", style="text-align: center;font-style: italic"> {{item}} </td>
+    {% set '' as var3 %}
+    {% else %}
+    <td colspan="2", style="text-align: center;"> b </td>
+    {% endif %}
+{% endfor %}

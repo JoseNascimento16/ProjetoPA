@@ -1,0 +1,15 @@
+<div class="wrapper">
+        <div>
+            <h3 class="text-center">SIPA - Sistema de Planos de ação</h3>
+        </div>
+        
+        <form class="form-signin" action="{% url 'fazendo_login' %}" method="">       
+          <h2 class="form-signin-heading">Acesso</h2>
+          <input type="text" class="form-control" name="username" placeholder="Login" required="" autofocus="" />
+          <input type="password" class="form-control" name="password" placeholder="Senha" required=""/>      
+          <label class="checkbox">
+            <input type="checkbox" value="remember-me" id="rememberMe" name="rememberMe"> Lembrar de mim
+          </label>
+          <button class="btn btn-lg btn-primary btn-block" type="submit">Entrar</button>   
+        </form>
+      </div>

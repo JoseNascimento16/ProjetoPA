@@ -1,0 +1,55 @@
+Para fazermos o login no site
+
+Primeiro devemos criar o path, informar o método POST, e inserir o token de segurança
+
+	<form action="{% url 'login' %}" method="POST">
+	{% csrf_token %}
+
+em usuarios > views.py
+
+Na função de login teremos 2 trechos importantes:
+
+- O primeiro filtra pelo username e nos retorna o username:
+
+if User.objects.filter(username=Usuario).exists(): 
+      Nome = User.objects.filter(username=Usuario).values_list('username', flat=True).get()
+      # print(Nome)
+
+- O segundo compara os campos informados com o conteudo do banco de dados, e setudo estiver correto, autoriza redireciona para o dashboard
+
+user = auth.authenticate(request, username=Nome, password=Senha)
+
+     if user is not None:
+         auth.login(request, user)
+         print('login realizado com sucesso')
+         return redirect('dashboard')
+
+- A função completa com algumas validações fica assim:
+
+def login(request):
+    if request.method == 'POST':
+        Usuario = request.POST['username']
+        Senha = request.POST['password']
+        
+        if not Usuario.strip() or not Senha.strip() :      
+            print("Informe o usuario ou senha")
+            return redirect('fazendo_login')
+
+        if User.objects.filter(username=Usuario).exists(): 
+            Nome = User.objects.filter(username=Usuario).values_list('username', flat=True).get()
+            # print(Nome)
+        
+            user = auth.authenticate(request, username=Nome, password=Senha)
+
+            if user is not None:
+                auth.login(request, user)
+                print('login realizado com sucesso')
+                return redirect('dashboard')
+            print('Informações de login incorretas!')
+        
+    return render(request, 'index.html')
+
+### Note que ao inves de filtrarmos pelo username, podemos filtrar pelo email também:
+
+if User.objects.filter(email=Email).exists(): (linha 44)
+        Nome = User.objects.filter(email=Email).values_list('username', flat=True).get()

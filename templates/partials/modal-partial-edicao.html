@@ -1,0 +1,64 @@
+{% load static %}
+
+<!-- este modal-partial esta posicionado em cada pagina.html que precise dele -->
+
+{% if contexto_edicao_plano or contexto_extra_edita_plano or chave_abre_modal_edicao or chave_edita_ordem_existente or chave_abre_altera_nome or chave_abre_altera_assinatura or contexto_extra_modelo_fia or contexto_extra_ordem_fia or chave_abre_form_extra_criacao or chave_abre_form_extra_edicao %}
+<div class="modelo-modal-edicao" style="display: flex;">
+{% else %}
+<div class="modelo-modal-edicao" >
+{% endif %}
+    <div class="fundo-modal" style="overflow-y: auto;">
+        <div class="corpo-modal">
+            <div class="fechar-modal">
+                <a href="#"><i class="fas fa-times fa-2x fecha-modal"></i></a>
+            </div>
+            
+            <!-- Todos os partials de formularios devem estar aqui -->
+
+            {% if chave_form_extra_fia or chave_abre_form_extra_edicao %}
+            {% include 'partials/formularios/form-ordem-extra-fia.html' %}
+            {% endif %}
+            
+            {% if chave_form_modelo_fia %}
+            {% include 'partials/formularios/form-modelo-fia.html' %}
+            {% endif %}
+            
+            {% if chave_edita_ordem_existente %}
+            {% include 'partials/formularios/form-edita-ordem.html' %}
+            {% endif %}
+
+            {% if chave_insere_form_edita_ordem %} <!-- vem da edição de ordem original -->
+            {% include 'partials/formularios/form-edita-ordem.html' %}
+            {% endif %}
+
+            {% if chave_form_planos or chave_edita_plano_form %}
+            {% include 'partials/formularios/edita-plano-form.html' %}
+            {% endif %}
+
+            {% if form_codigos %}
+            {% include 'partials/formularios/form-codigo.html' %}
+            {% endif %}
+
+            {% if chave_form_cadastro_escolas %}
+            {% include 'partials/formularios/form-cadastro-escolas.html' %}
+            {% endif %}
+
+            {% if chave_form_cadastro_funcionarios %}
+            {% include 'partials/formularios/form-cadastro-funcionarios.html' %}
+            {% endif %}
+
+            {% if chave_form_cadastro_turmas %}
+            {% include 'partials/formularios/form-cadastro-turmas.html' %}
+            {% endif %}
+
+            {% if chave_abre_altera_nome %}
+            {% include 'partials/formularios/form-altera-nome.html' %}
+            {% endif %}
+
+            {% if chave_abre_altera_assinatura %}
+            {% include 'partials/formularios/form-cadastra-assinatura.html' %}
+            {% endif %}
+
+        </div>
+    </div>
+</div>

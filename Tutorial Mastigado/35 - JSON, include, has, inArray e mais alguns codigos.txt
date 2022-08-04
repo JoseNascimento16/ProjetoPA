@@ -1,0 +1,59 @@
+ordens_serializadas = serializers.serialize('json', Ordens.objects.filter(plano=plano_objeto).filter(possui_sugestao_correcao=True))
+print(type(ordens_serializadas)) #str
+
+json_loads = json.loads(ordens_serializadas)
+print(type(json_loads)) #list
+
+json_dumps = json.dumps(ordens_serializadas)
+print(type(json_dumps)) #str
+
+###################################################
+
+if (jQuery.inArray(element,nome) ){
+}
+
+- onde "element" é o elemento(valor dele) do array, e "nome" é o nome do array(no nosso caso, uma lista)
+- esta função inArray checa o INDEX de cada elemento, e retorna o proprio INDEX e não o valor
+- Portanto não da para comparar valores, somente checar se o elemento existe no array
+- Se ele não achar, ele retorna " -1 "
+
+###################################################
+#element, é o resultado da varredura de uma variavel num FOR(each)
+
+if ( $(lista2_de_ordens).has(element){
+}
+
+- Essa estrutura checa se há o elemento na lista2_de_ordens
+- No nosso caso, a lista possui 3 valores, e somente 2 deles continham o elemento
+- Mas a função nos retornou os 3 valores, preciso estudar mais esta função.
+
+###########################################
+#element, é o resultado da varredura de uma variavel num FOR(each)
+
+if ( lista2_de_ordens.includes(element) ){
+}
+
+- Essa estrutura checa se o elemento está incluido na lista2_de_ordens
+- Neste caso, a estrutura funciona como esperado, e quando posta dentro de um FOR, só nos retorna os valores de "elemento" que também estiverem     presentes na lista2_de_ordens. É como se fosse um any().
+- Perceba que a construção da estrutura é diferente do .has() , a lista2_De_ordens não é estruturada como uma função com o $
+- o .has() não aceita esta notação
+
+##############################################
+
+every() e muitas outras, pesquisar por jquery built.in() methods
+
+##############################################
+
+var instance = JSON.parse(response["instance"]);
+var fields = instance[0]["fields"];
+
+###############################################
+
+import json
+dishes = Dish.objects.all()  #pega o objeto querySet
+dishes_ser = serializers.serialize('json', dishes) #serializa
+json_data = json.loads(dishes_ser) #transforma em objeto json
+context = {'dishes': json_data,} #passa pra o contexto
+{{ dishes|json_script:"id_var_dishes" }} #no html transforma em script pro jquery
+var var_dishes = JSON.parse([document.getElementById('id_var_dishes').textContent]); #coloca numa variavel (estou assumindo que isto ja seja o objeto)
+

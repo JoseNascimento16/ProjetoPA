@@ -1,0 +1,27 @@
+A estrutura para que este recurso funcione já está montada, do tutorial 21*. (ou seja, quando um plano é criado, ele já tem um usuario associado a ele)
+
+Portanto só precisamos definir na renderização no views.py da página (dashboard, index, a que preferirmos...) as condições para que o CARD do plano a ser mostrado seja somente do usuário que o criou.
+
+Ex:
+
+@login_required
+def planos_de_acao(request):
+    id = request.user.id
+    planos = Plano_de_acao.objects.order_by('-data_de_criação').filter(usuario=id).filter(situacao='Em desenvolvimento')
+    checa_usuario = request.user
+    if checa_usuario.is_superuser:
+        planos = Plano_de_acao.objects.order_by('-data_de_criação').filter(situacao='Pendente')
+        # print(teste,"é superuser")
+
+    dados = {
+        'chave_planos' : planos
+    }
+
+    return render(request, 'planos_de_acao.html', dados)
+
+Nesta função:
+
+1 - Pegamos o id do usuario logado.
+2 - Buscamos o plano (modelo Plano_de_acao salvo no banco de dados) filtrando pelo id do usuario associado ao plano (comparando com o id pego acima). Filtrando também um outro parametro do plano.
+3 - Checamos num if, se o usuário é superuser, no caso, o superuser poderá visualizar todos os planos(perceba que não filtramos pelo id aqui), contanto que eles estejam "Pendente"
+4 - passamos para o contexto dados e renderizamos

@@ -1,0 +1,35 @@
+## referencia > plano_de_acao > views.py > def corrigindo_acao e def pagina_correcoes
+
+No nosso exemplo, temos varios formulários (quantidade variavel) utilizando-se de mais de um tipo de "modelo de objeto" (ordens, codigos) sendo enviados para o contexto. Cada um já com seu prefixo (quando aplicável, nem todos precisam de prefixo)
+
+No HTML temos todos esses formulários dentro de uma unica tag <form> </form> e um unico botão enviando o POST para a views.py
+
+Essas informações vem tudo de uma vez num unico PACOTÃO no POST para a nossa views.
+
+Vamos analisar 2 casos:
+
+- No primeiro caso, 1 formulario no meio do bolo é o unico que utiliza o modelo form_ORDENS, este formulario não utiliza prefixo, e portanto a sua validação é feita normalmente:
+
+	if request.method == 'POST':
+	   form = form_ordens(request.POST)
+	   if form.is_valid():
+		validações...
+
+- No segundo caso, ainda utilizando o mesmo PACOTÃO, temos varios formularios utilizando o modelo form_CODIGOS, e ao tentarmos buscar as informações, nos deparamos com um erro de ambiguidade, pois eles utilizam o mesmo modelo e portanto, tem os mesmos NOMES nos campos.
+
+   Como já sabiamos disso antecipadamente, de lá da primeira views de renderização desses formularios no html (def pagina_correcoes), já enviamos os formularios, cada um com um prefixo especifico:
+	
+	# codigos_da_ordem_inseridos é um querySet com varios objetos:
+	if request.method == 'POST':
+           for modelo in codigos_da_ordem_inseridos:
+              form = Mini_form_Codigos(request.POST, prefix=modelo.identificacao)
+            if form.is_valid():
+                valor_especificacao = secondform.cleaned_data.get('especificacao')
+                print('CODIGOS VALIDOS')
+            else:
+                print('CODIGOS INVALIDOS')
+                print(secondform.errors)
+
+   valor_especificacao terá uma informação especifica de acordo com o que foi preenchido em cada campo dos formularios.
+
+   E assim pudemos diferenciar cada formulario dentro desse pacote de informações que vieram no POST.

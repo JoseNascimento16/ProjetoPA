@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+{% block content %}
+
+{{ chave_tipo_usuario|json_script:"id-tipo-usuario" }}
+
+<div class="box-plano1">
+    <div class="box-plano1-1">
+        <h5><i class="fas fa-chart-bar fa-2x margem-icones-menu"></i>
+            PLANO: {{ chave_ordens.plano.ano_referencia }}    >    ORDEM: {{ chave_ordens.identificacao_numerica }}    >    Ações financiáveis (Códigos)
+        </h5>
+    </div>
+
+    {% if messages %}
+        <ul class="ul-mensagens">
+            {% for message in messages %}
+            <li{% if message.tags %} class="alert alert-{{ message.tags }} li-mensagens"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <div class="box-plano1-2">
+        <h5>Código</h5>
+        <h5>Especificação</h5>
+        <h5>Quantidade</h5>
+        <h5>Valor unitário</h5>
+        <h5>Valor total</h5>
+        <h5 class="flex-02"></h5>
+        <h5 class="flex-02"></h5>
+    </div>
+    <div class="div-cards-planos">
+            {% if chave_codigos %}
+            {% for elemento in chave_codigos %}
+            <div class="cards-planos">
+                <p class="clear-2 itens-cards-planos">
+                    <a href="#">
+                        - {{ chave_ordens.identificacao_numerica }}{{ elemento.identificacao }}
+                    </a>
+                </p>
+                <p class="clear-2 itens-cards-planos">
+                    <a href="#">
+                        {{ elemento.especificacao }}
+                    </a>
+                </p>
+                <p class="clear-2 itens-cards-planos">
+                    <a href="#">
+                        {{ elemento.quantidade }}
+                    </a>
+                </p>
+                <p class="clear-2 itens-cards-planos">
+                    <a href="#">
+                        R$ {{ elemento.preco_unitario }}
+                    </a>
+                </p>
+                {% if elemento.tipo_produto == 'Capital' %}
+                <p class="clear-2 itens-cards-planos">
+                    <a href="#">
+                        R$ {{ elemento.preco_total_capital }} (capital)
+                    </a>
+                </p>
+                {% elif elemento.tipo_produto == 'Custeio' %}
+                <p class="clear-2 itens-cards-planos">
+                    <a href="#">
+                        R$ {{ elemento.preco_total_custeio }} (custeio)
+                    </a>
+                </p>
+                {% endif %}
+
+                <p class="clear-2 itens-cards-planos flex-02">
+                    <a href="{% url 'abre_edicao_codigo' chave_ordens.id elemento.id %}" method="POST"  onclick="">
+                        <i class="fas fa-edit margem-icones-menu"></i>
+                    </a>
+                </p>
+                {% if chave_ordens2 %}
+                {% for ordem in chave_ordens2 %}
+                <p class="clear-2 itens-cards-planos flex-02">
+                    <a href="{% url 'deletar_codigo' ordem.id elemento.id %}" method="POST"  onclick="return confirm('Deseja realmente excluir este elemento?')">
+                        <i class="fa fa-trash lixeira" aria-hidden="true"></i>
+                    </a>
+                </p>
+                {% endfor %}
+                {% endif %}
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="cards-planos">
+                <p class="clear-2 itens-cards-planos">
+                    Esta ordem ainda não possui ações financiáveis
+                </p>
+            </div>
+            {% endif %}
+            {% if user.classificacao.tipo_de_acesso == 'Escola' %}
+            <div class="box-botao-cadastro1">
+                {% for ordem in chave_ordens2 %}
+                <a id="id_a_href" class="myButton" href="{% url 'abre_criacao_codigo' ordem.id 'novo_codigo' %}" >Nova ação</a>
+                {% endfor %}
+            </div>
+            {% endif %}
+    </div>
+</div>
+
+
+{% include 'partials/modal-partial.html' %}
+
+
+
+
+{% endblock %}
+
+
+        

@@ -1,0 +1,44 @@
+- No media.css incluimos:
+
+@media print {
+
+    body {
+        background: #CCCCCC;
+        background: none;
+        -ms-zoom: 1.665;
+        transform: scale(0.97);
+      }
+
+    @page {
+        size: auto;
+        margin: 1mm;
+    }
+}
+
+
+# transform: scale(0.97); - Altera a proporção de escala do layout de impressão. No ppróprio layout tem outra opção para ajustar lá dentro a escala também
+
+## size: auto; - Faz com que apareça no layout de impressão a opção de formato "retrato" ou "paisagem"
+
+### margin: 1mm; - Determina as margens padrão do layout de impressão. Dentro do layout também há uma opção de configurar as margens.
+
+####################################
+
+outras opções:
+
+    .pagebreak {
+        clear: both;
+        page-break-after: always;
+    } 
+
+    div.portrait, div.landscape {
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: none;
+    }
+
+    div.landscape {
+    transform: rotate(270deg) translate(-276mm, 0);
+    transform-origin: 0 0;
+    } 

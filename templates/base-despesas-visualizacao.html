@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIPA - Sistema de Planos de Ação</title>
+    <link rel="icon" href="{% static 'img/logo_barra.jpg' %}">
+    <link rel="stylesheet" href="{% static 'site.css' %}">
+    <!-- ICONS -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css"> -->
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.css">
+    
+    <!-- Active js -->
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{% static 'js/menu_accordion.js' %}"></script>
+    <script src="{% static 'js/modal.js' %}"></script> 
+    <script src="{% static 'js/scroll_maintain.js' %}"></script>
+    <script src="{% static 'js/pagina_despesas.js' %}"></script>
+    <script src="{% static 'js/disabled_fields.js' %}"></script>
+    <script src="{% static 'js/mensagens.js' %}"></script>
+    <script src="{% static 'js/pagina_fia.js' %}"></script>
+    
+</head>
+<body>
+
+  {% include 'partials/header.html' %}
+
+  {% include 'partials/navbar.html' %}
+
+  <div class="classe-container-central-visualizacao">
+
+    {% include 'partials/menu_edicao_turmas.html' %}
+
+  <!-- CORPO -->
+    <div class="classe-div-container-corpo-visualizacao">
+
+      {% block content %}{% endblock %}
+
+    </div>
+  <!-- FIM CORPO -->
+  
+  </div>
+  {% include 'partials/footer.html' %}
+
+  
+
+         <!-- SCRIPTS -->
+         <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.bundle.min.js"></script>
+         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+         <script src="{% static 'js/canvas.js' %}"></script>
+         <!-- FIM SCRIPTS -->
+  </body>
+  </html>

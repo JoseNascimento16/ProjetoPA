@@ -1,0 +1,44 @@
+{% load static %}
+
+<!-- MENU -->
+{% if user.classificacao.tipo_de_acesso == 'Escola' %}
+<div class="classe-div-menu-lateral-edicao menu-impressao-js display_none">
+    <div class="classe-menu-lateral1-edicao borda2"><span class="span-menu-edicao">Menu de impressão</span><a><i class="fa-solid fa-arrow-right-arrow-left margem-left-10 icone-alternancia"></i></a></div>
+    <div class="classe-menu-lateral1-edicao borda1"><span class="span-menu-edicao">Plano: {{ chave_planos.ano_referencia }}</span></div>
+
+        <ul class="classe-menu-lateral1-edicao itens clear-edicao" style="padding-bottom: 20px"><a class="item-principal-menu-edicao ordens-menu" href="#"><i class="fa-solid fa-print margem-icones-menu"></i>Layout de impressão<i class="arrow fa fa-angle-right pull-right setinha margem-left-5" style="margin-top: 5px"></i></a>
+            
+            <ul class="sub-menu-edicao sub-menu-edicao-ordens" style="margin: 0 7px 7px 7px; padding: 0">
+
+                <li class="sub-menu-item-edicao li-quebra-linha"><a href="#" class="desabilita-js"><i class="fa fa fa-tasks margem-icones-menu"></i>Quebra de linha após</a></li>
+
+            {% for elemento in chave_ordens2 %}
+                {% if elemento.inserida %}
+                
+                    <li class="sub-menu-item-edicao" style="margin: 0 7px 0 18px"><a class="desabilita-js" method="POST">Ordem: {{elemento.identificacao_numerica}}</a>
+                    </li>
+                    <div class="div-icones-soma-subtracao">
+                        <!-- <a id="menos-ordem-{{elemento.identificacao_numerica}}" href="#"><i class="fas fa-minus setinha"></i></a><p id="figure-ordem-{{elemento.identificacao_numerica}}">{{elemento.quebra_de_linha}}</p><a id="mais-ordem-{{elemento.identificacao_numerica}}" href="#"><i class="fas fa-plus setinha"></i></a> -->
+                        <form action="{% url 'insere_quebra_de_linha' chave_planos.id %}" method="GET">
+                        <a id="menos-ordem-{{elemento.identificacao_numerica}}"><i class="fas fa-minus setinha"></i></a><input class="input-menu-impressao" type="number" min="0" max="10" id="figure-ordem-{{elemento.identificacao_numerica}}" name="valor" value="{{elemento.quebra_de_linha}}"><a id="mais-ordem-{{elemento.identificacao_numerica}}"><i class="fas fa-plus setinha"></i></a>
+                        <input class="input-menu-impressao" type="text" name="ordemid" value="{{elemento.id}}" style="display: none">
+                        <button class="botao-ok-impressao" style="display: inline">ok</button>
+                        </form>
+                    </div>
+
+                {% endif %}
+            {% endfor %}
+            </ul>
+
+        </ul>
+
+        <div class="div-botao-impressao">
+            <input id="impressao" class="botao-impressao" type="button" onclick="printDiv('imprimir')" value="imprimir">
+            <li class="question-menu-impressao"><a class="desabilita-js"><i class="fas fa-question margem-icones-menu"></i></a></li>
+            <span id="id-tooltip7-menu" class="tooltiptext7-tabela">Alterações efetuadas aqui só terão efeito no layout de impressão!</span>
+        </div>
+          
+</div>
+
+{% endif %}
+<!-- FIM MENU -->

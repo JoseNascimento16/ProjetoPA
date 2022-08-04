@@ -1,0 +1,38 @@
+Perceba que estamos usando muito os codigos python {% ....%}, e se tivermor muitas
+páginas para configurar isso vai se tornar uma pratica contraproducente.
+
+Se tivermos trechos de códigos que são repetitivos (o header por exemplo) podemos usar
+os "partials", que são trechos do código compartilhado com todas as paginas.
+
+Vamos então aplicar esta técnica no header(menu) e no footer da página.
+
+Criaremos um novo folder e dois novos arquivos na pasta "templates"
+    receitas > templates > new folder > partials
+    receitas > templates > partials > new file > menu.html
+    receitas > templates > partials > new file > footer.html
+
+Na página index.html
+    Iremos RECORTAR todo o header e colar no menu.html
+    Iremos RECORTAR todo o footer e colar no footer.html
+    (na pagina receita somente apagamos TODO o header e o footer)
+
+Agora precisamos informar ao index.html e a receita.html, que queremos incluir o trecho que agora 
+está no menu.html e no footer de volta para o index.html e receita.html
+
+Portanto, no local de onde foi recortado o header, colocaremos:
+    {% include 'partials/menu.html' %}
+    Não podemos esquecer de carregar os arquivos estaticos no menu.html (linha1)
+
+Fazendo o mesmo para o footer, no local de onde foi recortado o footer, colocaremos:
+    {% include 'partials/footer.html' %}
+    Não podemos esquecer de carregar os arquivos estaticos no footer.html (linha1)
+
+*PERCEBA QUE O CAMINHO 'partials/menu.html' tem como raiz o diretório da pasta "templates" configurado no SetupPrincipal > settings.py:
+
+'DIRS': [os.path.join(BASE_DIR, 'SetupPrincipal/usuarios/templates')],
+
+logo, neste nosso caso, a pasta 'partials' tem, por obrigatoriedade, que estar dentro de usuarios em:
+
+"SetupPrincipal/usuarios/templates/partials"
+
+Desta forma, se tivermos 50 paginas iguais, so precisamos ir em 1 arquivo para altera-las.

@@ -1,0 +1,249 @@
+{% extends 'base-despesas-visualizacao.html' %}
+{% load static %}
+{% load definir_acoes %}
+{% load humanize %}
+{% block content %}
+
+{{ chave_lista2_codigos|json_script:"id-lista-codigos-correcao" }}
+
+{{ chave_planos.devolvido|json_script:"id-chave-devolvido" }}
+{{ chave_tipo_usuario|json_script:"id-tipo-usuario" }}
+{{ chave_situacao_plano|json_script:"id-situacao-plano" }}
+{{ chave_planos.alterabilidade|json_script:"id-alterabilidade-plano" }}
+{{ chave_planos.pre_analise_fia|json_script:"id-sugestoes-fia-concluidas" }}
+{{ chave_lista_todas_ordens|json_script:"id-todas-ordens" }}
+{{ chave_ordens_com_correcao|json_script:"id-ordens-com-correcao" }}
+
+<div class="div-visualizacao-bloco div-visualizacao-bloco-fia">
+
+    {% if messages %}
+    <ul class="ul-mensagens" style="padding: 0%;">
+        {% for message in messages %}
+        <li{% if message.tags %} class="alert alert-{{ message.tags }} li-mensagens"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <div class="div-visualizacao-img" style="margin: 0">
+        <img class="visualizacao-img" src="{% static 'img/cabecalho_visualizacao_fiapng.png' %}" alt="">
+    </div>
+    <h5 class="h5-1-fia">SUPERINTENDÊNCIA DA EDUCAÇÃO PROFISSIONAL E TECNOLÓGICA - SUPROT</h5>
+
+    <table class="div-unidade-bloco tabela-unidade table1-fia">
+        <tr>
+            <td colspan="2"> FIA - FORMULÁRIO DE ALTERAÇÃO / INCLUSÃO DE AÇÕES</td>
+        </tr>
+    </table>
+
+    <table class="div-unidade-bloco tabela-unidade table2-fia">
+        {% for turma in chave_turmas_associadas %}
+        <tr>
+            <td>Turma</td>
+            <td>{{turma.nome}}</td>
+            <td>Qtde de alunos</td>
+            <td>{{turma.quantidade_alunos}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <div class="titulo-plano">
+        <h4 style="margin-top: 10px;">FIA: {{ chave_planos.ano_referencia }}</h4>
+    </div>
+
+    <table class="tabela-unidade table3-fia">
+        <tr>
+            <td> 1 - CÓDIGO DA ESCOLA - {{ chave_planos.usuario.classificacao.codigo_escola }}</td>
+            <td> 2 - NOME DA ESCOLA - {{ chave_planos.usuario.last_name }}</td>
+            <td> 3 - MUNICÍPIO - {{ chave_planos.usuario.classificacao.municipio }}</td>
+        </tr>
+    </table>
+    <table class="tabela-unidade table4-fia">
+        <tr class="linha-municipio">
+            {% if chave_modelo_fia.nome_caixa_escolar %}
+            <td> 4 - NOME CAIXA ESCOLAR: {{ chave_modelo_fia.nome_caixa_escolar }}</td>
+            {% else %}
+            <td style="background-color: rgba(255, 0, 0, 0.404);"> 4 - NOME CAIXA ESCOLAR: </td>
+            {% endif %}
+            <td style="width: 215px;"> 5 - {{ chave_planos.usuario.classificacao.nte }}</td>
+            {% if chave_modelo_fia.ano_exercicio %}
+            <td style="width: 215px;"> 6 - EXERCÍCIO - {{ chave_modelo_fia.ano_exercicio }}</td>
+            {% else %}
+            <td style="background-color: rgba(255, 0, 0, 0.404);width: 215px"> 6 - EXERCÍCIO -     </td>
+            {% endif %}
+
+        </tr>
+    </table><br>
+
+    
+
+    <table class="tabela-principal table5-fia">
+        
+        <tr>
+            <th colspan="2"> 7 - AÇÕES/ATIVIDADES/ITENS EXCLUÍDOS / REDUZIDOS </th>
+            <th rowspan="2"> 8 - UNIDADE</th>
+            <th colspan="3"> 9 - SITUAÇÃO ANTERIOR</th>
+            <th colspan="4"> 10 - SITUAÇÃO ATUAL</th>
+            <th rowspan="2" style="width: 215px;"> 11 - JUSTIFICATIVA</th>
+        </tr>
+        <tr>
+            <th style="width: 45px;"> 7.1 - Nº ORDEM </th>
+            <th style="width: 300px;"> 7.2 - ITENS/SERVIÇOS - DISCRIMINAÇÃO / ESPECIFICAÇÕES TÉCNICAS </th>
+            <th> 9.2 - QUANT. </th>
+            <th style="width: 75px;"> 9.1 - PREÇO UNITÁRIO DO ITEM (R$). </th>
+            <th> 9.3 - VALOR TOTAL </th>
+            <th style="width: 45px;"> 10.2 - QUANT. </th>
+            <th style="width: 75px;"> 10.1 - PREÇO UNITÁRIO DO ITEM (R$). </th>
+            <th> 10.3 - VALOR TOTAL </th>
+            <th style="width: 67px;"> 10.4 - SALDO </th>
+        </tr>
+        <tr id="id-background-hover">
+            <td>{{chave_modelo_fia.valor_numerico}}</td>
+            <td class="classe-discriminacao">{{chave_modelo_fia.discriminacao}}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>O valor será retirado do saldo de Custeio do Caixa Escolar</td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align: left;"> 12 - TOTAL </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>R$ {{chave_modelo_fia.valor_total_fia|intcomma}}</td>
+            <td></td>
+        </tr>
+    </table>
+
+    <table class="tabela-principal table6-fia">
+        
+        <tr>
+            <th colspan="2"> 13 - AÇÕES/ATIVIDADES/ITENS EXCLUÍDOS / REDUZIDOS </th>
+            <th rowspan="2"> 14 - UNIDADE</th>
+            <th colspan="3"> 15 - SITUAÇÃO ANTERIOR</th>
+            <th colspan="4"> 16 - SITUAÇÃO ATUAL</th>
+            <th rowspan="2" style="width: 215px;"> 17 - JUSTIFICATIVA</th>
+        </tr>
+        <tr>
+            <th style="width: 45px;"> 13.1 - Nº ORDEM </th>
+            <th style="width: 300px;"> 13.2 - ITENS/SERVIÇOS - DISCRIMINAÇÃO / ESPECIFICAÇÕES TÉCNICAS </th>
+            <th> 15.2 - QUANT. </th>
+            <th style="width: 75px;"> 15.1 - PREÇO UNITÁRIO DO ITEM (R$). </th>
+            <th> 15.3 - VALOR TOTAL </th>
+            <th style="width: 45px;"> 16.2 - QUANT. </th>
+            <th style="width: 75px;"> 16.1 - PREÇO UNITÁRIO DO ITEM (R$). </th>
+            <th> 16.3 - VALOR TOTAL </th>
+            <th style="width: 67px;"> 16.4 - SALDO </th>
+        </tr>
+        <!-- RENDERIZA ORDEM 1 -->
+        <tr class="tr-dinamico-fia-{{chave_modelo_fia.valor_numerico}}" id="id-background-hover">
+                {% if user.classificacao.tipo_de_acesso == 'Escola' %}
+                    {% if chave_modelo_fia.possui_sugestao_correcao %}
+                    <td><a class="a-clear-acao desabilita-js" href="{% url 'abrindo_correcao_fia' chave_planos.id chave_modelo_fia.valor_numerico 'Sim' %}"><div style="height:100%;width:100%">{{chave_modelo_fia.valor_numerico}} <span class="tooltiptext3-tabela" style="font-size: 11px"> <i class="fa-solid fa-arrow-left"></i> corrigir!</span> </div> </a> </td>
+                    {% else %}
+                    <td>{{chave_modelo_fia.valor_numerico}}</td>
+                    {% endif %}
+                {% elif user.classificacao.tipo_de_acesso == 'Func_sec' %}
+                    {% if chave_modelo_fia.possui_sugestao_correcao %}
+                    <td><a class="a-clear-acao desabilita-js" href="{% url 'chamando_correcao_modelo_fia' chave_planos.id chave_modelo_fia.id %}"><div style="height:100%;width:100%">{{chave_modelo_fia.valor_numerico}} <span class="tooltiptext3-tabela" style="font-size: 11px"> <i class="fa-solid fa-arrow-left"></i> Alterar correção!</span> </div> </a> </td>
+                    {% else %}
+                    <td><a class="a-clear-acao desabilita-js" href="{% url 'chamando_correcao_modelo_fia' chave_planos.id chave_modelo_fia.id %}"><div style="height:100%;width:100%">{{chave_modelo_fia.valor_numerico}} <span class="tooltiptext4-tabela" style="font-size: 11px"> <i class="fa-solid fa-arrow-left"></i> Sugerir correção!</span> </div> </a> </td>
+                    {% endif %}
+                {% else %}
+                <td>{{chave_modelo_fia.valor_numerico}}</td>
+                {% endif %}
+            <td class="classe-discriminacao">{{chave_modelo_fia.discriminacao}}</td>
+            <td> unid. </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>{{chave_modelo_fia.quantidade}}</td>
+            <td>R$ {{chave_modelo_fia.preco_unitario_item|intcomma}}</td>
+            <td>R$ {{chave_modelo_fia.valor_total_item|intcomma}}</td>
+            <td></td>
+            <td>{{chave_modelo_fia.justificativa}}</td>
+        </tr>
+
+        <!-- RENDERIZA ORDENS EXTRAS QUANDO HÁ -->
+        {% if chave_ordens_extra %}
+            {% for item in chave_ordens_extra %}
+            <tr class="tr-dinamico-fia-{{item.valor_numerico}}" id="id-background-hover">
+                    {% if user.classificacao.tipo_de_acesso == 'Escola' %}
+                        {% if item.possui_sugestao_correcao %}
+                        <td><a class="a-clear-acao desabilita-js" href="{% url 'abrindo_correcao_fia' chave_planos.id item.valor_numerico 'Sim' %}"><div style="height:100%;width:100%">{{item.valor_numerico}} <span class="tooltiptext3-tabela" style="font-size: 11px"> <i class="fa-solid fa-arrow-left"></i> corrigir!</span> </div> </a> </td>
+                        {% else %}
+                        <td>{{item.valor_numerico}}</td>
+                        {% endif %}
+                    {% elif user.classificacao.tipo_de_acesso == 'Func_sec' %}
+                        {% if item.possui_sugestao_correcao %}
+                        <td><a class="a-clear-acao desabilita-js" href="{% url 'chamando_correcao_extra_fia' chave_planos.id item.id %}"><div style="height:100%;width:100%">{{item.valor_numerico}} <span class="tooltiptext3-tabela" style="font-size: 11px"> <i class="fa-solid fa-arrow-left"></i> Alterar correção!</span> </div> </a> </td>
+                        {% else %}
+                        <td><a class="a-clear-acao desabilita-js" href="{% url 'chamando_correcao_extra_fia' chave_planos.id item.id %}"><div style="height:100%;width:100%">{{item.valor_numerico}} <span class="tooltiptext4-tabela" style="font-size: 11px"> <i class="fa-solid fa-arrow-left"></i> Sugerir correção!</span> </div> </a> </td>
+                        {% endif %}
+                    {% else %}
+                    <td>{{item.valor_numerico}}</td>
+                    {% endif %}
+                <td class="classe-discriminacao">{{item.discriminacao}}</td>
+                <td> unid. </td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>{{item.quantidade}}</td>
+                <td>R$ {{item.preco_unitario_item|intcomma}}</td>
+                <td>R$ {{item.valor_total_item|intcomma}}</td>
+                <td>-</td>
+                <td>{{item.justificativa}}</td>
+            </tr>
+            {% endfor %}
+        {% endif %}
+
+        <tr>
+            <td colspan="2" style="text-align: left;"> 17 - TOTAL </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>R$ {{chave_modelo_fia.valor_total_anterior|intcomma}}</td>
+            <td></td>
+            <td></td>
+            <td>R$ {{chave_modelo_fia.valor_total_fia|intcomma}}</td>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>
+
+    <table class="tabela-principal table7-fia">
+        <tr>
+            <th style="text-align: left"> 18 - AUTORIZAÇÃO</th>
+            <th style="text-align: left"> DATA: </th>
+        </tr>
+        <tr>
+            <td style="text-align: left"> 18.1 - DIRETOR - {{chave_planos.usuario.first_name}}</td>
+            <td style="text-align: left"> 18.2 - ASSINATURA: ????????</td>
+        </tr>
+        <tr>
+            <td style="text-align: left"> 18.3 - COLEGIADO ESCOLAR - ?????????</td>
+            <td style="text-align: left"> 18.4 - ASSINATURA(S): ????????</td>
+        </tr>
+        <tr>
+            <td style="text-align: left"> 18.5 - TÉCNICO RESP. P/ACOMPANHAMENTO - ???????</td>
+            <td style="text-align: left"> 18.6 - ASSINATURA: ????????</td>
+        </tr>
+    </table>
+
+    
+
+</div>
+
+
+{% include 'partials/modal-partial-correcao.html' %}
+{% include 'partials/modal-partial-edicao.html' %}
+
+{% endblock %}

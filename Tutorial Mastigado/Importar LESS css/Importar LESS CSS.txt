@@ -1,0 +1,9 @@
+<link rel="stylesheet/less" type="text/css" href="styles.less" />
+
+<script src="//cdn.jsdelivr.net/npm/less@3.13" ></script>
+
+Exemplo:
+
+<link rel="stylesheet/less" type="text/css" href="{% static 'css/accordion.less' %}" /> 
+
+<script src="//cdn.jsdelivr.net/npm/less@3.13" ></script>

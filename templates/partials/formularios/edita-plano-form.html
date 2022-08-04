@@ -1,0 +1,32 @@
+{% load static %}
+{% load widget_tweaks %}
+
+{% if contexto_edicao_plano or contexto_extra_edita_plano %}
+<div class="div-form-edita-plano" style="display: block;">
+{% else %}
+<div class="div-form-edita-plano">
+{% endif %}
+    <div class="titulo-modal">
+        <h2>Editar plano de ação</h2><p>{{contexto_edicao_plano.ano_referencia}}</p>
+    </div>
+    <div class="classe-form-modal">
+        {% for plano in chave_contexto_edicao_plano %}
+        <form class="form-modal" action="{% url 'editar_plano' plano.id %}" method="POST">
+        {% endfor %}
+        {% csrf_token %}
+        {% for conteudo in chave_edita_plano_form.visible_fields %}
+        <div class="linha-input linha-input-row">
+            <label class="label-input label-input-form-django" for="{{ conteudo.id_for_label }}">{{ conteudo.label }}</label>
+            {{conteudo|add_class:'input-input'}}
+        </div>
+        {% for error in conteudo.errors %}
+        <section class="alert alert-danger" role="alert"> {{ conteudo.errors }} </section>
+        {% endfor %}
+
+        {% endfor %}
+        <div class="linha-submit">
+            <input class="myButton" type="submit" value="Salvar"></input>
+        </div>
+        </form>
+    </div>
+</div>

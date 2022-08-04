@@ -1,0 +1,57 @@
+### no tutorial anterior aprendemos uma simples linha de código (tipo = user.classificacao.tipo_de_acesso) que inutiliza todo este processo feito a seguir. Mas vale a leitura para compreensão do funcionamento de dicionarios de contexto. ###
+
+No tutorial anterior conseguimos integrar um usuario a um modelo de classificação(tipo de usuario).
+
+Agora vamos  utilizar de uns artificios para Personalizar o que aparece nas páginas dependendo do tipo de usuario que esta logado.
+
+A ideia central aqui é: Iremos comparar o nome do usuário logado, com o nome do usuário integrado ao modelo de classificação. Se ao filtrarmos o modelo de classificacao por exemplo, por tipo_de_acesso = Escola, se o usuário associado a este tipo de acesso for igual ao usuário logado, então podemos definir o que renderizar nesta página.
+
+- Na função da views da pagina que queremos renderizar
+
+Primeiro importamos as classes de usuario, de classificação e a get_object_or_404
+
+	from usuarios.models import Classificacao
+	from django.shortcuts import redirect, render, get_object_or_404
+	from django.contrib.auth.models import User
+
+Na função de renderizar a página temos:
+
+def cadastro(request):
+	.
+	.
+	.
+	contexto_secretaria = Classificacao.objects.filter(tipo_de_acesso='Secretaria').filter(user=id_usuario_ativo)
+    	contexto_escola = Classificacao.objects.filter(tipo_de_acesso='Escola').filter(user=id_usuario_ativo)
+    	contexto_funcionario = Classificacao.objects.filter(tipo_de_acesso='Funcionario').filter(user=id_usuario_ativo)
+
+	usuario_ativo = get_object_or_404(User, pk=request.user.id)
+
+	dados = {
+        	'chave_classificacao' : contexto_secretaria,
+        	'chave_classificacao2' : contexto_escola,
+        	'chave_classificacao3' : contexto_funcionario,
+        	'chave_usuario' : usuario_ativo
+    	}
+
+	return render(request, 'cadastros.html', dados)
+
+
+Na página html que queremos renderizar:
+
+{% for elemento in chave_classificacao %}
+            {% if chave_usuario.username ==  elemento.user.username %}
+            	<h5><i class="fas fa-chart-bar margem-icones-menu"></i>SÓ APARECE PARA SECRETARIA</h5>
+            {% endif %}
+            {% endfor %}
+
+            {% for elemento in chave_classificacao2 %}
+            {% if chave_usuario.username ==  elemento.user.username %}
+            	<h5><i class="fas fa-chart-bar margem-icones-menu"></i>SÓ APARECE PARA ESCOLAS</h5>
+            {% endif %}
+            {% endfor %}
+
+            {% for elemento in chave_classificacao3 %}
+            {% if chave_usuario.username ==  elemento.user.username %}
+            	<h5><i class="fas fa-chart-bar margem-icones-menu"></i>SÓ APARECE PARA FUNCIONÁRIOS</h5>
+            {% endif %}
+            {% endfor %}

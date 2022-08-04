@@ -1,0 +1,200 @@
+TENHO QUE APRENDER A TROCAR DE MODELO DE USUARIO (USAR O ABSTRACT AUTH_USER)
+
+----------------------------------------------------------------------------------
+- Fia
+   - Estou na pre assinatura de escolas
+	- Saber a melhor forma de incluir assinatura de tecnico responsavel
+	- checar se -0 no form atrapalha
+	- link no documento direto para a correção
+   - Desativar alterabilidade de documento, se ele estiver pré-aprovado
+   - testar urls Fia
+
+- alternancia menu parou de funcionar pós print...
+- menu de impressão com as assinaturas só pode ser mostrado em planos com situação Finalizado
+
+- Talvez Inserir funcionalidade de alteração de cadastro de escola.
+
+- OK Aplicar alterabilidade.
+
+- OK Não permitir exclusão de usuários, somente inativação! (Sempre?)
+   - OK Configurar as dependências para quando isso acontece
+- OK incluir icone de seta para o accordion planos de outras paginas
+- OK incluir o accordion plano de outras paginas
+- OK verificar como essa pagina (planos_De_acao) esta mostrando para Secretaria (nao pode corrigir, nem aprovar, nem ASSINAR)
+- OK Quando apaga plano, desassocia as TURMAS também
+- OK Quando RESETA, desassocia TURMAS também.
+- OK Talvez gerar um log de plano APROVADO quando a escola pre assinar planos e reenviar a secretaria e começarem as assinaturas dos func_sec
+
+- OK Plano com donos? SIM
+   - OK Planos em situação "Assinado" DEVEM aparecer para os usuários de alto cargo, mesmo que este não seja o corretor.
+   - OK Plano que não tem 'corretor' aparece para todos.
+   - OK Se entrar pelas ações ou despesas, pode visualizar, mas não pode corrigir se não for o 'corretor'
+   - OK Se alguem clicar no botão 'corrigir' vira dono, informar que ele será o dono
+   - OK Gerar LOG para isso
+   - OK Plano com 'dono' só aparece para ele, exceto algumas condições.
+   - OK Criar um dropbox menu acordeon simples com mais informações sobre o plano na pagina de planos de acao.
+	- OK Mostrar o acordeon para ESCOLAS/FUNCIONARIOS também
+   - OK SECRETARIA ou Func_sec de alto cargo podem "TROCAR" o 'corretor'(dono) de um plano
+	- OK Impedir que o corretor de um plano seja TROCADO, caso o plano esteja em situação inapropriada para tal
+   - OK Criar PESQUISA, para func de alto cargo e SECRETARIA encontrarem planos já com donos e poderem trocar o "Corretor"
+	- OK Tenho que formatar a página para alinhar os planos
+	- OK PESQUISA NÃO deve achar planos em desenvolvimento!
+	- OK Talvez depois tenho que replicar isso para o usuario SECRETARIA também.
+
+   - OK Criar pagination para todos os tipos de usuarios.
+	- OK Criar pagination para log de planos e geral.
+
+   - OK Criar PESQUISA, para a página de LOGS (Sec, Func_sec, Escolas)
+   - OK Criar PESQUISA de escolas cadastradas e funcionários cadastrados(sec, func_sec)
+- OK Só funcionário de Alto cargo vê a página de cadastro de funcionários.
+   - OK Cadastro de funcionários da Secretaria DEVE mostrar indicação de alto cargo
+   - OK Cadastro de funcionários da Secretaria DEVE permitir "alto cargo" alterar tipo de cargo de funcionarios.
+
+   - OK Mostrar status de quais funcionários ja assinaram o plano.
+	- OK Em um plano FINALIZADO, Quando um func_sec é rebaixado para PADRÃO, ou excluido(inativo), as assinaturas dele não podem ser removidas
+	- OK O mesmo para funcionarios e escolas.
+	- OK quando torna func_sec inativo, ele nao pode ser mostrado na pag de funcionarios.
+	- OK O mesmo para funcionarios e escolas.
+   - OK Mostrar assinaturas da escola no documento ações
+   - OK Mostrar assinaturas de Func_sec no documento ações.
+
+   - OK Criar página de PERFIL
+	- Criar funcionalidade de TROCA de SENHA (precisa de funcionalidade de e-mail)
+
+- Verificar as chamadas de incluir assinaturasm e logs, se estão todas funcionando (teste)
+
+- OK Talvez criar checagem, caso um func_sec de alto cargo seja adicionado, voltar todos os planos 'inteiramente assinados' para 'Assinados'
+   - OK O mesmo para caso um Func_sec altere algum outro Func_sec para alto cargo
+   - OK Porém quando um Func_sec REBAIXA outro Func_sec para 'padrão', tenho que remover as assinaturas deste func_sec
+	- OK retornar o plano para Assinado
+
+- formato paisagem no documento
+
+- IMPEDIR ACESSO ÀS VIEWS PARA FUNCIONARIOS/ESCOLAS/SECRETARIA
+
+- DESABILITAR LINKS DESNECESSARIOS 
+   - Secretaria
+   - Escolas
+   - Funcionários
+
+- IMPRESSÃO:
+   - DECIDI O SEGUINTE:
+	- Não terá quebra de página 'inside' na tabela 1 nem na 2!
+	- Porém se a formatação da impressão ficar ruim, o usuário terá a opção de:
+	   - Quebrar o ultimo TR
+	   - Ou adicionar linhas (tr) extra em branco antes do ultimo TR
+   - Se nada der certo, colocar para o usuario ir adicionando linhas em branco na tabela, para ajustar o layout de impressão:
+	<div class="pagebreak"> </div>
+	
+	- Consegui implementar o page break 'antes' da tabela de aprovação.
+	   - Colocando 	<div class="pagebreak"> </div> por 2 vezes seguidas, ele quebra a pagina na impressão
+	   - Porém ele só está quebrando a pagina, entre as tables, nao estou conseguindo quebrar, no MEIO de uma table
+	   - Lembrar que coloquei um avoid quebra pagina antes da table2
+	   - PAREI EM: AO CARREGAR A PAGINA, ADICIONA A CLASSE QUEBRA-PAGINA AO TR 3 E TENTA QUEBRALO AO IMPRIMIR
+	   - O PENSAMENTO AQUI EH, TENTAR QUEBRAR ANTES DO TR3 E DEPOIS DO TR2 AO MESMO TEMPO!
+	- Agora preciso conseguir implementar o page break 'antes' da ULTIMA ORDEM INSERIDA!!
+	- Ainda não testei 'englobar' as tables e trs dentro de divs, para que sejam page breaks entre divs e divs.
+	- https://jsfiddle.net/qL29aw31/
+	- https://jsfiddle.net/gtkve3hL/2/
+
+- Planos PENDENTE, APROVADO, CONCLUIDO ou CORRIGIDO PELA ESCOLA não podem ser modificados nas paginas específicas
+
+- MENSAGENS
+   - 
+
+- OK PENSAR como implementar uma função para resetar um plano para um estado ALTERÁVEL, ou seja, APÓS aprovado
+
+- Se uma alteração for feita num plano a partir de publicado, gera LOG. (SIGNALS)
+
+- OK Colocar filtros para textos muito grandes nos cards de planos
+
+- Quando secretaria aprova plano, as turmas sao permanentemente associadas a ele. Será que tenho que checar se elas estão inseridas?(views.py linha 1325)
+- Verificar se funcionalidade de inserção de turmas está normal. Em um documento CONCLUIDO identifiquei turmas inseridas repetidamente. Talvez o problema esteja na associação das turmas ao plano, logo após em que ele é concluido.
+   - Pelo que me lembro, isso está acontecendo quando eu aprovo o mesmo plano varias vezes(durante os testes). Mas em produção varias aprovações também podem ocorrer, portanto, tenho que verificar isso.
+
+- OK Planos PENDENTE, APROVADO, CONCLUIDO ou CORRIGIDO PELA ESCOLA não podem ser modificados nos menus laterais (documentos)(ESCOLA)
+- OK Planos Em desenvolvimento, Publicado, Corrigido, APROVADO, CONCLUIDO ou não podem ser modificados nos menus laterais (documentos)(SECRETARIA)
+
+
+- FUNCIONALIDADE DE ASSINATURAS digitais
+
+- FUNCIONALIDADE DE IMPRIMIR PLANO APROVADO
+  - https://stackoverflow.com/questions/66657967/print-a-html-page-using-django
+  - https://docs.djangoproject.com/en/3.1/howto/outputting-pdf/
+  - <button onclick="window.print()">Print this page</button>
+  - Posso usar jS pra remover visualmente os elementos da página na hora do clique e manter só o necessário para a impressão
+
+- FUNCIONALIDADE "LEMBRAR DE MIM" NO LOGIN, TALVEZ TROCAR POR ESQUECI MINHA SENHA
+
+- FUNCIONALIDADE DE TROCA DE SENHA
+  - Criar campo para preenchimento de email de escola/funcionarios cadastrada
+
+- Enviar e-mail sempre que determinadas ações forem executadas. (plano aprovado, plano devolvido, plano enviado)(SIGNALS)
+
+- Botão de engrenagem para telas pequenas
+
+- Cadastros SERCRETARIA:
+   - OK Alternância de HTMLs
+   - OK Checar se a classificação BUGA por qualquer motivo que seja quando gera funcionario da secretaria
+   - OK carrega escola cadastradas
+   - OK cadastra escola
+   - exclui escola (não precisa ainda)
+   - OK carrega funcionarios cadastrados
+   - OKcadastra funcionarios
+   - OK exclui funcionario
+
+LOG DE EVENTOS
+
+- OK ASSOCIAR O LOG AO ID DO PLANO, E NAO AO NOME. OK
+- OK Criar modelo OK
+- OK Quando publicar, gerar log(OK). 
+- A partir deste estado, sempre gerar log quando uma alteração for feita.
+- OK Centralizar a criação de logs num unico arquivo.
+- inserir a geração de logs nas devidas views e afins.
+- Gerar log quando Func_sec altera cargo
+- Talvez já começar a mecher no DashBoard.(ainda nao)
+
+
+- OK Assinatura de planos
+- OK Criar funcionalidade de aprovação para membos do colegiado e tesoureiro, gerando logs.
+- OK Criar condicao para só poder concluir quando todos os membros aprovarem.
+- OK Não pode enviar plano à Secretaria se não houver no minimo 1 funcionário cadastrado
+- OK Não pode enviar plano à Secretaria se não houver no minimo 1 ordem e 1 codigo já cadastrados e JÁ ADICIONADOS!
+- OK Link para a criação de ordens e códigos a partir do menu do documento AÇÃO
+- OK Secretaria e funcionarios não acessam páginas de ordens nem códigos
+
+- OK Se um funcionario for apagado:
+   - OK remove todas as assinaturas deste usuario
+   - OK reduz em 1 a quant de assinaturas de cada plano desse, SE o mesmo ja tiver alguma assinatura, ou seja ja estiver em estado de aprovado
+   - OK reduz a quant de funcionarios da matriz
+
+- OK FUNÇÃO DE EDIÇÃO DE PLANO/ORDENS/CODIGOS
+- OK CADASTRO DE ESCOLAS E FUNCIONARIOS
+- OK FUNCIONALIDADE DE CORREÇÃO
+- OK EDIÇÃO DE ORDENS
+- OK EDICAO DE CODIGOS
+
+OK tooltip para informar isso
+
+
+
+- Se remover um funcionario de uma escola que ja tem planos CONCLUIDOS o objeto many-to-many (que indica quais planos este funcionario ja assinou) não é removido para os planos nesse estado, isso implicaria problemas ou gera bugs para os planos nesse estado??? Ainda não pensei sobre isso!! (views de usuarios linha 151 +/-)
+
+
+html filters
+{{ value|add:"2" }}
+
+{{ value|floatformat }}
+
+{{ data_salva|timesince:data_hoje }} (se deixar o segundo parametro vazio, é considerado "now"
+{{ conference_date|timeuntil:from_date }}
+
+{{ value|truncatechars:7 }}
+{{ value|truncatewords:2 }}
+
+
+
+DUVIDAS:
+
+- Nas DESPESAS
+- Só pode haver 1 tesoureiro? SIM

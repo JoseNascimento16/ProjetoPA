@@ -1,0 +1,10 @@
+.classe-div-container-corpo{
+    border: 1px solid black;
+    flex: 4;
+    overflow-y: auto;
+    margin: 15px;
+  }
+
+      .classe-texto-container-corpo{
+        border: 1px solid black;
+      }

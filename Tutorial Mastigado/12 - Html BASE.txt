@@ -1,0 +1,32 @@
+templates > new file > base.html
+
+copia todo o html que irá se repetir para dentro do base.html, que irá ficar assim:
+
+Ex:
+	{% load static %}
+
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+	</head>
+	<body
+
+	{% block content %}{% endblock %}
+
+	</body>
+	</html>
+
+E nas paginas html ficaremos com o codigo assim:
+
+Ex:
+
+	{% extends 'base.html' %}
+	{% load static %}
+	{% block content %}
+
+
+	<p>CONTEUDO</p>
+
+
+
+	{% endblock %}

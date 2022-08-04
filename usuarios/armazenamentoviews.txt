@@ -1,0 +1,45 @@
+# preciso dizer que quero a instancia deste usuario que acabou de ser criado, o código do "u" abaixo faz isso
+        u = User.objects.get(username=Nome_2)
+        # print(u)
+        # u_id = u.id
+        # print(u_id)
+        # se eu puxar o id e colocar numa variável u_id como fiz acima, o Django não aceita
+        classificacao = Classificacao.objects.create(user=u, tipo_de_acesso='Escola')
+        classificacao.save()
+        # print("REDIRECIONOU")
+        return redirect('cadastrar')
+    
+
+
+    # user = get_object_or_404(User, pk=request.user.id)
+    # u = User.objects.get(username=user)
+    # categoria = u.classificacao.tipo_de_acesso
+
+    #pega todas as entradas
+    # username_usuario_ativo = get_object_or_404(User, pk=request.user.id)
+    # teste = username_usuario_ativo.first_name
+    # usernames_usuario_ativo = request.user.username #String
+
+    id_usuario_ativo = request.user.id #String
+    contexto_secretaria = Classificacao.objects.filter(tipo_de_acesso='Secretaria').filter(user=id_usuario_ativo)
+    contexto_escola = Classificacao.objects.filter(tipo_de_acesso='Escola').filter(user=id_usuario_ativo)
+    contexto_funcionario = Classificacao.objects.filter(tipo_de_acesso='Funcionario').filter(user=id_usuario_ativo)
+    usuario_ativo = get_object_or_404(User, pk=request.user.id)
+
+    # usuario = var
+
+    #pega somente 1 entrada, se houver + de 1 tipo 'Secretaria', dá erro
+    var2 = Classificacao.objects.get(tipo_de_acesso='Secretaria')
+    teste = var2.user_id
+
+    print(teste)
+    print(type(var2))
+
+    dados = {
+        'chave_classificacao' : contexto_secretaria,
+        'chave_classificacao2' : contexto_escola,
+        'chave_classificacao3' : contexto_funcionario,
+        'chave_usuario' : usuario_ativo
+    }
+
+    # print('RENDERIZOU')

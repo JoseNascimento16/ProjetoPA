@@ -1,0 +1,18 @@
+/* O MENU LATERAL e o CORPO estão dentro deste conteiner */
+
+.classe-container-central{
+  display:flex;
+  height: 80vh;
+}
+
+.classe-container-central-visualizacao{
+  display:flex;
+  height: 80vh;
+  border: 2px solid black;
+}
+
+.classe-container-central-correcoes{
+  display:flex;
+  height: 80vh;
+  border: 2px solid black;
+}

@@ -1,0 +1,17 @@
+.box-geral-cadastros{
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+/* .box-cadastro1{
+    flex: 1;
+} */
+
+.box-botao-cadastro1 a{
+    margin: 15px 0 0 10px;
+}
+
+.box-botao-cadastro1 > form,button{
+    margin: 5px 0;
+}

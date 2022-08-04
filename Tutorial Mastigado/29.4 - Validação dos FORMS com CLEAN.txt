@@ -1,0 +1,56 @@
+Com o método clean podemos validar todos os campos de uma vez só, e também centralizamos as validações num arquivo de validações.
+Vamos tirar as nossas validações do clean_field, para o clean.
+
+No app que quisermos, criamos o arquivo validation.py
+
+Em validation.py colocamos as funções de validação:
+
+	*def campo_tem_algum_numero(valor_campo, nome_campo, lista_de_erros):
+       		 if any(char.isdigit() for char in valor_campo):
+           		 lista_de_erros[nome_campo] = 'Não inclua números neste campo'
+
+            	(O trecho [nome_campo] significa que a mensagem de erro será mostrada abaixo deste campo)
+
+ou
+
+	**def campo1_campo2_iguais(valor_campo1, valor_campo2, nome_campo2, lista_de_erros):
+        	if valor_campo1 == valor_campo2:
+            		lista_de_erros['nome_campo2'] = 'Origem e destino não podem ser iguais'
+
+Em * note que nós só utilizamos o "valor_campo" para validar no if. Puxamos o nome_campo somente para dizermos onde queremos que o erro seja mostrado
+Em ** comparamos os valores dos 2 campos, e mostraremos a mensagem de erro abaixo do campo2. 
+
+
+No app > forms.py vamos importar o validation.py
+
+	    from app.validation import *
+
+	- Apagamos as funções clean_field (caso estivermos usando)
+
+
+	e teremos só a função clean que ficará assim:
+
+	def clean(self):
+        	valor_campo1 = self.cleaned_data.get('origem')
+        	valor_campo2 = self.cleaned_data.get('destino')
+        	lista_de_erros = {}
+
+        	campo_tem_algum_numero(valor_campo1, 'nome_campo1', lista_de_erros)
+        	campo_tem_algum_numero(valor_campo2, 'nome_campo2', lista_de_erros)
+        	origem_destino_iguais(valor_campo1, valor_campo2, 'nome_campo2', lista_de_erros)
+
+        	if lista_de_erros is not None:
+            		for erro in lista_de_erros:
+                		mensagem_erro = lista_de_erros[erro]
+                		self.add_error(erro, mensagem_erro)
+       		return self.cleaned_data
+
+###########################################
+
+Se formos preencher um formulário, valida-lo e depois tratar as informações na views, temos que nos atentar para duas situações distintas.
+
+Sempre que terminamos esta ação, ou o formulario está valido e salva, ou está invalido e retorna para a página.
+
+- Ao ser validado e salvo, o formulário, podemos redirecionar para a URL que queremos normalmente.
+
+- Porém se o formulário for inválido, queremos receber os erros para saber onde corrigir, e se redirecionarmos para uma url, as informações da página são recarregadas e perdemos as informações de ONDE foi o erro de validação. Para evitar isso, usamos o RENDER ao invez do redirect!!!

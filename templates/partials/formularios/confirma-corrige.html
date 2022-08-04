@@ -1,0 +1,23 @@
+{% load static %}
+
+{% if chave_confirma_corrige %}
+<div class="div-confirma-devolve" style="display: block;">
+{% else %}
+<div class="div-confirma-devolve">
+{% endif %}
+    <div class="titulo-modal titulo-modal-devolve">
+        <h4>Confirmação</h4>
+        <div style="flex: 0.5;" class="fechar-modal">
+            <a href="#"><i class="fas fa-times fa-2x fecha-modal"></i></a>
+        </div>
+    </div>
+    <div class="classe-form-modal">
+        <form class="form-modal" action="{% url 'chamando_atribui_corretor' chave_plano_atribui.id %}" method="POST">
+            {% csrf_token %}
+            <p style="font-size: 1 em;">Este plano ainda não possui um funcionário responsável. Ao confirmar, você será o corretor responsável em corrigir este plano de ações!</p>
+            <div class="linha-submit">
+                <input class="myButton" type="submit" value="Confirma">
+            </div>
+        </form>
+    </div>
+</div>

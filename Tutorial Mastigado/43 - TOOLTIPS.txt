@@ -1,0 +1,53 @@
+Temos um <tr> com um <td> e um <a> dentro dele, queremos que, ao passar o mouse sobre o <tr>, apareça uma tooltip <span> que originalmente esta invisivel dentro do <a> e portanto, também será um link.
+
+<tr id='id-tr-pai'>
+
+   <td> 
+	<a> TEXTO <span class='classe-do-span'> TEXTO DA TOOLTIP </span> </a>
+   </td>
+
+</tr>
+
+no CSS temos:
+
+#id-tr-pai:hover span{
+  display: block;
+}
+
+#id-tr-pai:hover a{
+  position: relative;
+}
+
+	## OU SEJA, AO PASSARMOS O MOUSE SOBRE O ELEMENTO <tr>, PEGAMOS ELE PELO ID E MOSTRAMOS O filho <span>, E SETAMOS O filho <a> COMO 	position relative
+	## SE TIVERMOS 2 ELEMENTOS <tr> COM O MESMO ID 'id-tr-pai', FUNCIONA TAMBÉM INDEPENDENTE PARA CADA <tr> E SUAS RESPECTIVAS TOOLTIPS.
+	## NO JAVASCRIPT, AO PEGAR O TR PELO ID, ELE SÓ PEGA O PRIMEIRO TR COM ESTE ID QUE ELE ENCONTRAR, PELO CSS, ELE PEGA TODOS.
+
+---------------------------------------------------------------------
+ABAIXO, UMA ESTILIZAÇÃO PARA A TOOLTIP
+
+.classe-do-span {
+    display: none;
+    position: absolute; 
+    z-index:100;
+    width: 130px;
+    /* background-color: rgb(36, 46, 143); */
+    background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(69,88,112,1) 6%, rgba(9,37,87,1) 100%);
+    color: rgb(255, 254, 254);
+    text-align: center;
+    border: 1px solid black;
+    border-radius: 6px;
+    padding: 5px 0;
+    font-size: 0.77em;
+    font-weight: 600;
+  
+    height: 30px;
+    width: 130px;
+    bottom: 73%;
+    left: 13%;
+    margin-left: 30px;
+    margin-bottom: -23px;
+  }
+
+###############################################################
+
+DA PRA FAZER VIA JAVASCRIPT TAMBÉM CASO A ESTRUTURA DO HTML SEJA MUITO COMPLEXA OU CASO QUEIRAMOS CONDIÇÕES MAIS COMPLEXAS PARA O APARECIMENTO DA TOOLTIP

@@ -1,0 +1,16 @@
+No nosso exemplo queremos 2 botões no mesmo formulário e cada um leva para uma ação diferente.
+Para isso usamos um atributo de formularios chamado 'formaction'
+
+Para isso fazemos:
+
+<form class="qualquer" action="{% url 'url 1' %}" method="POST">
+.
+.
+.
+<input class="qualquer" type="submit" value="Confirmar" </input>
+
+<input class="qualquer" type="submit" value="Apagar" formaction="{% url 'url 2' %}"></input>
+
+</form>
+
+Portanto, ao clicarmos no botão Apagar, iremos para outra URL.

@@ -1,0 +1,1 @@
+default_app_config = 'plano_de_acao.apps.PlanoDeAcaoConfig'

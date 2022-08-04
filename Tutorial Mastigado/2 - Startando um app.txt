@@ -1,0 +1,37 @@
+-No terminal
+
+    python manage.py startapp (nome do app)
+
+-INSTALANDO o app em SetupPrincipal > settings.py > INSTALLED_APPS (linha 34)
+
+    'nome_do_app',
+
+-CADASTRANDO url para o app
+
+    nome_do_app > New file > urls.py
+
+        from django.urls import path
+       	from . import views
+
+        urlpatterns = [
+            path('',views.indexar, name='index')
+        ]
+
+	* O campo '' é o nome que deve ser colocado na barra de endereço quando se vai acessar a página (Ex: 'index/')
+	* O campo views.index é a função index em nome_do_app > views.py
+	* No campo name='index', index é o atributo name que é usado para chamar esta url (Ex: Num botão html 	     name="{% url 'index' %}
+
+-Criando a função index em views.py
+
+    nome_do_app > views.py
+        
+        def indexar(request):
+            return render(request, 'index.html')
+
+-REGISTRANDO o path do app
+
+    SetupPrincipal > urls.py
+	
+	from django.urls import path, include	
+
+        path('', include('nome_do_app.urls')),

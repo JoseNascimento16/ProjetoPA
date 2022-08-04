@@ -1,0 +1,196 @@
+{% extends 'base-despesas-visualizacao.html' %}
+{% load static %}
+{% load definir_acoes %}
+{% load humanize %}
+{% block content %}
+
+{{ chave_lista_codigos|json_script:"id-lista-todos-codigos" }}
+{{ chave_lista2_codigos|json_script:"id-lista-codigos-correcao" }}
+{{ chave_sugestoes_despesas_concluidas|json_script:"id-chave-sugestoes-despesas-concluidas" }}
+{{ chave_devolvido|json_script:"id-chave-devolvido" }}
+{{ chave_tipo_usuario|json_script:"id-tipo-usuario" }}
+{{ chave_situacao_plano|json_script:"id-situacao-plano" }}
+
+<div class="div-visualizacao-bloco">
+
+    {% if messages %}
+    <ul class="ul-mensagens" style="padding: 0%;">
+        {% for message in messages %}
+        <li{% if message.tags %} class="alert alert-{{ message.tags }} li-mensagens"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <div class="div-visualizacao-img">
+        <img class="visualizacao-img" src="{% static 'img/cabecalho_visualizacaopng.png' %}" alt="">
+    </div>
+
+    <table class="div-unidade-bloco tabela-unidade">
+    {% if chave_planos2 %}
+    {% for plano in chave_planos2 %}
+        <tr>
+            <td colspan="2"> UNIDADE: {{ plano.usuario.last_name }}</td>
+        </tr>
+        <tr class="linha-municipio">
+            <td>MUNICÍPIO: {{ plano.usuario.classificacao.municipio }}</td>
+            <td>DIREC: {{ plano.usuario.username }}</td>
+        </tr>
+        
+    </table><br>
+
+    <table class="div-unidade-bloco tabela-unidade">
+            {% for turma in chave_turmas_associadas %}
+            <tr>
+                <td>Turma</td>
+                <td>{{turma.nome}}</td>
+                <td>Qtde de alunos</td>
+                <td>{{turma.quantidade_alunos}}</td>
+            </tr>
+            {% endfor %}
+    </table>
+
+    <div class="titulo-plano">
+        <h4 style="margin-top: 30px;">PLANO: {{ chave_planos.ano_referencia }}</h4>
+        <h4>2 - DETALHAMENTO DAS DESPESAS</h4>
+    </div>
+
+    <table class="tabela-principal">
+        
+        <tr>
+            <th style="width: 30px;"> Código </th>
+            <th style="width: 295px;"> Especificação das Ações Negociáveis (máximo de detalhamento possível) </th>
+            <th style="width: 240px;"> Justificativa para aquisição do item </th>
+            <th style="width: 50px;"> Unid/Cx </th>
+            <th style="width: 50px;"> Qt. </th>
+            <th style="width: 100px;"> Valor Unitário </th>
+            <th style="width: 100px;"> Valor Total Capital </th>
+            <th style="width: 100px;"> Valor Total Custeio </th>
+        </tr>
+        
+        <!-- GERAÇÃO DOS CODIGOS -->
+        {% for ordem in chave_ordens2 %}  <!-- PARA TODAS AS ORDENS DO PLANO X -->
+            {% for codigo in chave_codigos %} <!-- PARA CADA CODIGO DO PLANO COMO UM TODO -->
+                {% if codigo.ordem.identificacao_numerica == ordem.identificacao_numerica %}  <!-- SE A ORDEM DESTE CODIGO = INSTANCIA DA ORDEM ATUAL -->
+                    
+                        <tr class="tr-codigos tr-dinamicos{{ordem.identificacao_numerica}}{{codigo.identificacao}}">
+                            
+                            {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
+                                {% if codigo.possui_sugestao_correcao %}
+                                <td style="text-align: center;"> <a class="a-clear-acao tds-trs-{{ordem.identificacao_numerica}}{{codigo.identificacao}} desabilita-js" href="{% url 'chamando_correcao_despesa_plano' plano.id ordem.id codigo.id %}"><div style="height:100%;width:100%">{{ordem.identificacao_numerica}}{{codigo.identificacao}} <span class="tooltiptext3-tabela"> <i class="fas fa-edit"></i> Alterar correção!</span> </div> </a> </td>
+                                {% else %}
+                                <td style="text-align: center;"> <a class="a-clear-acao tds-trs-{{ordem.identificacao_numerica}}{{codigo.identificacao}} desabilita-js" href="{% url 'chamando_correcao_despesa_plano' plano.id ordem.id codigo.id %}"><div style="height:100%;width:100%">{{ordem.identificacao_numerica}}{{codigo.identificacao}} <span class="tooltiptext4-tabela"> <i class="fa-solid fa-arrow-left"></i> Sugerir correção!</span> </div> </a> </td>
+                                {% endif %}
+                            {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
+                                {% if codigo.possui_sugestao_correcao %}
+                                <td style="text-align: center;"> <a class="a-clear-acao tds-trs-{{ordem.identificacao_numerica}}{{codigo.identificacao}}" href="{% url 'abrindo_correcao_despesa' plano.id ordem.identificacao_numerica codigo.identificacao 'Sim' %}"><div style="height:100%;width:100%">{{ordem.identificacao_numerica}}{{codigo.identificacao}} <span class="tooltiptext3-tabela"> <i class="fas fa-edit"></i> Corrigir!</span> </div> </a> </td>
+                                {% else %}
+                                <td style="text-align: center;"> <a class="a-clear-acao tds-trs-{{ordem.identificacao_numerica}}{{codigo.identificacao}}"><div style="height:100%;width:100%">{{ordem.identificacao_numerica}}{{codigo.identificacao}} </div> </a> </td>
+                                {% endif %}
+                            {% elif user.classificacao.tipo_de_acesso == 'Funcionario' %}
+                                <td style="text-align: center;"> <a class="a-clear-acao tds-trs-{{ordem.identificacao_numerica}}{{codigo.identificacao}}"><div style="height:100%;width:100%">{{ordem.identificacao_numerica}}{{codigo.identificacao}} </div> </a> </td>
+                            {% endif %}
+
+                            <td class="td-especificacao-justificativa tds-trs-{{ordem.identificacao_numerica}}{{codigo.identificacao}}"> {{codigo.especificacao}} </td>
+                            <td class="td-especificacao-justificativa tds-trs-{{ordem.identificacao_numerica}}{{codigo.identificacao}}"> {{codigo.justificativa}} </td>
+                            <td class="tds-trs-{{ordem.identificacao_numerica}}{{codigo.identificacao}}" style="text-align: center;"> {{codigo.embalagem}} </td>
+                            <td class="tds-trs-{{ordem.identificacao_numerica}}{{codigo.identificacao}}" style="text-align: center;"> {{codigo.quantidade}} </td>
+                            <td class="tds-trs-{{ordem.identificacao_numerica}}{{codigo.identificacao}}" style="text-align: center;"> R$ {{codigo.preco_unitario|intcomma}} </td>
+                            <td class="tds-trs-{{ordem.identificacao_numerica}}{{codigo.identificacao}}" style="text-align: center;"> R$ {{codigo.preco_total_capital|intcomma}} </td>
+                            <td class="tds-trs-{{ordem.identificacao_numerica}}{{codigo.identificacao}}" style="text-align: center;"> R$ {{codigo.preco_total_custeio|intcomma}} </td>
+                        </tr>
+                    
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+        
+                <tr>
+                    <td colspan="6">  </td>
+                    <td style="text-align: center;font-size: 14px;font-weight: bold;"> R$ {{var_capital|intcomma}} </td>
+                    <td style="text-align: center;font-size: 14px;font-weight: bold;"> R$ {{var_custeio|intcomma}} </td>
+                </tr>
+
+                <tr>
+                    <td colspan="6", style="font-size: 16px;font-weight: bold;"> VALOR TOTAL DO PLANO </td>
+                    <td colspan="2", style="text-align: center;font-size: 16px;font-weight: bold;"> R$ {{var_total|intcomma}} </td>
+                </tr>
+
+                
+                    
+        
+
+        <!-- FIM DA GERAÇÃO DOS CODIGOS -->
+        </table>
+        <table class="tabela-principal">
+
+        <tr>
+            <th colspan="4"> APROVAÇÃO UNIDADE ESCOLAR </th>
+            <td colspan="2", rowspan="0", style="width: 100px;">  </td>
+            <th colspan="2", rowspan="2"> APROVAÇÃO SUPROT </th>
+        </tr>
+
+        <tr>
+            <td colspan="4"> DATA:    /     /      </td>
+        </tr>
+
+        <tr>
+            <th style="width: 100px;"> POSIÇÃO </th>
+            <th> NOME </th>
+            <th colspan="2", style="width: 200px;"> ASSINATURA </th>
+            <td colspan="2"> DATA:    /     /      </td>
+        </tr>
+
+        <tr>
+            <td style="text-align: center;"> Presidente Cx Escolar </td>
+            <td style="text-align: center;width: 200px;font-weight: bold;"> {{plano.usuario.first_name}} </td>
+            <td colspan="2", style="text-align: center;">  </td>
+            <td colspan="2"> VISTO SUPROT: </td>
+        </tr>
+
+        <tr>
+            <td style="text-align: center;"> Tesoureiro(a) </td>
+            {% for funcionarios in chave_funcionarios %}
+                {% if funcionarios.user.last_name == 'Tesoureiro(a)' %}
+                <td style="text-align: center;width: 200px;font-weight: bold;"> {{funcionarios.user.first_name}} </td>
+                {% endif %}
+            {% endfor %}
+            <td colspan="2", style="text-align: center;">  </td>
+            <td colspan="2"> CADASTRO: </td>
+        </tr>
+
+
+        {% set '' as var2 %}
+        {% for funcionarios in chave_funcionarios %}
+        <tr>
+            
+            {% if not var2 %}
+                    {% if varmembros > 0 %}
+                    <td rowspan="{{varmembros}}", style="text-align: center;"> Membros do colegiado escolar </td>
+                    {% else %}
+                    <td style="text-align: center;"> Membros do colegiado escolar </td>
+                    {% endif %}
+                {% endif %}
+                
+                    {% if funcionarios.user.last_name == 'Membro do colegiado' %}
+                    <td style="text-align: center;width: 200px;font-weight: bold;"> {{funcionarios.user.first_name}} </td>
+                    {% endif %}
+                
+                    {% if funcionarios.user.last_name == 'Membro do colegiado' %}
+                    <td colspan="2", style="text-align: center;">  </td>
+                    {% endif %}
+
+        </tr>
+
+        {% set 'true' as var2 %}
+        {% endfor %} 
+
+    {% endfor %}
+    {% endif %}
+    </table>
+</div>
+
+
+
+
+{% include 'partials/modal-partial-correcao.html' %}
+
+{% endblock %}

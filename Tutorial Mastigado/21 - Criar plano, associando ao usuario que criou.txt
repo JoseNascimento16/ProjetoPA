@@ -1,0 +1,65 @@
+
+Quando um plano for criado, queremos associa-lo ao usuário que o criou.
+Nesta etapa do projeto já devemos ter o formulário pronto para ser preenchido e enviado.
+
+Primeiro vamos integrar o modelo de Users(Django) ao nosso modelo de Plano_de_acao. Ou seja, todo plano de ação terá um User como foreignkey.
+
+Em planos_de_acao > models.py
+
+Saimos de:
+            from usuarios.models import Usuario
+        Para:
+            from django.contrib.auth.models import User
+
+E a classe vai ficar assim:
+
+class Plano_de_acao(models.Model):
+
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    ano_referencia = models.CharField(max_length=50)
+    data_de_criação = models.DateField(default=date.today, blank=True)
+---------------------------------------------------------------------
+
+Depois fazemos as migrações em um terminal com a (venv) ativa
+
+    Python manage.py makemigrations
+    Python manage.py migrate
+----------------------------------------------------------------------
+
+Sabemos que estamos criando planos de ação, portanto iremos configurar os proximos passos no APP planos_de_acao
+Faremos os passos, e depois mostraremos a função completa.
+
+-Para sabermos qual usuário criou o plano, vamos primeiro importar o get_object_or_404 e colocar a informação em uma variável:
+
+	from django.shortcuts import render, redirect, get_object_or_404
+
+	user = get_object_or_404(User, pk=request.user.id)
+
+	## Desta forma, na requisição, agente pega o id do usuário que está logado e passa para a nossa variável "user"
+	## Neste caso SOMENTE usuários logados e autenticados podem acessar esta página. Já garantimos isso com o decorator 	   @login_required na def planos_de_acao.
+
+-Para sabermos a data em que o plano foi criado:
+
+	from datetime import date
+
+	Data_de_criacao = date.today()
+
+-Para pegarmos um campo digitado no formulario:
+
+	Ano_referencia = request.POST['nome_1']
+
+	## 'nome_1' é o valor do atributo name="" do input do formulário
+
+Portanto a função completa ficou assim:
+
+def cria_plano(request):
+    if request.method == 'POST':
+        Ano_referencia = request.POST['nome_1']
+        Data_de_criacao = date.today()
+        user = get_object_or_404(User, pk=request.user.id)
+        print(user, Ano_referencia, Data_de_criacao)
+        plano = Plano_de_acao.objects.create(usuario=user, ano_referencia=Ano_referencia, data_de_criação=Data_de_criacao)
+        plano.save()
+
+    return redirect('plano_de_acao')

@@ -1,0 +1,72 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>SIPA - Sistema de Planos de Ação</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+
+    <!-- Less -->
+    <link rel="stylesheet/less" type="text/css" href="{% static 'css/style.css' %}" /> 
+
+    <!-- LOGO BARRA -->
+    <link rel="icon" href="{% static 'img/logo_barra.jpg' %}">
+
+    <!-- CARREGA CSS -->
+    <link rel="stylesheet" href="{% static 'site.css' %}">    
+
+</head>
+
+  <body>
+    
+
+
+
+
+    <div class="wrapper">
+        <div>
+            <h3 class="text-center">SIPA - Sistema de Planos de ação</h3>
+        </div>
+        
+        <form class="form-signin" action="{% url 'fazendo_login' %}" method="POST">   
+          {% csrf_token %}    
+          <h2 class="form-signin-heading">Acesso</h2>
+          <input type="text" class="form-control" name="username" placeholder="Usuário/DIREC" required="" autofocus="" />
+          <input type="password" class="form-control" name="password" placeholder="Senha" required="" style="margin-bottom: 3px;"/>      
+          
+          {% if messages %}
+              <ul style="padding-left: 0;" class="ul-mensagens">
+                  {% for message in messages %}
+                  <li{% if message.tags %} class="alert alert-{{ message.tags }} li-mensagens"{% endif %}>{{ message }}</li>
+                  {% endfor %}
+              </ul>
+          {% endif %}
+
+          <label class="checkbox">
+            <input type="checkbox" value="remember-me" id="rememberMe" name="rememberMe"> Lembrar de mim
+          </label>
+          <button class="btn btn-lg btn-primary btn-block cor-botao-entrar" type="submit">Entrar</button>   
+        </form>
+      </div>
+
+
+
+
+
+
+
+
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+    <!-- Script Less -->
+    <script src="//cdn.jsdelivr.net/npm/less@3.13" ></script>
+  </body>
+</html>

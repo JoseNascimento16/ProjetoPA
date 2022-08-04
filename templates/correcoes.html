@@ -1,0 +1,85 @@
+{% extends 'base-correcao.html' %}
+{% load static %}
+{% block content %}
+
+{{ chave_tipo_usuario|json_script:"id-tipo-usuario" }}
+
+<div class="classe-corpo-correcoes">
+    <div class="box-plano1-1">
+        <h5 style="margin-left: 0;"><i class="fas fa-edit margem-icones-menu"></i>SUGESTÕES DE CORREÇÃO</h5>
+    </div>
+
+    {% if messages %}
+    <ul class="ul-mensagens">
+        {% for message in messages %}
+        <li{% if message.tags %} class="alert alert-{{ message.tags }} li-mensagens"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <div class="box-correcao1-2">
+        <h3>Plano: {{chave_plano.ano_referencia}}</h3>
+    </div>
+    <div class="cards-correcoes">
+
+        {% if chave_correcoes_ordens %}
+            {% if not chave_plano.tipo_fia %}
+                {% for correcao in chave_correcoes_ordens %}
+                    <div class="box-correcao1-2-menor">
+                        <div class="cabecalho"> <h5>Correção na Ordem nº: {{correcao.ordem_associada}}</h5> </div>
+                        <h5>Sugestão de correção:</h5>
+                        <textarea class="textarea-cards" cols="30" rows="10" disabled="True">{{correcao.sugestao}}</textarea>
+                        <div class="form-botao-verificar clear-2 itens-cards-planos">
+                            <a class="myButton a-cadastros cards-botao-corrigir" href="{% url 'abrindo_correcao_acao' chave_plano.id correcao.ordem_associada 'Sim' %}" style="text-decoration: none;">Corrigir</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                {% for correcao in chave_correcoes_ordens %}
+                <div class="box-correcao1-2-menor">
+                    <div class="cabecalho"> <h5>Correção na Ordem nº: {{correcao.ordem_associada}}</h5> </div>
+                    <h5>Sugestão de correção:</h5>
+                    <textarea class="textarea-cards" cols="30" rows="10" disabled="True">{{correcao.sugestao}}</textarea>
+                    <div class="form-botao-verificar clear-2 itens-cards-planos">
+                        <a class="myButton a-cadastros cards-botao-corrigir" href="{% url 'abrindo_correcao_fia' chave_plano.id correcao.ordem_associada 'Sim' %}" style="text-decoration: none;">Corrigir</a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endif %}
+
+        {% if chave_correcoes_codigos %}
+        {% for correcao in chave_correcoes_codigos %}
+            <div class="box-correcao1-2-menor">
+                <div class="cabecalho"> <h5>Correção no código: {{correcao.ordem_associada}}{{correcao.codigo_associado}}</h5> </div>
+                
+                <h5>Sugestão de correção:</h5>
+                <textarea class="textarea-cards" cols="30" rows="10" disabled="True">{{correcao.sugestao}}</textarea>
+                <div class="form-botao-verificar clear-2 itens-cards-planos">
+                    <a class="myButton a-cadastros cards-botao-corrigir" href="{% url 'abrindo_correcao_despesa' chave_plano.id correcao.ordem_associada correcao.codigo_associado 'Sim' %}" style="text-decoration: none;">Corrigir</a>
+                </div>
+            </div>
+        {% endfor %}
+        {% endif %}
+        
+    </div>
+
+    {% if not chave_correcoes_ordens and not chave_correcoes_codigos %}
+        <div class="cards-planos">
+            <p class="clear-2 itens-cards-planos">
+                Não há mais correções a serem feitas para este plano <i class="fa-solid fa-check"></i>.
+            </p>
+        </div>
+        <div class="form-botao-voltar clear-2 itens-cards-planos">
+            <a class="myButton a-cadastros cards-botao-corrigir" href="{% url 'pagina_planos_de_acao' %}" style="text-decoration: none;">Voltar</a>
+        </div>
+    {% endif %}
+
+</div>
+
+
+
+{% include 'partials/modal-partial-correcao.html' %}
+
+
+{% endblock %}

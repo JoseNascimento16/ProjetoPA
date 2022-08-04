@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+{{ chave_tipo_usuario|json_script:"id-tipo-usuario" }}
+
+<div class="box-plano1">
+
+        <div class="box-plano1-1">
+            <h5><i class="fas fa-chart-bar margem-icones-menu"></i>PLANOS DE AÇÃO NECESSITANDO CORREÇÃO</h5>
+        </div>
+    
+    <div class="box-plano1-2">
+        <h5>Plano de ação</h5>
+        <h5 class="flex-02"></h5>
+        <h5>Visualizar</h5>
+        <h5>Visualizar</h5>
+        {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
+        <h5>Criado por:</h5>
+        <h5>Situação:</h5>
+        {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
+        <h5>Situação:</h5>
+        <h5>Ação:</h5>
+        {% elif user.classificacao.tipo_de_acesso == 'Funcionario' %}
+        <h5>Situação:</h5>
+        {% endif %}
+    </div>
+    <div class="div-cards-planos">
+        {% if chave_planos %}
+        {% for elemento in chave_planos %}
+            <div class="cards-planos">
+                <p class="clear-2 itens-cards-planos flex-02">
+                    <a class="a-clear-href" href="{% url 'abrindo_edicao_plano' elemento.id %}" method="POST" onclick="" >
+                        <i class="fas fa-edit margem-icones-menu"></i>
+                    </a>
+                </p>
+                <p class="clear-2 itens-cards-planos">
+                    <a class="a-clear-href" href="{% url 'chamando_1_plano' elemento.id %}">
+                        {{ elemento.ano_referencia }}
+                    </a>
+                </p>
+                <p class="clear-2 itens-cards-planos">
+                    <a href="{% url 'chamando_acao_plano' elemento.id %}">
+                        <i class="fas fa-eye margem-icones-menu"></i>Ações
+                    </a>
+                </p>
+                <p class="clear-2 itens-cards-planos">
+                    <a href="{% url 'chamando_despesa_plano' elemento.id %}">
+                        <i class="fas fa-eye margem-icones-menu"></i>Despesas
+                    </a>
+                </p>
+                {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
+                <p class="clear-2 itens-cards-planos">
+                    <a class="tooltip5">
+                        <i class="fa fa-user margem-icones-menu"></i>{{ elemento.usuario.last_name|truncatechars:25 }}
+                        <span class="tooltiptext5" style="left: 100px; width: 300px">{{elemento.usuario.last_name}}</span>
+                    </a>
+                </p>
+                {% endif %}
+
+                <p class="clear-2 itens-cards-planos">
+                    <a class="a-clear-href tooltip5" href="#">
+                        {{ elemento.situacao }}
+                        <span class="tooltiptext5" style="left: 0px; width: 250px">Este plano possui correções a serem efetuadas pela escola.</span>
+                    </a>
+                </p>
+                {% if user.classificacao.tipo_de_acesso == 'Escola' %}
+                <div class="clear-2 itens-cards-planos">
+                    <a class="myButton a-cadastros" href="{% url 'pagina_correcoes' elemento.id %}" style="text-decoration: none;">Corrigir</a>
+                </div>
+                {% endif %}
+                
+                
+            </div>
+        {% endfor %}
+        {% else %}
+        <div class="cards-planos">
+            {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
+            <p class="clear-2 itens-cards-planos">
+                Não há planos de ação com sugestões para serem corrigidos pelas escolas...
+            </p>
+            {% else %}
+            <p class="clear-2 itens-cards-planos">
+                Não há planos de ação com correções a serem feitas...
+            </p>
+            {% endif %}
+        </div>
+        {% endif %}
+        <!-- <a href="{% url 'criar_plano' %}">TESTE</a> -->
+    </div>
+
+    <div class="box-legendas">
+        <h4>Legenda:</h4>
+        <h5>- Em Desenvolvimento </h5>
+        <p>Planos "Em desenvolvimento" podem ser alterados a qualquer momento pela Escola, são planos recém criados.</p>
+        <h5>- Publicado </h5>
+        <p>Planos "Publicados" já terminaram de ser desenvolvidos pela escola, e portanto, já podem ser enviados à Secretaria da Educação. A partir deste estado, TODA alteração feita no plano gera um log de eventos que fica registrado.</p>
+        <h5>- Pendente </h5>
+        <p>Planos "Pendentes" já foram enviados e estão sob a análise da Secretaria da Educação. Um plano neste estado não pode ser modificado pela escola.</p>
+        <h5>- Necessita correção </h5>
+        <p>Um plano nesta situação já foi corrigido pela Secretaria da Educação, porém necessita de correção, e portanto, foi devolvido à escola com as devidas sugestões. Um plano pode passar por esta etapa quantas vezes for necessário.</p>
+        <h5>- Corrigido pela escola </h5>
+        <p>Um plano "Corrigido" já foi corrigido pela escola e reenviado para a Secretaria da Educação com as devidas correções.</p>
+        <h5>- Aprovado </h5>
+        <p>Planos "Aprovados" já passaram por quase todas as etapas necessárias, foram aprovados pela Secretaria da Educação e portanto já podem receber as assinaturas do tesoureiro e membros do colegiado. Planos neste estágio não podem mais ser alterados por ninguém.</p>
+        <h5>- Pronto </h5>
+        <p>Planos "Prontos" já foram assinados pelo tesoureiro e por todos os membros do colegiado e estão prontos para serem concluidos pela escola.</p>
+        <h5>- Concluído </h5>
+        <p>Planos concluídos estão finalizados e podem ser impressos já com as assinaturas do tesoureiro e membros do colegiado.</p>
+    </div>
+
+</div>
+
+</div>
+
+
+
+
+
+
+
+{% endblock %}
+
+
+        

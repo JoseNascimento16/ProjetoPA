@@ -1,0 +1,22 @@
+{% for nome_plano in chave_planos_assinados %}
+                    
+    {% if elemento.situacao == 'Aprovado' and elemento.ano_referencia == nome_plano %}
+        <div class="box-botao-cadastro1 itens-cards-planos">
+            <form action="#">
+                <input class="myButtonGrey" type="submit" value="Assinado">
+            </form>
+        </div>
+    {% elif elemento.situacao == 'Aprovado' and not elemento.ano_referencia == nome_plano %}
+        <div class="box-botao-cadastro1 itens-cards-planos">
+            <form action="{% url 'autorizar_plano' elemento.id %}" method="POST" onclick="return confirm('Deseja realmente assinar o plano de ação: {{ elemento.ano_referencia }}?')">
+                {% csrf_token %}
+                <input class="myButton" type="submit" value="Assinar">
+            </form>
+        </div>
+    {% elif elemento.situacao != 'Aprovado' %}
+    <div class="box-botao-cadastro1 itens-cards-planos">
+        
+    </div>
+    {% endif %}
+
+{% endfor %}

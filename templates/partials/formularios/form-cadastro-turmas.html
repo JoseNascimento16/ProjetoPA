@@ -1,0 +1,30 @@
+{% load static %}
+{% load widget_tweaks %}
+
+{% if contexto_extra_turmas %}
+<div class="div-form-cadastro-turmas" style="display: block;">
+{% else %}
+<div class="div-form-cadastro-turmas">
+{% endif %}
+    <div class="titulo-modal">
+        <h2>Cadastrar Turma</h2>
+    </div>
+    <div class="classe-form-modal">
+        <form class="form-modal" action="" method="POST">
+        {% csrf_token %}
+        {% for elemento in chave_form_cadastro_turmas.visible_fields %}
+        <div class="linha-input linha-input-coluna">
+            <label class="label-input label-input-form-django" for="{{ elemento.id_for_label }}">{{ elemento.label }}</label>
+            {{elemento|add_class:'input-input'}}
+        </div>
+        {% for error in elemento.errors %}
+        <section class="alert alert-danger" role="alert"> {{ elemento.errors }} </section>
+        {% endfor %}
+
+        {% endfor %}
+        <div class="linha-submit">
+            <input class="myButton" type="submit" value="Cadastrar"></input>
+        </div>
+        </form>
+    </div>
+</div>

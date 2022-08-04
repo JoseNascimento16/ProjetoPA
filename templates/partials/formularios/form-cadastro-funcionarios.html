@@ -1,0 +1,45 @@
+{% load static %}
+{% load widget_tweaks %}
+
+{% if contexto_extra_form_funcionarios %}
+<div class="div-form-cadastro-funcionarios" style="display: block;">
+{% else %}
+<div class="div-form-cadastro-funcionarios">
+{% endif %}
+    <div class="titulo-modal">
+        <h2>Novo cadastro</h2>
+    </div>
+    <div class="classe-form-modal">
+        {% if not chave_cad_funcionarios %}
+            <form id="form_login" class="form-modal" action="{% url 'cadastrar_funcionarios' user.id %}" method="POST" autocomplete="off">
+        {% else %}
+            <form id="form_login" class="form-modal" action="{% url 'cadastrar_funcionarios_secretaria' user.id 'Sim' %}" method="POST" autocomplete="off">
+        {% endif %}
+        {% csrf_token %}
+        {% for elemento in chave_form_cadastro_funcionarios.visible_fields %}
+            {% if forloop.counter0 != 5 %}
+            <div class="linha-input linha-input-coluna">
+                <label class="label-input label-input-form-django" for="{{ elemento.id_for_label }}">{{ elemento.label }}</label>
+                {{elemento|add_class:'input-input'}}
+            </div>
+            {% elif forloop.counter0 == 5 %}
+            <div class="linha-input2 linha-input-row">
+                <label class="label-input2 label-input-form-django" for="{{ elemento.id_for_label }}">{{ elemento.label }}</label>
+                {{elemento}} 
+                <div class="tooltip5">
+                <i class="fa-solid fa-circle-info margem-left-10"></i>
+                <span class="tooltiptext5">Marque caso o funcionário sendo cadastrado seja de alto cargo. Este funcionário terá de assinar planos e poderá cadastrar escolas e funcionários. </span>
+                </div>
+            </div>
+            {% endif %}
+        {% for error in elemento.errors %}
+        <section class="alert alert-danger" role="alert"> {{ elemento.errors }} </section>
+        {% endfor %}
+
+        {% endfor %}
+        <div class="linha-submit">
+            <input class="myButton" type="submit" value="Cadastrar"></input>
+        </div>
+        </form>
+    </div>
+</div>

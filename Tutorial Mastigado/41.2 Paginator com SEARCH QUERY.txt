@@ -1,0 +1,27 @@
+O problema é o seguinte: Da maneira como aprendemos no tutorial anterior, ao fazermos uma pesquisa numa página que contenha um paginator, não conseguimos ver os outros resultados da pesquisa caso, eles estejam armazenados na pagina 2 ou posteriores, pois o link de "proxima página" não esta considerando a pesquisa, e portanto, ele nos retorna uma "pagina 2" que desconsidera a pesquisa.
+
+A melhor maneira de se fazer isso é 'passando' a informação do search pela URL atravéz de um metodo GET!
+
+A estrutura fica da seguinte forma:
+1 - pesquisa em si atravéz do form (método POST)
+2 - link de próxima/anterior página (método GET)
+
+Em 1:
+
+- O usuário pesquisa por uma palavra (ex:tina)
+   - Na nossa views, essa informação chega atravéz de um método post
+   - A pesquisa é tratada na views, e a página renderiza a pesquisa normalmente na página 1 do paginator
+   - Geramos também uma variável de contexto chamada "chave_valor_pesquisa" com o valor "tina"
+
+- Agora o usuário quer ir para a página 2 da pesquisa
+   - Iserimos no href do HTML a informação de ir para proxima página e também o valor da "chave_valor_pesquisa"
+	<a href="?page={{chave_planos.next_page_number}}&q={{chave_valor_pesquisa|urlencode}}" class="page-link">&raquo;</a>
+   - No request da nossa views irão chegar 2 variáveis atravéz do GET: "page = 2" e "q = tina"
+   - Agora a pesquisa é tratada na views utilizando as informações vindas do GET e não mais do POST
+	valor_pesquisa = request.GET.get('q','')
+   - Geramos também uma variável de contexto chamada "chave_valor_pesquisa" com o valor de q = "tina"
+	contexto{ "chave_valor_pesquisa" : valor_pesquisa }
+
+# E para adicionar uma segurança maior, usamos o filtro |urlencode depois da chave. 
+# Da para fazer um url encode atravez de templatetags personalizadas também:
+   https://stackoverflow.com/questions/67525746/pagination-of-search-results-only-in-django-not-working

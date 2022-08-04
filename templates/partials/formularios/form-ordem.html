@@ -1,0 +1,34 @@
+{% load static %}
+{% load widget_tweaks %}
+
+{% if contexto_extra_ordem or chave_abre_nova_ordem %}
+<div class="div-form-ordem" style="display: block;">
+{% else %}
+<div class="div-form-ordem">
+{% endif %}
+
+    <div class="titulo-modal">
+        <h2>Nova Ordem</h2>
+    </div>
+    <div class="classe-form-modal">
+        <form class="form-modal" action="{% url 'criar_ordem' chave_planos.id %}" method="POST">
+        {% csrf_token %}
+        {% for elemento in chave_form_ordem.visible_fields %}
+        <div class="linha-input linha-input-row">
+            <label class="label-input label-input-form-django" for="{{ elemento.id_for_label }}">{{ elemento.label }}</label>
+            {{elemento|add_class:'input-input'}}
+        </div>
+        {% for error in elemento.errors %}
+        <section class="alert alert-danger" role="alert"> {{ elemento.errors }} </section>
+        {% endfor %}
+
+        {% endfor %}
+        <div class="linha-submit">
+            <input class="myButton myButton_form_margem" type="submit" value="Criar ordem"></input>
+        </div>
+        </form>
+    </div>
+
+    
+
+</div>

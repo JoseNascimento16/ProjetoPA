@@ -1,0 +1,80 @@
+MODELFORMS, SUPER(), *ARGS, **KWARGS, PARAMETROS.
+
+O OBJETIVO: Tinhamos que validar um campo (letra) para saber se o valor inserido nele (uma letra qualquer) já não havia sido cadastrado previamente na mesma ORDEM, e portanto, não poderia ser utilizado.(uma validação .exists() )
+
+O PROBLEMA: Para fazer esta validação, precisariamos do NUMERO do ID da ORDEM à que a "letra" seria associada. Porém, no nosso formulário, não tinhamos o valor do ID da ORDEM (optamos por não incluir o campo ORDEM no formulario como visto no tutorial 29.7).
+
+A SOLUÇÃO: Usamos a instância da ORDEM que tinhamos na nossa VIEWS para capturar o ID da ORDEM e passa-lo como um ARGUMENTO no momento da inicialização do formulário, e assim conseguimos usar este valor numerico para dizer à validação de qual ORDEM estavamos tratando. Usamos o metodo super() para isso.
+
+---------------------------------------------------
+
+1 - Na VIEWS.PY 
+
+def ordem(request, ordem_id):
+
+    ordem = get_object_or_404(Ordens, pk=ordem_id)
+    id_da_ordem = ordem.id
+
+    if request.method == 'POST':
+        form = CodigosForm(request.POST, ordem_id=id_da_ordem) <<<<<<<<<<<<<<<<<<<
+        if form.is_valid():
+		.
+		.
+		.
+
+	# Pegamos a instância da ordem e salvamos o ID em id_da_ordem
+	# Ao inicializar o 'form' passamos este valor como parametro
+
+
+2 - Em FORMS.PY
+
+class CodigosForm(forms.ModelForm):
+
+  # def __init__(self, *args, **kwargs):
+        self.ordem_id = kwargs.pop('ordem_id', None)
+        super().__init__(*args, **kwargs)
+        
+    
+    class Meta:
+
+        model = ModeloCodigos
+
+        labels = {
+           }
+        
+        widgets = {
+           }
+
+    def clean(self):
+        
+   ##   valor_ordem_id = self.ordem_id
+        
+        valor_identificacao = self.cleaned_data.get('identificacao')
+        valor_especificacao = self.cleaned_data.get('especificacao')
+
+  ###   valor_ja_esta_sendo_usado(valor_identificacao, 'identificacao', lista_de_erros, ordem_id_form=valor_ordem_id)
+
+
+# Aqui definimos o método __init__ e preparamos a classe CodigosForm para receber o parâmetro 'ordem_id'. Usamos a função super() para inicializar parcialmente a classe trazendo este parâmetro. 
+
+## Como o método clean está dentro da classe CodigosForm, podemos capturar o valor de 'ordem_id' com self. e coloca-lo numa variavel
+
+### Ainda dentro do metodo clean, agora chamamos uma função de validação "valor_ja_esta_sendo_usado" e passamos o valor_ordem_id como parametro também.
+
+
+
+3 - Em validation.py
+
+def valor_ja_esta_sendo_usado(valor, campo, lista_De_erros, valor_ordem_id):
+    
+ #  instancia_ordem = get_object_or_404(Ordens, pk=valor_ordem_id)
+    valor_maiusculo = valor.upper()
+
+ ## if ModeloCodigos.objects.filter(ordem=instancia_ordem.id).filter(identificacao=valor_maiusculo).exists():
+        lista_De_erros[campo] = 'A letra ' + valor + ' já está sendo usada, escolha outra...'
+
+# Pegamos o valor_ordem_id para criar uma instancia da ORDEM
+## Usamos a instancia da ORDEM e o valor da LETRA para filtrarmos os objetos já existentes na classe ModeloCodigos e assim podemos saber se já existe uma letra "TAL" associada à ORDEM "TAL".
+
+
+Desta forma, pegamos o valor do ID da ORDEM que tinhamos na VIEWS, passamos para a inicialização do formulário e fizemos a validação!!!

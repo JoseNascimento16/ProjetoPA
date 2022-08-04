@@ -1,0 +1,27 @@
+{% load static %}
+{% load widget_tweaks %}
+
+<div class="div-confirma-devolve">
+    <div class="titulo-modal">
+        <h2>Alterar nome</h2>
+    </div>
+    <div class="classe-form-modal">
+        <form class="form-modal" action="{% url 'altera_nome' user.id %}" method="POST">
+            {% csrf_token %}
+            {% for elemento in chave_form_altera_nome.visible_fields %}
+            <div class="linha-input2 linha-input-row">
+                <label style="width: 200px;" class="label-input2 label-input-form-django flex-0-4" for="{{ elemento.id_for_label }}">{{ elemento.label }}</label>
+                {{elemento|add_class:'input-input'}}
+            </div>
+
+            {% for error in elemento.errors %}
+            <section class="alert alert-danger" role="alert"> {{ elemento.errors }} </section>
+            {% endfor %}
+
+            {% endfor %}
+            <div class="linha-submit">
+                <input class="myButton" type="submit" value="Confirmar">
+            </div>
+        </form>
+    </div>
+</div>

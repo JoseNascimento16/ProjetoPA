@@ -1,0 +1,48 @@
+Como já foi dito anteriormente, para renderizarmos os erros de validação de um formulário no template, devemos utilizar o render ao invéz do redirect.
+
+No nosso caso, temos a seguinte situação:
+
+- 1 Views que renderiza a página
+- 2 Views que valida o formulário e recarrega esta mesma página utilizando a views de cima
+
+- Estamos na views 2, e o fomulário ( cadastra_datas_form = Form(request.POST) ) deu INVALIDO. No else que rendezira a página com os erros do formulário, teremos isso:
+
+	if cadastra_datas_form.is_valid():
+	   ...
+	else:
+            
+           * chama_acao_plano = acao_plano(request, elemento_id=elemento_id, ordem_id=ordem_id, contx_ordem=True)
+          ** chama_acao_plano['chave_form_datas'] = cadastra_datas_form
+            
+            return render(request, 'acao-visualizacao.html', chama_acao_plano)
+
+* "acao_plano" é a funcao da views 1, chamamos esta função com os argumentos necessarios para renderização da página e DELA RETORNAMOS somente o CONTEXTO
+** o contexto da views 1 vem com o formulario VAZIO SEM ERROS, temos que trocar o formulario vazio, pelo nosso COM OS ERROSm esta linha de código faz isso no dicionario "chama_acao_plano"
+
+- E com isso o formulario renderiza com os erros.
+
+#################
+
+Na verdade, é necessário que o FORMULARIO que contém os erros seja o formulário renderizado. Ou seja, podemos até usar o redirect, porém teriamos que passar os erros como argumento através de um metodo GET.
+
+	if form_com_erro.is_valid():
+	   ...
+	else:
+	   contexto = funcao_principal_da_pag(request, argumentos...)
+	   contexto['chave_do_form'] = form_com_erro
+	   return render(request, 'pagina.html', contexto)
+	
+	## Ou seja, fazemos uma chamada da função de renderização da pagina, configuramos para que ela somente nos retorne o contexto, e de volta 	na views de tratamento do form, substituimos o form do contexto, pelo form_com_erro
+
+Podemos também passar o formulario com os erros como um parâmetro para a função de renderização da página que ao detectar o formulário com erro, utiliza ele na renderização ao invéz do formulário vazio.
+
+##################
+
+Só não podemos esquecer de configurar como o erro vai ser mostrado no html:
+
+- Dentro do FOR do formulario:
+
+	    {% for error in elemento.errors %}
+            <section class="alert alert-danger" role="alert"> {{ elemento.errors }} </section>
+            {% endfor %}
+

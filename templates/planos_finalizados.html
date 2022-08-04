@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load definir_acoes %}
+{% load custom_tags %}
+{% block content %}
+
+{{ chave_tipo_usuario|json_script:"id-tipo-usuario" }}
+{{ chave_situacao_plano|json_script:"id-situacao-plano" }}
+
+<div class="box-plano1">
+
+        <div class="box-plano1-1">
+            <h5><i class="fas fa-chart-bar margem-icones-menu"></i>PLANOS DE AÇÃO FINALIZADOS</h5>
+        </div>
+    
+    <div class="box-plano1-2">
+        <h5>Plano de ação</h5>
+        <h5 class="flex-02"></h5>
+        <h5>Visualizar</h5>
+        <h5>Visualizar</h5>
+        {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
+        <h5>Criado por:</h5>
+        <h5>Situação:</h5>
+        {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
+        <h5>Situação:</h5>
+        {% elif user.classificacao.tipo_de_acesso == 'Funcionario' %}
+        <h5>Situação:</h5>
+        {% endif %}
+    </div>
+    <div class="div-cards-planos">
+        {% if chave_planos %}
+        {% for elemento in chave_planos %}
+        <div class="cards-planos-box">
+            <div class="cards-planos border-0">
+                <p class="clear-2 itens-cards-planos flex-02">
+                    <a class="a-clear-href">
+                        <i class="fas fa-edit margem-icones-menu"></i>
+                    </a>
+                </p>
+                <p class="clear-2 itens-cards-planos">
+                    <a class="a-clear-href" >
+                        {{ elemento.ano_referencia }}
+                    </a>
+                </p>
+                <p class="clear-2 itens-cards-planos">
+                    <a href="{% url 'chamando_acao_plano' elemento.id %}">
+                        <i class="fas fa-eye margem-icones-menu"></i>Ações
+                    </a>
+                </p>
+                <p class="clear-2 itens-cards-planos">
+                    <a href="{% url 'chamando_despesa_plano' elemento.id %}">
+                        <i class="fas fa-eye margem-icones-menu"></i>Despesas
+                    </a>
+                </p>
+                {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
+                <p class="clear-2 itens-cards-planos">
+                    <a href="#" class="tooltip5">
+                        <i class="fa fa-user margem-icones-menu"></i>{{ elemento.usuario.last_name|truncatechars:25 }}
+                        <span class="tooltiptext5" style="left: 100px; width: 300px">{{elemento.usuario.last_name}}</span>
+                    </a>
+                </p>
+                {% endif %}
+
+                <p class="clear-2 itens-cards-planos">
+                    <a>
+                        {{ elemento.situacao }}
+                    </a>
+                </p>
+
+            </div>
+
+            <!-- ACCORDION DE INFORMAÇÕES EXTRAS -->
+            
+            <div class="box-plano-accordion accordion-planos" style="margin-left: 0;">
+                <div class="div-info-accordion">
+                    <div class="div-corretor-flex tooltip5" style="display: flex"> <h5  style="min-width: 148px">Instituição de ensino:</h5><p style="font-style: italic;margin-left: 0;">{{elemento.usuario.last_name|truncatechars:27}}</p>
+                        <span class="tooltiptext5" style="left: 100px; width: 300px">{{elemento.usuario.last_name}}</span>
+                    </div>
+                    <div class="div-corretor-flex"> <h5>Situação:</h5><p style="font-style: italic;">{{elemento.situacao}} (ver legenda)</p> </div>
+                    {% if elemento.corretor_plano != None %}
+                        <div class="div-corretor-flex"> <h5>Corretor:</h5><p style="font-style: italic;">{{elemento.corretor_plano.first_name}}</p>
+                            {% if user.classificacao.assina_plano == True and elemento.situacao != 'Finalizado' %}
+                            <a class="" style="font-style: italic;" href="{% url 'abrindo_altera_corretor' elemento.id True %}">(Alterar)</a>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <div class="div-corretor-flex"> <h5>Corretor:</h5><p style="font-style: italic;">-------</p> </div>
+                    {% endif %}
+                </div>
+                {% tag_len_funcionarios chave_classificacoes elemento.usuario.last_name as len_funcionarios %}
+                {% tag_len_assinaturas elemento.classificacao_set.all as len_assinaturas %}
+                {% if elemento.situacao == 'Aprovado' or elemento.situacao == 'Pronto' or elemento.situacao == 'Assinado' or elemento.situacao == 'Inteiramente assinado' or elemento.situacao == 'Finalizado' %}
+                <div class="div-assinaturas-escolas">
+                    <h5 style="margin-left: 0">Assinaturas Escola ({{len_assinaturas}}/{{len_funcionarios}}):</h5>
+                    {% for item in elemento.classificacao_set.all %}
+                        {% if item.tipo_de_acesso == 'Escola' or item.tipo_de_acesso == 'Funcionario' %}
+                        <p>- {{item}}</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% tag_len_alto_cargo chave_classificacoes as len_alto_cargo %}
+                {% tag_len_suprof elemento.classificacao_set.all as len_suprof %}
+                {% if elemento.situacao == 'Pronto' or elemento.situacao == 'Assinado' or elemento.situacao == 'Inteiramente assinado' or elemento.situacao == 'Finalizado' %}
+                <div class="div-assinaturas-suprot">
+                    <h5 style="margin-left: 0">Assinaturas SUPROT ({{len_suprof}}/{{len_alto_cargo}}):</h5>
+                    {% for item in elemento.classificacao_set.all %}
+                        {% if item.tipo_de_acesso == 'Func_sec' %}
+                        <p>- {{item}}</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {% endfor %}
+        {% else %}
+        <div class="cards-planos">
+            <p class="clear-2 itens-cards-planos">
+                Não há planos de ação finalizados no arquivo...
+            </p>
+        </div>
+        {% endif %}
+        <!-- <a href="{% url 'criar_plano' %}">TESTE</a> -->
+    </div>
+</div>
+</div>
+
+
+{% include 'partials/modal-partial.html' %}
+
+
+
+
+{% endblock %}
+
+
+        

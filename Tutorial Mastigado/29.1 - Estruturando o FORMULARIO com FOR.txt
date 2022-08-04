@@ -1,0 +1,17 @@
+<form class="form-modal" action="#" method="POST"> 
+        {% csrf_token %}
+
+        {% for elemento in form.visible_fields %}
+
+        <div class="#">
+            <label class="#" for="{{ elemento.id_for_label }}">  {{ elemento.label }}  </label>
+            {{elemento}}
+        </div>
+
+        {% endfor %}
+
+Ou seja, para cada elemento visível no dicionário do formulario:
+
+- mostre o label do elemento: <label>  {{ elemento.label }}  </label>
+- associe o label ao elemento: for="{{ elemento.id_for_label }}"
+- mostre o elemento: {{elemento}}

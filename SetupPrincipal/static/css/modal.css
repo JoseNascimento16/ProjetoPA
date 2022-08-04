@@ -1,0 +1,115 @@
+.modelo-modal{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 5;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.modelo-modal-edicao{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 5;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.modelo-modal-confirma{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 5;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.modelo-modal-correcao{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 5;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.fundo-modal{
+    background-color: rgb(255, 255, 255);
+    width: 60%;
+    height: 80%;
+    border-radius: 10px;
+    position: relative;
+}
+
+.fundo-modal-confirma{
+    background-color: rgb(255, 255, 255);
+    width: 410px;
+    height: 30%;
+    border-radius: 10px;
+    position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.fundo-modal-correcao{
+    background-color: rgb(255, 255, 255);
+    width: 60%;
+    height: 80%;
+    border-radius: 10px;
+    position: relative;
+    overflow-y: auto;
+}
+
+.fundo-modal-corrigindo{
+    background-color: rgb(255, 255, 255);
+    width: 60%;
+    height: 80%;
+    border-radius: 10px;
+    position: relative;
+    overflow-y: auto;
+}
+
+.corpo-modal{
+    color: rgb(139, 138, 138);
+}
+
+.fechar-modal, .fechar-modal>a{
+    margin: 10px 10px 0 0;
+    text-align: right;
+    color: rgb(139, 138, 138);
+}
+.fechar-modal a:hover{
+    color: red;
+}
+
+.titulo-modal{
+    text-align: center;
+}
+.titulo-modal h2{
+    margin-top: 0;    
+    margin-bottom: 50px;
+}
+
+.titulo-modal-devolve{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+

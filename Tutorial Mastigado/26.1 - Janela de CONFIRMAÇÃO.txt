@@ -1,0 +1,5 @@
+Para adicionar uma janela de confimação na ação de deletar um plano de ação, basta adicionar este código nos parâmetros do botão:
+
+<a href"#" method"#" onclick="return confirm('Deseja realmente apagar o plano de ação: {{ elemento.ano_referencia }}?')"></a>
+
+## Note que o botão/link para deletar está contido dentro do FOR do dicionário de contexto ##

@@ -1,0 +1,46 @@
+{% load static %}
+{% load widget_tweaks %}
+
+{% if contexto_extra_ordem_fia or chave_abre_form_extra_edicao or chave_abre_form_extra_criacao %}
+<div class="div-form-ordem-extra-fia" style="display: block;">
+{% else %}
+<div class="div-form-ordem-extra-fia">
+{% endif %}
+    <div class="titulo-modal">
+        <h2 style="margin-bottom: 25px;">FIA - {{chave_planos.ano_referencia}}</h2>
+    </div>
+    <div class="titulo-modal">
+        {% if chave_abre_form_extra_criacao %} <!--  form de CRIACAO -->
+        <h4 style="margin-bottom: 15px;">- Criação de ordens extras -</h4>
+        {% elif chave_modo_edicao %}<!--  form de EDIÇÃO -->
+        <h4 style="margin-bottom: 15px;">- Edição ordem: {{chave_ordem_extra_objeto.valor_numerico}} -</h4>
+        {% endif %}
+    </div>
+    <div class="classe-form-modal">
+        {% if chave_abre_form_extra_criacao %} <!--  form de CRIACAO -->
+        <form class="form-modal" action="{% url 'cria_extra_fia' chave_modelo_fia.id %}" method="POST">
+        {% elif chave_modo_edicao %}<!--  form de EDIÇÃO -->
+        <form class="form-modal" action="{% url 'altera_extra_fia' chave_modelo_fia.id chave_ordem_extra_objeto.id %}" method="POST">
+        {% endif %}
+        {% csrf_token %}
+        {% for elemento in chave_form_extra_fia.visible_fields %}
+        <div class="linha-input linha-input-row">
+            <label class="label-input label-input-form-django" for="{{ elemento.id_for_label }}">{{ elemento.label }}</label>
+            {{elemento|add_class:'input-input'}}
+        </div>
+        {% for error in elemento.errors %}
+        <section class="alert alert-danger" role="alert"> {{ elemento.errors }} </section>
+        {% endfor %}
+
+        {% endfor %}
+        <div class="linha-submit">
+            {% if chave_abre_form_extra_criacao %} <!--  form de CRIACAO -->
+            <input class="myButton" type="submit" value="Criar"></input>
+            {% elif chave_modo_edicao %}<!--  form de EDIÇÃO -->
+            <input class="myButton" type="submit" value="Excluir" formaction="{% url 'excluir_extra_fia' chave_ordem_extra_objeto.id %}" style="margin-right: 10px"></input>
+            <input class="myButton" type="submit" value="Salvar"></input>
+            {% endif %}
+        </div>
+        </form>
+    </div>
+</div>

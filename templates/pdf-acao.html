@@ -1,0 +1,291 @@
+{% load static %}
+{% load definir_acoes %} <!-- carrega uma template tag (ver txt 30 do tutorial) -->
+
+<style>
+    @page {
+        /* size: letter landscape; */
+        size: letter portrait;
+        margin: 1cm;
+    }
+
+    .div-visualizacao-bloco{
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: 1065px;
+    margin: auto;
+    border: 1px solid black;
+    }
+    .div-visualizacao-img{
+    flex: 1;
+    margin-bottom: 15px;
+    }
+    .visualizacao-img{
+    max-width: 100%;
+    display: block;
+    height: auto;
+    top: 0px;
+    }
+    .div-unidade-bloco{
+    width: 535px;
+    }
+    .tabela-unidade, .tabela-unidade td{
+    border: 0.5px solid black;
+    border-collapse: collapse;
+    }
+    td{
+    padding: 4px;
+    }
+    .titulo-plano{
+    text-align: center;
+    }
+    .titulo-plano h4{
+    margin: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    }
+    .tabela-principal{
+    width: 99.9%;
+    border: 1px solid black;
+    border-collapse: collapse;
+    }
+
+    .tabela-principal th{
+    border: 1px solid black;
+    background-color: rgb(167, 164, 164);
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+    text-align: center;
+    }
+
+    .tabela-principal td{
+    border: 1px solid black;
+    }
+</style>
+
+
+<div class="div-visualizacao-bloco">
+
+    {% if messages %}
+    <ul class="ul-mensagens" style="padding: 0%;">
+        {% for message in messages %}
+        <li{% if message.tags %} class="alert alert-success success li-mensagens"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <div class="div-visualizacao-img">
+        <img class="visualizacao-img" src="static/img/cabecalho_visualizacaopng.png" alt="">
+    </div>
+
+    <table class="div-unidade-bloco tabela-unidade">
+
+    {% if chave_planos2 %}
+    {% for plano in chave_planos2 %}
+        <tr>
+            <td colspan="2"> UNIDADE: {{ plano.usuario.last_name }}</td>
+        </tr>
+        <tr class="linha-municipio">
+            <td>MUNICÍPIO: {{ plano.usuario.classificacao.municipio }}</td>
+            <td>DIREC: {{ plano.usuario.username }}</td>
+        </tr>
+        
+    </table>
+
+    <div class="titulo-plano">
+        <h4 style="margin-top: 30px;">PLANO: {{ chave_planos.ano_referencia }}</h4>
+        <h4>1 - IDENTIFICAÇÃO DAS AÇÕES</h4>
+    </div>
+
+    <table class="tabela-principal">
+        <tr>
+            <th colspan="2"> Problema </th>
+            <th colspan="2"> Ações financiáveis </th>
+            <th colspan="2", style="width: 158px;"> Prazo execução </th>
+            <th rowspan="2", style="width: 200px;"> Resultados esperados </th>
+        </tr>
+
+        <tr>
+            <th style="width: 100px;"> Nº Ordem </th>
+            <th style="width: 350px;"> Descrição </th>
+            <th> Código </th>
+            <th style="width: 350px;"> Descrição </th>
+            <th style="width: 79px;"> Início </th>
+            <th style="width: 79px;"> Fim </th>
+        </tr>
+
+        <!-- GERAÇÃO DAS ORDENS -->
+        {% for ordem in chave_ordens2 %}  <!-- PARA TODAS AS ORDENS DO PLANO X -->
+
+        {% if ordem.inserida %}  <!-- SE ORDEM INSERIDA -->
+        
+
+            <!--  SE ORDEM INSERIDA, MAS CODIGOS NÃO INSERIDOS -->
+            {% if ordem.codigos_inseridos == 0 %}
+            <tr class="cards-ordens-visualizacao tr-dinamicos{{ordem.identificacao_numerica}}">
+                {% if user.classificacao.tipo_de_acesso == 'Secretaria' %}
+                    {% if ordem.possui_sugestao_correcao %}
+                    <td class="tds-trs-{{ordem.identificacao_numerica}}" style="text-align: center;"> <a class="a-clear-acao desabilita-js" href="{% url 'chamando_correcao_acao_plano' plano.id ordem.id %}"><div style="height:100%;width:100%">{{ordem.identificacao_numerica}} <span class="tooltiptext2-tabela"> <i class="fas fa-edit"></i> Alterar correção!</span> </div> </a> </td>
+                    {% else %}
+                    <td class="tds-trs-{{ordem.identificacao_numerica}}" style="text-align: center;"> <a class="a-clear-acao desabilita-js" href="{% url 'chamando_correcao_acao_plano' plano.id ordem.id %}"><div style="height:100%;width:100%">{{ordem.identificacao_numerica}} <span class="tooltiptext1-tabela"> <i class="fa-solid fa-arrow-left"></i> Sugerir correção!</span> </div> </a> </td>
+                    {% endif %}
+                {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
+                    {% if ordem.possui_sugestao_correcao %}
+                    <td class="tds-trs-{{ordem.identificacao_numerica}}" style="text-align: center;"> <a class="a-clear-acao" href="{% url 'abrindo_correcao_acao' plano.id ordem.identificacao_numerica 'Sim' %}"><div style="height:100%;width:100%">{{ordem.identificacao_numerica}} <span class="tooltiptext2-tabela"> <i class="fas fa-edit"></i> Corrigir!</span> </div> </a> </td>
+                    {% else %}
+                    <td class="tds-trs-{{ordem.identificacao_numerica}}" style="text-align: center;"> <a class="a-clear-acao" ><div style="height:100%;width:100%">{{ordem.identificacao_numerica}} </div> </a> </td>
+                    {% endif %}
+                {% elif user.classificacao.tipo_de_acesso == 'Funcionario' %}
+                    <td class="tds-trs-{{ordem.identificacao_numerica}}" style="text-align: center;"> <a class="a-clear-acao" ><div style="height:100%;width:100%">{{ordem.identificacao_numerica}} </div> </a> </td>
+                {% endif %}
+
+                <td class="tds-trs-{{ordem.identificacao_numerica}}" style="width: 200px;"> {{ordem.descricao_do_problema}} </td>
+                <td class="tds-trs-{{ordem.identificacao_numerica}}" style="text-align: center;">  </td>
+                <td class="tds-trs-{{ordem.identificacao_numerica}}" style="width: 300px;"> </td>
+                <td class="tds-trs-{{ordem.identificacao_numerica}}" style="text-align: center; width: 80px;">  </td>
+                <td class="tds-trs-{{ordem.identificacao_numerica}}" style="text-align: center;width: 80px;">  </td>
+                <td class="tds-trs-{{ordem.identificacao_numerica}}" style="width: 250px;"> {{ordem.resultados_esperados}} </td>
+            </tr>
+            
+            {% endif %}
+
+            <!--  SE ORDEM INSERIDA, E CONTÉM CODIGOS INSERIDOS -->
+
+            {% if ordem.inserida and ordem.codigos_inseridos != 0 %}
+
+                
+                {% set '' as var1 %} <!-- FORA DO FOR DOS CODIGOS. Variável que controla a renderização da rowspan somente na primeira passagem da ordem-->
+                {% for item in chave_codigos %} <!-- PARA CADA CODIGO -->
+                    {% if item.inserido  and item.ordem.identificacao_numerica == ordem.identificacao_numerica %}  <!-- SE A ORDEM DESTE CODIGO = INSTANCIA DA ORDEM ATUAL -->
+                    <tr class=" cards-ordens-visualizacao tr-dinamicos{{item.ordem.identificacao_numerica}}" >
+                        {% if not var1 %}
+
+                        {% if user.classificacao.tipo_de_acesso == 'Secretaria' %}
+                            {% if ordem.possui_sugestao_correcao %}
+                            <td class="tds-trs-{{ordem.identificacao_numerica}}" rowspan="{{ordem.ordem_rowspan}}" style="text-align: center;"> <a class="a-clear-acao desabilita-js" href="{% url 'chamando_correcao_acao_plano' plano.id ordem.id %}"><div style="height:100%;width:100%">{{ordem.identificacao_numerica}} <span class="tooltiptext2-tabela"> <i class="fas fa-edit"></i> Alterar correção!</span> </div> </a> </td>
+                            {% else %}
+                            <td class="tds-trs-{{ordem.identificacao_numerica}}" rowspan="{{ordem.ordem_rowspan}}" style="text-align: center;"> <a class="a-clear-acao desabilita-js" href="{% url 'chamando_correcao_acao_plano' plano.id ordem.id %}"><div style="height:100%;width:100%">{{ordem.identificacao_numerica}} <span class="tooltiptext1-tabela"> <i class="fa-solid fa-arrow-left"></i> Sugerir correção!</span> </div> </a> </td>
+                            {% endif %}
+                        {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
+                            {% if ordem.possui_sugestao_correcao %}
+                            <td class="tds-trs-{{ordem.identificacao_numerica}}" rowspan="{{ordem.ordem_rowspan}}" style="text-align: center;"> <a class="a-clear-acao" href="{% url 'abrindo_correcao_acao' plano.id ordem.identificacao_numerica 'Sim' %}"><div style="height:100%;width:100%">{{ordem.identificacao_numerica}} <span class="tooltiptext2-tabela"> <i class="fas fa-edit"></i> Corrigir!</span> </div> </a> </td>
+                            {% else %}
+                            <td class="tds-trs-{{ordem.identificacao_numerica}}" rowspan="{{ordem.ordem_rowspan}}" style="text-align: center;"> <a class="a-clear-acao"><div style="height:100%;width:100%">{{ordem.identificacao_numerica}} </div> </a> </td>
+                            {% endif %}
+                        {% elif user.classificacao.tipo_de_acesso == 'Funcionario' %}
+                            <td class="tds-trs-{{ordem.identificacao_numerica}}" rowspan="{{ordem.ordem_rowspan}}" style="text-align: center;"> <a class="a-clear-acao"><div style="height:100%;width:100%">{{ordem.identificacao_numerica}} </div> </a> </td>
+                        {% endif %}
+
+
+                        <td class="tds-trs-{{ordem.identificacao_numerica}}" rowspan="{{ordem.ordem_rowspan}}" style="width: 200px;"> {{ordem.descricao_do_problema}} </td>
+                        {% endif %}
+
+                        {% if item.ordem.identificacao_numerica == ordem.identificacao_numerica %}  <!-- SE A ORDEM DESTE CODIGO = INSTANCIA DA ORDEM ATUAL -->
+                            {% if ordem.codigos_inseridos >= 1 %}  <!-- SE HOUVER AO MINIMO 1 CODIGO DESTA ORDEM INSERIDO -->
+                                
+                                <td class="tds-trs-{{ordem.identificacao_numerica}}" style="text-align: center;"> {{ordem.identificacao_numerica}}{{item.identificacao}}  </td>
+                                <td class="tds-trs-{{ordem.identificacao_numerica}}" style="width: 300px;"> {{item.especificacao}} </td>
+                                <td class="tds-trs-{{ordem.identificacao_numerica}}" style="text-align: center;"> {{ordem.prazo_execucao_inicial|date:'M/Y'}}  </td>
+                                <td class="tds-trs-{{ordem.identificacao_numerica}}" style="text-align: center;"> {{ordem.prazo_execucao_final|date:'M/Y'}}  </td>
+                                
+                            {% endif %}
+                        {% endif %}
+                        
+                        
+                        {% if not var1 %}
+                        <td class="tds-trs-{{ordem.identificacao_numerica}}" rowspan="{{ordem.ordem_rowspan}}" style="width: 250px;"> {{ordem.resultados_esperados}} </td>
+                        {% endif %}
+                        
+                    </tr>
+                    {% set 'true' as var1 %}    <!-- SÓ DESABILITA RENDERIZAÇÃO DOS ROWSPAN QUANDO RENDERIZAR O PRIMEIRO CODIGO DISPONIVEL    -->
+                    {% endif %}
+                
+                    
+
+                {% endfor %}
+            {% endif %}
+
+
+                
+                    
+            
+        
+
+
+
+        {% else %}  <!-- SE ORDEM NAO INSERIDA -->
+        
+        <!-- ORDEM NAO INSERIDA, NAO RENDERIZA NADA -->
+
+        {% endif %}
+        {% endfor %}
+
+        <!-- FIM DA GERAÇÃO DAS ORDENS -->
+        </table>
+
+        <table class="tabela-principal">
+
+        <tr>
+            <th colspan="4"> APROVAÇÃO UNIDADE ESCOLAR </th>
+            <td colspan="2", rowspan="0", style="width: 100px;">  </td> <!-- celula vazia-->
+            <th rowspan="2"> APROVAÇÃO SUPROT </th>
+        </tr>
+
+        <tr>
+            <td colspan="4"> DATA:    /     /      </td>
+        </tr>
+
+        <tr>
+            <th style="width: 100px;"> POSIÇÃO </th>
+            <th> NOME </th>
+            <th colspan="2", style="width: 200px;"> ASSINATURA </th>
+            <td> DATA:    /     /      </td>
+        </tr>
+
+        <tr>
+            <td style="text-align: center;"> Presidente Cx Escolar </td>
+            <td style="text-align: center;width: 200px;font-weight: bold;"> {{plano.usuario.first_name}} </td>
+            <td colspan="2", style="text-align: center;">  </td>
+            <td> VISTO SUPROF: </td>
+        </tr>
+
+        <tr>
+            <td style="text-align: center;"> Tesoureiro(a) </td>
+            {% for funcionarios in chave_funcionarios %}
+                {% if funcionarios.user.last_name == 'Tesoureiro(a)' %}
+                <td style="text-align: center;width: 200px;font-weight: bold;"> {{funcionarios.user.first_name}} </td>
+                {% endif %}
+            {% endfor %}
+            <td colspan="2", style="text-align: center;">  </td>
+            <td> CADASTRO: </td>
+        </tr>
+
+
+        {% set '' as var2 %}
+        {% for funcionarios in chave_funcionarios %}  
+        <tr>        
+                {% if not var2 %}
+                    {% if varmembros > 0 %}
+                    <td rowspan="{{varmembros}}", style="text-align: center;"> Membros do colegiado escolar </td>
+                    {% else %}
+                    <td style="text-align: center;"> Membros do colegiado escolar </td>
+                    {% endif %}
+                {% endif %}
+                
+                    {% if funcionarios.user.last_name == 'Membro do colegiado' %}
+                    <td style="text-align: center;width: 200px;font-weight: bold;"> {{funcionarios.user.first_name}} </td>
+                    {% endif %}
+                
+                    {% if funcionarios.user.last_name == 'Membro do colegiado' %}
+                    <td colspan="2", style="text-align: center;">  </td>
+                    {% endif %}                 
+        </tr>
+
+        {% set 'true' as var2 %}
+        {% endfor %}  
+
+    {% endfor %}
+    {% endif %}
+    
+    </table>
+</div>

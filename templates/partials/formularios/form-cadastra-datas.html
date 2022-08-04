@@ -1,0 +1,36 @@
+{% load static %}
+{% load widget_tweaks %}
+
+{% if chave_contexto_abre_form_datas %}
+<div class="div-form-ordem" style="display: block;">
+{% else %}
+<div class="div-form-ordem">
+{% endif %}
+
+    <div class="titulo-modal">
+        <h2>Cadastro de datas</h2>
+        <h4>Plano: {{chave_planos.ano_referencia}}</h4>
+        <h4>Ordem: Nº {{chave_ordem_data.identificacao_numerica}}</h4><br>
+    </div>
+    <div class="classe-form-modal">
+        <form class="form-modal" action="{% url 'cadastrando_datas' chave_planos.id chave_ordem_data.id %}" method="POST"> 
+        {% csrf_token %}
+        {% for elemento in chave_form_datas.visible_fields %}
+        <div class="linha-input linha-input-row">
+            <label class="label-input label-input-form-django" for="{{ elemento.id_for_label }}">{{ elemento.label }}</label>
+            {{elemento|add_class:'input-input'}}
+        </div>
+        {% for error in elemento.errors %}
+        <section class="alert alert-danger" role="alert"> {{ elemento.errors }} </section>
+        {% endfor %}
+
+        {% endfor %}
+        <div class="linha-submit">
+            <input class="myButton myButton_form_margem" type="submit" value="Cadastrar"></input>
+        </div>
+        </form>
+    </div>
+
+    
+
+</div>

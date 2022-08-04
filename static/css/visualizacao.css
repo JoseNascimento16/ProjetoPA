@@ -1,0 +1,108 @@
+.div-visualizacao-bloco{
+    display: flex;
+    flex-direction: column;
+    /* margin: 5px 80px 5px 80px; */
+    position: relative;
+    width: 1065px;
+    margin: auto;
+    overflow-x: auto;
+    /* border: 1px solid black; */
+  }
+
+.div-visualizacao-img{
+  flex: 1;
+  margin-bottom: 15px;
+}
+
+  .visualizacao-img{
+    max-width: 100%;
+    display: block;
+    /* position: absolute; */
+    height: auto;
+    top: 0px;
+  }
+
+.div-visualizacao-bloco div{
+  /* border: 1px solid black; */
+}
+
+.div-unidade-bloco{
+  width: 535px;
+}
+
+.tabela-unidade, .tabela-unidade td{
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+td{
+  padding: 5px;
+}
+
+.linha-municipio{
+  /* display: flex; */
+}
+.linha-municipio div{
+  /* flex: 1; */
+}
+
+.titulo-plano{
+  text-align: center;
+}
+.titulo-plano h4{
+  margin: 5px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.tabela-principal{
+  width: 99.9%;
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+.tabela-principal th{
+  border: 1px solid black;
+  background-color: rgb(167, 164, 164);
+  -webkit-print-color-adjust: exact;
+  color-adjust: exact;
+  text-align: center;
+}
+
+.tabela-principal td{
+  border: 1px solid black;
+}
+
+.background-tr-acoes{ /* HOVER, ESTA PELO JQUERY pagina_acoes.js */
+  background-color: rgba(46, 137, 255, 0.137);
+}
+
+.background-possui-correcao{ /* TROCA O BACKGROUND SE A ORDEM POSSUIR CORREÇÃO A SER FEITA */
+  background-color: rgba(255, 147, 46, 0.384);
+}
+
+/* CSS DA PAGINA DESPESA */
+
+.tr-codigos td{
+  font-size: 14px;
+}
+
+.td-especificacao-justificativa{
+  padding: 1px 2px;
+}
+
+/* testes de quebra de pagina na impressão*/
+
+table.quebra-pagina{
+  page-break-inside:auto;
+}
+
+table.quebra-pagina2{
+  page-break-inside:avoid;
+  page-break-before:avoid;
+}
+
+table tr.quebra-pagina{
+  display: block;
+  page-break-after:always;
+}

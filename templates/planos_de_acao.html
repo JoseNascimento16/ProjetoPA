@@ -1,0 +1,626 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load definir_acoes %}
+{% load custom_tags %}
+{% block content %}
+
+{{ chave_tipo_usuario|json_script:"id-tipo-usuario" }}
+
+
+<div class="box-plano1">
+    {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
+    <div class="box-plano1-1 display-flex">
+        <h5><i class="fas fa-chart-bar margem-icones-menu"></i>PLANOS DE AÇÃO</h5>
+        <form class="tooltip5" action="{% url 'pagina_planos_de_acao_pesquisa' 'search' %}" method="POST">
+            {% csrf_token %}
+            <input class="search-bar" type="text" placeholder="Pesquisar..." value="{{chave_valor_pesquisa}}" name="campo">
+            <!-- <span style="left: 40px;" class="tooltiptext5">Pesquisar planos.</span> -->
+            <button class="botao-pesquisa" type="submit"><i class="fas fa-search margem-icones-menu"></i></button>                                  
+        </form>
+    </div>
+    {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
+        <div class="box-plano1-1 display-flex">
+            <h5><i class="fas fa-chart-bar margem-icones-menu"></i>MEUS PLANOS DE AÇÃO</h5>
+            <form class="tooltip5" action="{% url 'pagina_planos_de_acao_pesquisa' 'search' %}" method="POST">
+                {% csrf_token %}
+                <input class="search-bar" type="text" placeholder="Pesquisar..." value="{{chave_valor_pesquisa}}" name="campo">
+                <!-- <span style="left: 40px;" class="tooltiptext5">Pesquisar planos.</span> -->
+                <button class="botao-pesquisa" type="submit"><i class="fas fa-search margem-icones-menu"></i></button>                                  
+            </form>
+        </div>
+    {% else %}
+        <div class="box-plano1-1">
+            <h5><i class="fas fa-chart-bar margem-icones-menu"></i>PLANOS DE AÇÃO</h5>
+        </div>
+    {% endif %}
+    
+    {% if chave_planos_com_correcao %}
+    <div class="box-plano1-3">
+        <p>Há planos com correções a serem feitas, <a href="{% url 'pagina_planos_a_serem_corrigidos' 'slug' %}"> clique aqui!</a> </p>
+    </div>
+    {% endif %}
+
+    {% if messages %}
+        <ul class="ul-mensagens">
+            {% for message in messages %}
+            <li{% if message.tags %} class="alert alert-{{ message.tags }} li-mensagens"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <div class="box-plano1-2" style="margin-left: 10px">
+        <h5 style="min-width: 131px">Plano de ação</h5>
+        <!-- <h5 class="flex-02"></h5> -->
+        <h5>Visualizar</h5>
+        <h5>Visualizar</h5>
+        {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
+        <h5 class="card-nome-instituicao" style="flex: 2;">Instituição de ensino:</h5>
+        {% if user.classificacao.tipo_de_acesso == 'Func_sec' %}
+        <h5></h5>
+        {% endif %}
+        {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
+        <h5 class="h5-situacao" style="min-width: 162px">Situação:</h5>
+        <h5>Ação:</h5>
+            {% if not chave_pagina_correcoes %}
+            <h5></h5>
+            {% endif %}
+        {% elif user.classificacao.tipo_de_acesso == 'Funcionario' %}
+        <h5>Situação:</h5>
+        <h5>Ação:</h5>
+        {% endif %}
+    </div>
+    <div class="div-cards-planos">
+        {% if chave_planos %}
+        {% for elemento in chave_planos.object_list %}
+        <div class="cards-planos-box">
+            <div class="cards-planos border-0">
+                    <!-- POS 1 PLANO -->
+                    <h5 class="box-plano-1-2-compact">Plano de ação</h5>
+                    <p class="clear-2 itens-cards-planos p1-itens-cards-planos">
+                    
+                        <!-- <i id="icone-accordion" class="fas fa-edit margem-icones-menu icone-accordion"></i> -->
+                        <i id="icone-accordion" class="arrow fa-solid fa-angle-right setinha margem-icones-menu icone-accordion" style="margin-left: 5px"></i>
+                    
+                        {% if not elemento.tipo_fia %}
+                        <a class="a-clear-href tooltip5" href="{% url 'chamando_1_plano' elemento.id %}">
+                            {{ elemento.ano_referencia|truncatechars:15 }}
+                            <span class="tooltiptext5" style="left: 100px;width: 200px; min-width: 120px">{{elemento.ano_referencia}}</span>
+                        </a>
+                        {% else %}
+                        <a class="a-fia">(FIA)</a>
+                        <a class="a-clear-href tooltip5">
+                            {{ elemento.ano_referencia|truncatechars:15 }}
+                            <span class="tooltiptext5" style="left: 100px;width: 200px; min-width: 120px">(FIA) {{elemento.ano_referencia}}</span>
+                        </a>
+                        {% endif %}
+                    </p>
+                    <!-- POS 2 AÇÕES -->
+                    <h5 class="box-plano-1-2-compact">Visualizar</h5> <!-- hidden -->
+                    {% if not elemento.tipo_fia %}
+                    <p class="clear-2 itens-cards-planos p2-itens-cards-planos">
+                        <a href="{% url 'chamando_acao_plano' elemento.id %}">
+                            <i class="fas fa-eye margem-icones-menu"></i>Ações
+                        </a>
+                    </p>
+                    {% else %}
+                    <p class="clear-2 itens-cards-planos p2-itens-cards-planos">
+                        <a href="{% url 'chamando_documento_fia' elemento.id %}">
+                            <i class="fas fa-eye margem-icones-menu"></i>Documento
+                        </a>
+                    </p>
+                    {% endif %}
+
+                    <!-- POS 3 DESPESAS -->
+                    <h5 class="box-plano-1-2-compact">Visualizar</h5> <!-- hidden -->
+                    {% if not elemento.tipo_fia %}
+                    <p class="clear-2 itens-cards-planos p3-itens-cards-planos">
+                        <a href="{% url 'chamando_despesa_plano' elemento.id %}">
+                            <i class="fas fa-eye margem-icones-menu"></i>Despesas
+                        </a>
+                    </p>
+                    {% else %}
+                    <p class="clear-2 itens-cards-planos p3-itens-cards-planos">
+                            --------
+                    </p>
+                    {% endif %}
+                
+                <!-- POS 4 SITUAÇÃO -->
+                {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
+                <p class="clear-2 itens-cards-planos card-nome-instituicao" style="flex: 2;">
+                    <a class="tooltip5" href="#">
+                        <i class="fas fa-school margem-icones-menu"></i>{{elemento.usuario.last_name|truncatechars:27}}
+                        <span class="tooltiptext5" style="left: 100px; width: 300px">{{elemento.usuario.last_name}}</span>
+                    </a>
+                </p>
+                {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
+                    {% if elemento.situacao == 'Publicado' and elemento.devolvido == True and elemento.correcoes_a_fazer == 0 and elemento.pre_assinatura == True %}
+                    <p class="clear-2 itens-cards-planos p-situacao">
+                        <a href="#">
+                            Pré aprovado
+                        </a>
+                    </p>
+                    {% else %}
+                    <p class="clear-2 itens-cards-planos p-situacao">
+                        <a href="#">
+                            {{ elemento.situacao }}
+                        </a>
+                    </p>
+                    {% endif %}
+                {% elif user.classificacao.tipo_de_acesso == 'Funcionario' %}
+                <p class="clear-2 itens-cards-planos p-situacao">
+                    <a class="a-clear-href" href="#">
+                        {{ elemento.situacao }}
+                    </a>
+                </p>
+                {% endif %}
+
+                <!-- POS 4.1 VAZIO OU ACAO -->
+                {% if user.classificacao.tipo_de_acesso == 'Func_sec' %}
+                    {% if elemento.situacao == 'Em desenvolvimento' or elemento.situacao == 'Necessita correção' or elemento.situacao == 'Pronto' or elemento.situacao == 'Publicado' or elemento.situacao == 'Aprovado' or elemento.situacao == 'Finalizado' %}
+                        <p class="itens-cards-planos">
+                            -----
+                        </p>
+                    {% endif %}
+                    {% if elemento.situacao == 'Inteiramente assinado' and user.classificacao.assina_plano == False %}
+                        <p class="itens-cards-planos">
+                            -----
+                        </p>
+                    {% endif %}
+                {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
+                    {% if not chave_pagina_correcoes %}
+                        {% if elemento.situacao == 'Assinado' or elemento.situacao == 'Inteiramente assinado' or elemento.situacao == 'Necessita correção' or elemento.situacao == 'Corrigido pela escola' or elemento.situacao == 'Pendente' or elemento.situacao == 'Finalizado' %}
+                            <p class="itens-cards-planos">
+                                -----
+                            </p>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+
+                
+                <!-- POS 5 BOTAO DE AÇÕES FUNC_SEC -->
+                {% if user.classificacao.tipo_de_acesso == 'Func_sec' %}
+                
+                    {% if elemento.situacao == 'Assinado' %}
+                    
+                        {% if elemento.ano_referencia not in chave_planos_assinados and user.classificacao.assina_plano == True %}
+                        <div class="box-botao-cadastro1 itens-cards-planos">
+                            <form class="tooltip2 display-flex-media" action="{% url 'autorizar_plano_sec' elemento.id %}" method="POST" onclick="return confirm('Deseja realmente assinar o plano de ação: {{ elemento.ano_referencia }}?')">
+                                {% csrf_token %}
+                                <input class="myButton flex-grow-media" type="submit" value="Assinar">
+                                <span style="left: 40px;" class="tooltiptext2">Você já pode assinar este plano.</span>  
+                            </form>
+                        </div>
+                        {% elif elemento.ano_referencia in chave_planos_assinados and user.classificacao.assina_plano == True %}
+                        <div class="box-botao-cadastro1 itens-cards-planos">
+                            <form class="tooltip2 display-flex-media" method="#">
+                                <input class="myButtonGrey flex-grow-media" type="button" value="Assinado">
+                                <span style="left: 40px;" class="tooltiptext2">Você já assinou. Para finalizar, é preciso que TODOS os funcionários de alto cargo também assinem este plano.</span>                                                 
+                            </form>
+                        </div>
+                        {% endif %}
+                        {% if user.classificacao.assina_plano == False %}
+                            <p class="itens-cards-planos">
+                                -----
+                            </p>
+                        {% endif %}
+                        
+                    {% endif %}
+
+                    {% if elemento.situacao == 'Inteiramente assinado' %}
+
+                        {% if user.classificacao.assina_plano == True %}
+                        <div class="box-botao-cadastro1 itens-cards-planos">
+                            <form class="tooltip3 display-flex-media" action="{% url 'finalizar_plano' elemento.id %}" method="POST" onclick="return confirm('Plano: - {{ elemento.ano_referencia }} - será finalizado (completo). Ao confirmar, ele já poderá ser impresso com todas as assinaturas e a escola poderá dispor dos recursos necessários para a efetivação do mesmo!')">
+                                {% csrf_token %}
+                                <input class="myButton flex-grow-media" type="submit" value="FINALIZAR!">
+                                <span style="left: 40px;" class="tooltiptext3">Plano já assinado por todos os envolvidos e pronto para ser finalizado.</span>                                                 
+                            </form>
+                        </div>
+                        {% endif %}
+                        
+                    {% endif %}
+
+                    {% if elemento.situacao == 'Pendente' or elemento.situacao == 'Corrigido pela escola' %}
+
+                            {% if elemento.pre_analise_acao == False and elemento.pre_analise_despesa == False and elemento.pre_analise_fia == False %}
+                            
+                                {% if elemento.corretor_plano == None %}
+                                    <div class="box-botao-cadastro1 itens-cards-planos">
+                                        <form class="tooltip2 display-flex-media" action="{% url 'abrindo_atribui_corretor' elemento.id 'sim' %}" method="POST">
+                                            {% csrf_token %}
+                                            <input class="myButtonGreen flex-grow-media" type="submit" value="Corrigir">
+                                            <span style="left: 40px;" class="tooltiptext2">Habilita a correção deste plano!</span>
+                                        </form>
+                                    </div>
+                                {% else %}
+                                    {% if elemento.corretor_plano == user %}
+                                    <div class="box-botao-cadastro1 itens-cards-planos">
+                                        <form class="tooltip2 display-flex-media" action="{% url 'chamando_acao_plano' elemento.id %}" method="POST">
+                                            {% csrf_token %}
+                                            <input class="myButton flex-grow-media" type="submit" value="Corrigir">
+                                            <span style="left: 40px;" class="tooltiptext2">Favor verificar Ações e Despesas do plano!</span>
+                                        </form>
+                                    </div>
+                                    {% else %}
+                                        <p class="itens-cards-planos">
+                                            -----
+                                        </p>
+                                    {% endif %}
+                                {% endif %}
+
+                            {% elif elemento.pre_analise_acao == True and elemento.pre_analise_despesa == False %}
+                            <div class="box-botao-cadastro1 itens-cards-planos">
+                                <form class="tooltip2 display-flex-media" action="{% url 'chamando_despesa_plano' elemento.id %}" method="POST">
+                                    {% csrf_token %}
+                                    <input class="myButton flex-grow-media" type="submit" value="Despesas">
+                                    <span style="left: 40px;" class="tooltiptext2">Favor verificar Despesas do plano!</span>
+                                </form>
+                            </div>
+                            {% elif elemento.pre_analise_acao is False and elemento.pre_analise_despesa is True %}
+                            <div class="box-botao-cadastro1 itens-cards-planos">
+                                <form class="tooltip2 display-flex-media" action="{% url 'chamando_acao_plano' elemento.id %}" method="POST">
+                                    {% csrf_token %}
+                                    <input class="myButton flex-grow-media" type="submit" value="Ações">
+                                    <span style="left: 40px;" class="tooltiptext2">Favor verificar Ações do plano!</span>
+                                </form>
+                            </div>
+                            {% elif elemento.pre_analise_acao is True and elemento.pre_analise_despesa is True or elemento.pre_analise_fia is True %}
+
+                                {% if elemento.correcoes_a_fazer == 0 %}
+                                <div class="box-botao-cadastro1 itens-cards-planos">
+                                    <form action="{% url 'aprovar_plano' elemento.id %}" class="display-flex-media" method="POST" onclick="return confirm('Confirma que este plano já foi analisado e corrigido?. Ao confirmar, este plano será marcado como * Aprovado * e a escola já poderá assinar o plano de ações. Deseja realmente APROVAR o plano de ações: {{ elemento.ano_referencia }}? ')">
+                                        {% csrf_token %}
+                                        <input class="myButton flex-grow-media" type="submit" value="Aprovar">
+                                    </form>
+                                </div>
+                                {% else %}
+
+                                <div class="box-botao-cadastro1 itens-cards-planos">
+                                    <form action="{% url 'abre_modal_devolve' elemento.id 'modal' %}" class="display-flex-media" method="POST">
+                                        {% csrf_token %}
+                                        <input class="myButton flex-grow-media" type="submit" value="Devolver">
+                                    </form>
+                                </div>
+                                    
+                                {% endif %}
+                                
+                            {% endif %}
+
+                    {% endif %}
+                
+                {% endif %}
+                
+                <!-- POS 5 BOTÃO DE AÇÕES ESCOLA-->
+                {% if user.classificacao.tipo_de_acesso == 'Escola' %}
+
+                    {% if elemento.situacao == 'Em desenvolvimento' %}
+                    <div class="box-botao-cadastro1 itens-cards-planos">
+                        <form class="tooltip2 display-flex-media" action="{% url 'publicar_plano' elemento.id %}" method="POST">
+                            {% csrf_token %}
+                            <input class="myButton flex-grow-media" type="submit" value="Publicar">     
+                            <span class="tooltiptext2">Após ser publicado, qualquer alteração no Plano de ação será registrada.</span>                                                 
+                        </form>
+                        
+                    </div>
+                    {% elif elemento.situacao == 'Publicado' %}
+                        {% if not elemento.devolvido %}
+                        <div class="box-botao-cadastro1 itens-cards-planos">
+                            <form class="tooltip3 display-flex-media" action="{% url 'enviar_plano' elemento.id %}" method="POST" onclick="return confirm('Ao enviar você confirma que este plano já foi discutido e acordado com os membros do colegiado escolar. Deseja realmente ENVIAR o plano de ação: {{ elemento.ano_referencia }} para a Secretaria da Educação? ')">
+                                {% csrf_token %}
+                                <input class="myButton flex-grow-media" type="submit" value="Enviar">
+                                <!-- <span class="tooltiptext3">Plano pronto para ser enviado!</span>                                                  -->
+                            </form>
+                        </div>
+                        {% elif elemento.devolvido and elemento.pre_assinatura and elemento.ano_referencia not in chave_planos_assinados %}
+                        <div class="box-botao-cadastro1 itens-cards-planos">
+                            <form class="tooltip2 display-flex-media" action="{% url 'autorizar_plano' elemento.id %}" method="POST" onclick="return confirm('Deseja realmente assinar o plano de ação: {{ elemento.ano_referencia }}?')">
+                                {% csrf_token %}
+                                <input class="myButton flex-grow-media" type="submit" value="Assinar">
+                                <span style="left: 40px;" class="tooltiptext2">Você já pode assinar este plano.</span>  
+                            </form>
+                        </div>
+                        {% elif elemento.pre_assinatura and elemento.ano_referencia in chave_planos_assinados %}
+                        <div class="box-botao-cadastro1 itens-cards-planos">
+                            <form class="tooltip2 display-flex-media" method="#">
+                                <input class="myButtonGrey flex-grow-media" type="button" value="Assinado">
+                                <span class="tooltiptext2">Você já assinou. Para concluir, é preciso que TODOS os membros do corpo escolar também assinem este plano.</span>                                                 
+                            </form>
+                        </div>
+                        {% elif elemento.pre_assinatura and chave_assinado_todos %}
+                        <div class="box-botao-cadastro1 itens-cards-planos">
+                            <form class="tooltip3 display-flex-media" action="{% url 'enviar_plano' elemento.id %}" method="POST" onclick="return confirm('Ao enviar você confirma que já analisou as sugestões de correção. Deseja realmente REENVIAR o plano de ação: {{ elemento.ano_referencia }} para a Secretaria da Educação? ')">
+                                {% csrf_token %}
+                                <input class="myButton flex-grow-media" type="submit" value="Reenviar">
+                                <span class="tooltiptext3">Correções concluidas, plano pronto para ser reenviado!</span>                                                 
+                            </form>
+                        </div>
+                        {% elif elemento.devolvido and elemento.correcoes_a_fazer == 0 %}
+                        <div class="box-botao-cadastro1 itens-cards-planos">
+                            <form class="tooltip3 display-flex-media" action="{% url 'enviar_plano' elemento.id %}" method="POST" onclick="return confirm('Ao enviar você confirma que já analisou as sugestões de correção. Deseja realmente REENVIAR o plano de ação: {{ elemento.ano_referencia }} para a Secretaria da Educação? ')">
+                                {% csrf_token %}
+                                <input class="myButton flex-grow-media" type="submit" value="Reenviar">
+                                <span class="tooltiptext3">Correções concluidas, plano pronto para ser reenviado!</span>                                                 
+                            </form>
+                        </div>
+                        {% endif %}
+
+                    {% elif elemento.situacao == 'Aprovado' %}
+                    
+                        {% if elemento.ano_referencia in chave_planos_assinados %} <!-- Se ja assinou -->
+                        <div class="box-botao-cadastro1 itens-cards-planos">
+                            <form class="tooltip2 display-flex-media" method="#">
+                                <input class="myButtonGrey flex-grow-media" type="button" value="Assinado">
+                                <span style="left: 40px;" class="tooltiptext2">Você já assinou. Para concluir, é preciso que TODOS os funcionários cadastrados também assinem este plano.</span>                                                 
+                            </form>
+                        </div>
+                        
+                        {% elif elemento.ano_referencia not in chave_planos_assinados %} <!-- Se não assinou -->
+                        
+                        <div class="box-botao-cadastro1 itens-cards-planos">
+                            <form class="tooltip2 display-flex-media" action="{% url 'autorizar_plano' elemento.id %}" method="POST" onclick="return confirm('Deseja realmente assinar o plano de ação: {{ elemento.ano_referencia }}?')">
+                                {% csrf_token %}
+                                <input class="myButton flex-grow-media" type="submit" value="Assinar">
+                                <span style="left: 40px;" class="tooltiptext2">Você já pode assinar este plano.</span>  
+                            </form>
+                        </div>
+
+                        {% endif %}
+                     
+                    {% elif elemento.situacao == 'Pronto' %}
+                    <div class="box-botao-cadastro1 itens-cards-planos">
+                        <form class="tooltip3 display-flex-media" action="{% url 'concluir_plano' elemento.id %}" method="POST" onclick="return confirm('Plano: {{ elemento.ano_referencia }} será concluído. Ao confirmar, ele será enviado à SUPROT para que possa ser assinado pelos coordenadores da Secretaria da Educação!')">
+                            {% csrf_token %}
+                            <input class="myButton flex-grow-media" type="submit" value="CONCLUIR !">
+                            <span class="tooltiptext3">Plano já assinado pelo (a) diretor(a), tesoureiro(a) e membros do colegiado.</span>                                                 
+                        </form>
+                    </div>
+
+                    {% elif elemento.situacao == 'Necessita correção' and chave_pagina_correcoes %}
+                    <div class="clear-2 itens-cards-planos">
+                        <a class="myButton a-cadastros" href="{% url 'pagina_correcoes' elemento.id %}" style="text-decoration: none;">Corrigir</a>
+                    </div>
+                    {% endif %}
+                
+                <!-- POS 6 EDIÇÃO NOME E LIXEIRA ESCOLA -->
+                    {% if not chave_pagina_correcoes %}
+                        <div class="box-botao-cadastro1 itens-cards-planos">
+                            <p class="clear-2 itens-cards-planos">
+
+                                <a class="a-clear-href" href="{% url 'abrindo_edicao_plano' elemento.id 'edita' %}">
+                                    <i class="fas fa-edit margem-icones-menu"></i>
+                                </a>
+
+                                <a href="{% url 'deletar_plano' elemento.id %}" method="POST" onclick="return confirm('Deseja realmente apagar o plano de ação: {{ elemento.ano_referencia }}?')" >
+                                    <i class="fa fa-trash tooltip4 lixeira" aria-hidden="true">
+                                    <span class="tooltiptext4">Excluir plano!</span>
+                                    </i>
+                                </a>
+                            </p>
+                        </div>
+                    {% endif %}
+                {% endif %}
+
+                <!-- POS 5 BOTÃO DE AÇÕES FUNCIONÁRIOS -->
+                {% if user.classificacao.tipo_de_acesso == 'Funcionario' %}
+
+                    {% if elemento.situacao == 'Aprovado' and elemento.ano_referencia in chave_planos_assinados %}
+                        <div class="box-botao-cadastro1 itens-cards-planos">
+                            <form action="#" class="display-flex-media">
+                                <input class="myButtonGrey flex-grow-media" type="submit" value="Assinado">
+                            </form>
+                        </div> 
+                    {% elif elemento.situacao == 'Aprovado' and elemento.ano_referencia not in chave_planos_assinados %}
+                        <div class="box-botao-cadastro1 itens-cards-planos">
+                            <form class="tooltip2 display-flex-media" action="{% url 'autorizar_plano' elemento.id %}" method="POST" onclick="return confirm('Deseja realmente assinar o plano de ação: {{ elemento.ano_referencia }}?')">
+                                {% csrf_token %}
+                                <input class="myButton flex-grow-media" type="submit" value="Assinar">
+                                <span style="left: 70px;" class="tooltiptext2">Você já pode assinar este plano.</span>
+                            </form>
+                        </div>
+                    {% elif elemento.situacao == 'Publicado' and elemento.ano_referencia in chave_planos_assinados %}
+                            <div class="box-botao-cadastro1 itens-cards-planos">
+                                <form action="#" class="display-flex-media">
+                                    <input class="myButtonGrey flex-grow-media" type="submit" value="Assinado">
+                                </form>
+                            </div>
+                    {% elif elemento.situacao == 'Publicado' and elemento.devolvido and elemento.pre_assinatura and elemento.ano_referencia not in chave_planos_assinados %}
+                        <div class="box-botao-cadastro1 itens-cards-planos">
+                            <form class="tooltip2 display-flex-media" action="{% url 'autorizar_plano' elemento.id %}" method="POST" onclick="return confirm('Deseja realmente assinar o plano de ação: {{ elemento.ano_referencia }}?')">
+                                {% csrf_token %}
+                                <input class="myButton flex-grow-media" type="submit" value="Assinar">
+                                <span style="left: 70px;" class="tooltiptext2">Você já pode assinar este plano.</span>
+                            </form>
+                        </div>
+                    {% elif elemento.situacao == 'Pronto' %}
+                    <div class="box-botao-cadastro1 itens-cards-planos display-flex-media">
+                        <form action="#">
+                            <input class="myButtonGrey flex-grow-media" type="submit" value="Assinado">
+                        </form>
+                    </div>
+                    {% else %}
+                        <div class="box-botao-cadastro1 itens-cards-planos">
+                            
+                        </div>   
+                    {% endif %}
+
+                {% endif %}
+
+            </div>
+
+            <!-- ACCORDION DE INFORMAÇÕES EXTRAS -->
+            
+                <div class="box-plano-accordion accordion-planos" style="margin-left: 0;">
+                    <div class="div-info-accordion">
+                        <div class="div-corretor-flex tooltip5" style="display: flex"> <h5  style="min-width: 148px">Instituição de ensino:</h5><p style="font-style: italic;margin-left: 0;">{{elemento.usuario.last_name|truncatechars:27}}</p>
+                            <span class="tooltiptext5" style="left: 100px; width: 300px">{{elemento.usuario.last_name}}</span>
+                        </div>
+                        <div class="div-corretor-flex"> <h5>Situação:</h5><p style="font-style: italic;">{{elemento.situacao}} (ver legenda)</p> </div>
+                        {% if elemento.corretor_plano != None %}
+                            <div class="div-corretor-flex"> <h5>Corretor:</h5><p style="font-style: italic;">{{elemento.corretor_plano.first_name}}</p>
+                                {% if user.classificacao.assina_plano == True and elemento.situacao != 'Finalizado' %}
+                                <a class="" style="font-style: italic;" href="{% url 'abrindo_altera_corretor' elemento.id True %}">(Alterar)</a>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <div class="div-corretor-flex"> <h5>Corretor:</h5><p style="font-style: italic;">-------</p> </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- MOSTRA QUAIS AS ASSINATURAS DA ESCOLA -->
+                    {% tag_len_funcionarios chave_classificacoes elemento.usuario.last_name elemento as len_funcionarios %}
+                    {% tag_len_assinaturas elemento.classificacao_set.all as len_assinaturas %}
+                    {% if elemento.situacao == 'Aprovado' or elemento.situacao == 'Pronto' or elemento.situacao == 'Assinado' or elemento.situacao == 'Inteiramente assinado' or elemento.situacao == 'Finalizado' %}
+                    <div class="div-assinaturas-escolas">
+                        <h5 style="margin-left: 0">Assinaturas Escola ({{len_assinaturas}}/{{len_funcionarios}}):</h5>
+                        {% for item in elemento.classificacao_set.all %}
+                            {% if item.tipo_de_acesso == 'Escola' or item.tipo_de_acesso == 'Funcionario' %}
+                            <p>- {{item}}</p>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    {% elif elemento.situacao == 'Publicado' and elemento.devolvido == True and elemento.correcoes_a_fazer == 0 and elemento.pre_assinatura == True %}
+                    <div class="div-assinaturas-escolas">
+                        <h5 style="margin-left: 0">Assinaturas Escola ({{len_assinaturas}}/{{len_funcionarios}}):</h5>
+                        {% for item in elemento.classificacao_set.all %}
+                            {% if item.tipo_de_acesso == 'Escola' or item.tipo_de_acesso == 'Funcionario' %}
+                            <p>- {{item}}</p>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <!-- MOSTRA QUAIS AS AASSINATURAS DA SUPROT -->
+                    {% tag_len_alto_cargo chave_classificacoes as len_alto_cargo %}
+                    {% tag_len_suprof elemento.classificacao_set.all as len_suprof %}
+                    {% if elemento.situacao == 'Pronto' or elemento.situacao == 'Assinado' or elemento.situacao == 'Inteiramente assinado' or elemento.situacao == 'Finalizado' %}
+                    <div class="div-assinaturas-suprot">
+                        <h5 style="margin-left: 0">Assinaturas SUPROT ({{len_suprof}}/{{len_alto_cargo}}):</h5>
+                        {% for item in elemento.classificacao_set.all %}
+                            {% if item.tipo_de_acesso == 'Func_sec' %}
+                            <p>- {{item}}</p>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            
+
+        </div>
+            
+        {% endfor %}
+
+        {% else %}
+        <div class="cards-planos">
+            {% if chave_var_pesquisa %}
+                <p class="clear-2 itens-cards-planos">
+                    Não há planos de ações que correspondam à pesquisa atual...
+                </p>
+            {% else %}
+                <p class="clear-2 itens-cards-planos">
+                    Não há Planos de ações para análise no momento...
+                </p>
+            {% endif %}
+        </div>
+        {% endif %}
+        {% if user.classificacao.tipo_de_acesso == 'Escola' %}
+        <div class="div-botoes-criar">
+            <div class="box-botao-cadastro1">
+                <a id="chama-form-plano" class="myButton a-cadastros">Criar Plano</a>
+            </div>
+            <div class="box-botao-cadastro1">
+                <a id="chama-form-fia" class="myButton a-cadastros">Criar FIA</a>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+
+    <!-- ##### Pagination ##### -->
+    <section class="top-catagory-area section-padding-20-0">
+        <div class="classe-pagination">
+            
+            <ul class="pagination">
+                {% if chave_planos.has_previous %}
+                    {% if not chave_var_pesquisa %}
+                    <li class="page-item">
+                        <a href="?page={{chave_planos.previous_page_number}}" class="page-link">&laquo;</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item">
+                        <a href="?page={{chave_planos.previous_page_number}}&q={{chave_valor_pesquisa|urlencode}}" class="page-link">&laquo;</a>
+                    </li>
+                    {% endif %}
+                {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link">&laquo;</a>
+                </li>
+                {% endif %}
+                
+                <li class="page-item active">
+                    <a class="page-link a-clear-href" style="cursor: default;">{{chave_planos.number}}</a>
+                </li>
+            
+                {% if chave_planos.has_next %}
+                    {% if not chave_var_pesquisa %}
+                    <li class="page-item">
+                        <a href="?page={{chave_planos.next_page_number}}" class="page-link">&raquo;</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item">
+                        <a href="?page={{chave_planos.next_page_number}}&q={{chave_valor_pesquisa|urlencode}}" class="page-link">&raquo;</a>
+                    </li>
+                    {% endif %}
+                {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link">&raquo;</a>
+                </li>
+                {% endif %}
+                
+            </ul>
+            
+        </div>
+    </section>
+    <!-- ##### Pagination End ##### -->
+
+    <div class="box-legendas">
+        <h4>Legenda:</h4>
+        <h5>- Em Desenvolvimento </h5>
+        <p>Planos "Em desenvolvimento" podem ser alterados a qualquer momento pela Escola, são planos recém criados.</p>
+        <h5>- Publicado </h5>
+        <p>Planos "Publicados" já terminaram de ser desenvolvidos pela escola, e portanto, já podem ser enviados à Secretaria da Educação. A partir deste estado, TODA alteração feita no plano gera um log de eventos que fica registrado.</p>
+        <h5>- Pendente </h5>
+        <p>Planos "Pendentes" já foram enviados e estão sob a análise da Secretaria da Educação. Um plano neste estado não pode ser modificado pela escola.</p>
+        <h5>- Necessita correção </h5>
+        <p>Um plano nesta situação já foi corrigido pela Secretaria da Educação, porém necessita de correção, e portanto, foi devolvido à escola com as devidas sugestões. Um plano pode passar por esta etapa quantas vezes forem necessárrias. Funcionários da SUPROT tem a opção de permitir que planos neste estágio sejam pré assinados pela escola após as correções.</p>
+        <h5>- Corrigido pela escola </h5>
+        <p>Um plano "Corrigido" já foi corrigido pela escola e reenviado para a Secretaria da Educação com as devidas correções.</p>
+        <h5>- Aprovado </h5>
+        <p>Planos "Aprovados" já passaram por quase todas as etapas necessárias, foram aprovados pela Secretaria da Educação e portanto já podem receber as assinaturas dos membros do corpo escolar. A partir deste estágio não podem mais ser alterados por ninguém.</p>
+        <h5>- Pronto </h5>
+        <p>Planos "Prontos" já passaram por correções, já foram assinados pelo tesoureiro e por todos os membros do colegiado e estão prontos para serem concluidos pela escola para receberem as assinaturas dos membros da SUPROT.</p>
+        <h5>- Assinado (pela escola - concluídos)</h5>
+        <p>Planos concluídos já foram assinados pelos membros do corpo escolar e devolvidos à SUPROT. Estão no aguardo das assinaturas dos coordenadores da SUPROT.</p>
+        <h5>- Inteiramente assinado (pela Secretaria)</h5>
+        <p>Planos neste estado já foram assinados pelos coordenadores da SUPROT.</p>
+        <h5>- Finalizado </h5>
+        <p>Planos finalizados já foram assinados por todos os envolvidos (escola e SUPROT) e finalizados por um coordenador. Portanto, já podem ser impressos com as assinaturas e a escola já pode dispor dos recursos necessários.</p>
+    </div>
+
+</div>
+
+
+{% include 'partials/modal-partial-edicao.html' %}
+{% include 'partials/modal-partial.html' %}
+{% include 'partials/modal-confirma.html' %}
+
+
+
+
+
+
+
+
+{% endblock %}
+
+
+        

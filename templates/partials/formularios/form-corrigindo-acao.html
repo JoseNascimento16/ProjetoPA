@@ -1,0 +1,63 @@
+{% load static %}
+{% load widget_tweaks %}
+
+{% if chave_contexto_corrigindo_acao %}
+<div class="div-form-ordem" style="display: block;">
+{% else %}
+<div class="div-form-ordem">
+{% endif %}
+
+    <div class="titulo-modal">
+        <h2>Corrigindo documento</h2>
+        <h4>1 - Identificação das ações</h4>
+    </div>
+    <div class="classe-form-modal">
+        <form id="form_corrigindo_acao" class="form-modal" action="{% url 'chama_corrige_ordem' chave_plano.id chave_ordem.id %}" method="POST" onsubmit="return confirm('Ao finalizar você confirma que já analisou e corrigiu (quando aplicável) as correções sugeridas. Deseja concluir esta correção?')">
+            {% for correcao in chave_correcao_ordem_especifica %}
+                <div class="linha-input linha-input-row sugestao-correcao-form">
+                    <label class="label-input label-input-form-django" for="{{ correcao.id_for_label }}">Sugestões de correção:</label>
+                    <textarea disabled="True" class="input-input" cols="30" rows="4">{{correcao.sugestao}}</textarea>
+                </div>
+            {% endfor %}
+        {% csrf_token %}
+            {% for elemento in chave_form_ordem.visible_fields %}
+                <div class="linha-input linha-input-row">
+                    <label class="label-input label-input-form-django" for="{{ elemento.id_for_label }}">{{ elemento.label }}</label>
+                    {{elemento|add_class:'input-input'}}
+                </div>
+                {% for error in elemento.errors %}
+                <section class="alert alert-danger" role="alert"> {{ elemento.errors }} </section>
+                {% endfor %}
+
+                {% if forloop.counter0 == 1 %} <!-- Na segunda passagem -->
+                    <div class="linha-input linha-input-row div-box-inseridos">
+                            {% for formularios in chave_form_codigos %}
+                                <div class="div-box-1-inseridos">
+                                {% for item in formularios.visible_fields %}
+                                        {% if forloop.counter0 == 0 %}
+                                            <label class="label-input label-input-form-django" for="{{ item.id_for_label }}">{{ item.label }}</label>
+                                            {{item|attr:'hidden:true'}}
+                                        {% else %}
+                                            {{item|add_class:'input-input'|attr:'rows:3'}}
+                                        {% endif %}
+
+                                        {% for error in item.errors %}
+                                        <section class="alert alert-danger" role="alert"> {{ item.errors }} </section>
+                                        {% endfor %}
+                                {% endfor %}
+                                </div>
+                            {% endfor %}
+                    </div>
+
+                {% endif %}
+        
+            {% endfor %}
+        <div class="linha-submit myButton_form_margem">
+            <input class="myButton" type="submit" value="Finalizar"></input>
+        </div>
+        </form>
+    </div>
+
+    
+
+</div>

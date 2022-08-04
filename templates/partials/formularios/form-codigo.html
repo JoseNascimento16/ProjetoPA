@@ -1,0 +1,65 @@
+{% load static %}
+{% load widget_tweaks %}
+
+{% if contexto_extra %}
+<div class="div-form-codigo" style="display: block;">
+{% else %}
+<div class="div-form-codigo">
+{% endif %}
+
+    {% if chave_abre_novo_codigo %}
+
+        <div class="titulo-modal">
+            <h2>Nova ação financiável (códigos)</h2>
+        </div>
+        <div class="classe-form-modal"> 
+            <form class="form-modal" action="{% url 'novo_codigo' chave_ordens.id 'variavel' %}" method="POST"> 
+            
+            {% csrf_token %}
+            {% for elemento in form_codigos.visible_fields %}
+            <div class="linha-input linha-input-coluna">
+                <label class="label-input label-input-form-django" for="{{ elemento.id_for_label }}">{{ elemento.label }}</label>
+                {{elemento|add_class:'input-input'}}
+            </div>
+            {% for error in elemento.errors %}
+            <section class="alert alert-danger" role="alert"> {{ elemento.errors }} </section>
+            {% endfor %}
+
+            {% endfor %}
+                <div class="linha-submit">
+                    <input class="myButton myButton_form_margem" type="submit" value="Criar ação"></input>
+                </div>
+            </form>
+        </div>
+
+    {% elif chave_abre_edita_codigo %}
+
+        <div class="titulo-modal">
+            <h2>Edição de ações financiáveis (códigos)</h2><p>Código: {{chave_ordens.identificacao_numerica}}{{chave_instancia_codigos.identificacao}}</p>
+        </div>
+        <div class="classe-form-modal"> 
+
+            <form class="form-modal" action="{% url 'editando_codigo' chave_ordens.id chave_instancia_codigos.id %}" method="POST"> 
+            
+            {% csrf_token %}
+            {% for elemento in form_codigos.visible_fields %}
+            <div class="linha-input linha-input-coluna">
+                <label class="label-input label-input-form-django" for="{{ elemento.id_for_label }}">{{ elemento.label }}</label>
+                {{elemento|add_class:'input-input'}}
+            </div>
+            {% for error in elemento.errors %}
+            <section class="alert alert-danger" role="alert"> {{ elemento.errors }} </section>
+            {% endfor %}
+
+            {% endfor %}
+                <div class="linha-submit">
+                    <input class="myButton" type="submit" style="margin-bottom: 10px;" value="Salvar"></input>
+                </div>
+            </form>
+        </div>
+
+    {% endif %}
+    
+</div>
+
+

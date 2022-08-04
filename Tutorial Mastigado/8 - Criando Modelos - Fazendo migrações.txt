@@ -1,0 +1,24 @@
+Em receitas > models.py vamos criar uma classe e dizer que ela é uma subclasse de models.Model
+    class Receita(models.Model):
+        nome1= models.CharField(max_length=200)
+        nome2= models.TextField()
+        nome3= models.IntegerField()
+        nome4= = models.DateTimeField(default=datetime.now, blank=True)
+
+Queremos saber também a data e hora em que o modelo foi criado foi publicada
+Vamos importar o DateTime
+    from datetime import datetime
+
+Temos que fazer as migrações
+
+No terminal
+    python manage.py makemigrations
+
+Agora que as migrações estão preparadas, vamos migrar os dados
+    python manage.py migrate
+
+Agora no nosso server veremos as tabelas migradas em:
+    server_do_projeto > SetupPrincipal > Schemas > Tables > desce o menu
+
+* Podemos alterar o tipo em cada um desses campos a qualquer momento, basta fazer uma nova migração.
+* Se já houverem modelos criados, talvez seja necessário apagá-los, pois alterar o tipo de campo muda tudo.

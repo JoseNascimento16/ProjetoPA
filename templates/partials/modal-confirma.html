@@ -1,0 +1,33 @@
+{% load static %}
+
+<!-- este modal-partial esta posicionado em cada pagina.html que precise dele -->
+{% if chave_confirma_corrige or chave_altera_corretor or chave_altera_cargo or chave_confirma_devolve %}
+<div class="modelo-modal-confirma" style="display: flex;">
+{% else %}
+<div class="modelo-modal-confirma">
+{% endif %}
+    <div class="fundo-modal-confirma">
+        <div class="corpo-modal">
+            <!-- <div class="fechar-modal">
+                <a href="#"><i class="fas fa-times fa-2x fecha-modal"></i></a>
+            </div> -->
+            <!-- Todos os partials de formularios devem estar aqui -->
+            {% if chave_confirma_devolve %}
+            {% include 'partials/formularios/confirma-devolve.html' %}
+            {% endif %}
+            {% if chave_reset_plano %}
+            {% include 'partials/formularios/confirma-reset-plano.html' %}
+            {% endif %}
+            {% if chave_confirma_corrige %}
+            {% include 'partials/formularios/confirma-corrige.html' %}
+            {% endif %}
+            {% if chave_altera_corretor %}
+            {% include 'partials/formularios/form-altera-corretor.html' %}
+            {% endif %}
+            {% if chave_altera_cargo %}
+            {% include 'partials/formularios/form-altera-cargo.html' %}
+            {% endif %}
+
+        </div>
+    </div>
+  </div>

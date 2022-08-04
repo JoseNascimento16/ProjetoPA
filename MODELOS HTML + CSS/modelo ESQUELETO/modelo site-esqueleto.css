@@ -1,0 +1,33 @@
+/* :: 1.0 Import Fonts */
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i");
+/* :: 2.0 Import All CSS */
+/* @import url(css/reset.css); */
+/* @import url(css/style.css); */
+@import url(css/conteiner-esqueleto.css);
+@import url(css/header-esqueleto.css);
+@import url(css/navbar-esqueleto.css);
+@import url(css/menu-esqueleto.css);
+@import url(css/corpo-esqueleto.css);
+@import url(css/footer-esqueleto.css);
+@import url(css/media-esqueleto.css);
+
+body{
+    margin: 0px;
+  }
+  
+* {
+    box-sizing: border-box;
+    font-family: 'Open Sans',sans-serif;
+}
+
+
+/* Todos os "<li>" e "<a>" terão esta formatação */
+.clear li{
+  list-style: none;
+}
+
+.clear a{
+  text-decoration: none;
+  color: rgb(206, 206, 206);
+}
+/* ------------------------------------------ */

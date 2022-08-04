@@ -1,0 +1,33 @@
+{% load static %}
+{% load widget_tweaks %}
+
+{% if contexto_extra_modelo_fia %}
+<div class="div-form-modelo-fia" style="display: block;">
+{% else %}
+<div class="div-form-modelo-fia">
+{% endif %}
+    <div class="titulo-modal">
+        <h2 style="margin-bottom: 25px;">FIA - {{chave_planos.ano_referencia}}</h2>
+    </div>
+    <div class="titulo-modal">
+        <h4 style="margin-bottom: 15px;">- Ordem principal -</h4>
+    </div>
+    <div class="classe-form-modal">
+        <form class="form-modal" action="{% url 'chama_altera_fia' chave_modelo_fia.id %}" method="POST">
+        {% csrf_token %}
+        {% for elemento in chave_form_modelo_fia.visible_fields %}
+        <div class="linha-input linha-input-row">
+            <label class="label-input label-input-form-django" for="{{ elemento.id_for_label }}">{{ elemento.label }}</label>
+            {{elemento|add_class:'input-input'}}
+        </div>
+        {% for error in elemento.errors %}
+        <section class="alert alert-danger" role="alert"> {{ elemento.errors }} </section>
+        {% endfor %}
+
+        {% endfor %}
+        <div class="linha-submit">
+            <input class="myButton" type="submit" value="Salvar"></input>
+        </div>
+        </form>
+    </div>
+</div>

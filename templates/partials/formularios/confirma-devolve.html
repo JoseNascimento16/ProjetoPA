@@ -1,0 +1,29 @@
+{% load static %}
+
+<div class="div-confirma-devolve">
+    <div class="titulo-modal titulo-modal-devolve">
+        <h4>Confirmação</h4>
+        <div style="flex: 0.5;" class="fechar-modal">
+            <a href="#"><i class="fas fa-times fa-2x fecha-modal"></i></a>
+        </div>
+    </div>
+    <div class="classe-form-modal">
+        <form class="form-modal" action="{% url 'devolver_plano' chave_plano_devolver.id %}" method="POST">
+            {% csrf_token %}
+            <p style="font-size: 1 em;">Este plano possui sugestões de correção que precisam ser efetuadas pela escola. Ao confirmar, ele será devolvido para que a escola possa corrigir!</p>
+            {% for item in chave_pre_assinatura.visible_fields %}
+            <div class="linha-input2 linha-input-row">
+                <label style="width: 200px;" class="label-input2 label-input-form-django flex-0-55" for="{{ item.id_for_label }}">{{ item.label }}</label>
+                {{item}} 
+                <div class="tooltip5">
+                <i class="fa-solid fa-circle-info margem-left-10"></i>
+                <span style="left: -150px;" class="tooltiptext5">Marque caso deseja permitir que a escola ja devolva o plano de ações ASSINADO pelos membros da escola após as correções. </span>
+                </div>
+            </div>
+            {% endfor %}
+            <div class="linha-submit">
+                <input class="myButton" type="submit" value="Confirma">
+            </div>
+        </form>
+    </div>
+</div>

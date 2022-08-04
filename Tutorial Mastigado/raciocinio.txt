@@ -1,0 +1,29 @@
+Quando eu crio o plano 2020 
+
+	* Tem q ter um USUARIO associado à classe Plano_De_Acao
+
+Quando eu crio uma ORDEM
+
+	* Tem q ter um Plano_de_acao associado à classe Ordens
+
+Quando eu crio um CÓDIGO
+
+	* Tem q ter uma Ordem associada à classe Códigos
+
+----------------------------------------------------------------------------------------
+
+Quando eu acesso o meu DASHBOARD
+
+	* 
+
+POSSO TER MODAL GERAL FORA DO "FOR"
+	neste caso, no clique do botão de apagar, eu tenho que passar o parametro pra dentro do MODAL
+		COMO QUE EU FAÇO ISSO??
+
+
+
+POSSO TER MODAL POR CARD
+	SE EU PUSER UMA CONDIÇÃO NA CRIAÇÃO DO MODAL
+	TODOS MODAIS SÃO RENDERIZADOS, MAS ESCONDIDOS:
+	SE EU PUSER UMA CONDIÇÃO NO CLIQUE PARA ABRIR O MODAL
+		COMO QUE EU CRIO UMA CONDIÇÃO NA RENDERIZAÇÃO DO MODAL PARA QUE EU CHAME ELE QUANDO O BOTAO CERTO FOR CLICADO

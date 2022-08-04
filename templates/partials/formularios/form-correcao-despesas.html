@@ -1,0 +1,38 @@
+{% load static %}
+{% load widget_tweaks %}
+
+{% if chave_contexto_extra_corrigir_despesas %}
+<div class="div-form-correcao-despesas" style="display: block;">
+{% else %}
+<div class="div-form-correcao-despesas">
+{% endif %}
+    <div class="titulo-modal">
+        {% if not chave_codigo_corrigir.possui_sugestao_correcao %}
+        <h2>Sugestão de correção</h2>
+        {% else %}
+        <h2>Alterar correção</h2>
+        {% endif %}
+    </div>
+    <div class="classe-form-modal">
+        <form id="form_correcao_despesa" class="form-modal" action="{% url 'chamando_cria_altera_correcao_despesa' chave_planos.id chave_ordens.id chave_codigo_corrigir.id %}" method="POST">
+        {% csrf_token %}
+        <!-- EDITAR A CHAVE ABAIXO -->
+        {% for elemento in chave_form_correcao_despesa.visible_fields %}
+        <div class="linha-input linha-input-coluna">
+            <label class="label-input label-input-form-django" for="{{ elemento.id_for_label }}">{{ elemento.label }}</label>
+            {{elemento|add_class:'input-input'}}
+        </div>
+        {% for error in elemento.errors %}
+        <section class="alert alert-danger" role="alert"> {{ elemento.errors }} </section>
+        {% endfor %}
+
+        {% endfor %}
+        <div class="linha-submit">
+            {% if chave_codigo_corrigir.possui_sugestao_correcao %}
+            <input class="myButton myButton_form_correcoes" type="submit" value="Apagar" formaction="{% url 'chamando_deleta_correcao_despesa' chave_planos.id chave_ordens.id chave_codigo_corrigir.id %}" onclick="return confirm('Deseja apagar esta sugestão de correção?')" ></input>
+            {% endif %}
+            <input class="myButton myButton_form_correcoes" type="submit" value="Confirmar"></input>
+        </div>
+        </form>
+    </div>
+</div>

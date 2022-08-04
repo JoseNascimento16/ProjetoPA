@@ -1,0 +1,30 @@
+{% load static %}
+{% load widget_tweaks %}
+
+{% if contexto_extra_plano %}
+<div class="div-form-plano" style="display: block;">
+{% else %}
+<div class="div-form-plano">
+{% endif %}
+    <div class="titulo-modal">
+        <h2>Criação de Plano de Ação</h2>
+    </div>
+    <div class="classe-form-modal">
+        <form class="form-modal" action="{% url 'criar_plano' %}" method="POST">
+        {% csrf_token %}
+        {% for elemento in chave_form_planos.visible_fields %}
+        <div class="linha-input linha-input-row">
+            <label class="label-input label-input-form-django" for="{{ elemento.id_for_label }}">{{ elemento.label }}</label>
+            {{elemento|add_class:'input-input'}}
+        </div>
+        {% for error in elemento.errors %}
+        <section class="alert alert-danger" role="alert"> {{ elemento.errors }} </section>
+        {% endfor %}
+
+        {% endfor %}
+        <div class="linha-submit">
+            <input class="myButton" type="submit" value="Criar plano"></input>
+        </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,69 @@
+Para gerar o nosso log de eventos vamos utilizar um método abstante simples.
+A intenção aqui é somente gerar Log de eventos que gere mensagens simples  que podem ser salvas no database e depois mostradas no template.
+
+1 - Instalação:
+
+	https://django-eventlog.readthedocs.io/en/latest/installation.html#usage
+
+	No CONSOLE
+
+	$ pip install django-eventlog
+
+	Em INSTALED_APPS
+
+	'eventlog.apps.EventLogConfig',
+
+	Não podemos esquecer de fazer a migração
+
+2 - Uso:
+
+  Na views que quisermos:
+
+    from eventlog.events import EventGroup
+
+    e = EventGroup()
+
+    ### fazemos a ação que queremos e após isso geramos o LOG ###
+
+    *e.info('Acao realizada com sucesso.', initiator=checa_usuario, plano_base=captura_plano.ano_referencia)
+
+3 - Podemos ver o log no Django Admin
+
+#####################################################################################
+
+Note que na linha * acima adicionamos um argumento personalizado "plano_base", para que isso funcione e seja adicionado tanto ao banco de dados, quanto ao admin, temos que seguir alguns passos:
+
+- Na pasta venv/lib/site-packages/eventlog/models.py , temos que adicionar o atributo "plano_base" à classe "Event" (linha 33)
+
+- Na pasta venv/lib/site-packages/eventlog/events.py , adicionamos o argumento ", plano_base=None" à funcao _log_event (linha 32)
+
+- Na pasta venv/lib/site-packages/eventlog/events.py , adicionamos o argumento ", plano_base=plano_base" (linha 38)
+
+- Na pasta venv/lib/site-packages/eventlog/events.py , adicionamos "'plano_base':event_object.plano_base," ao contexto (linha 57)
+
+- Na pasta venv/lib/site-packages/eventlog/admin.py , adicionamos ", 'plano_base'", como argumento do list_display (linha 17)
+
+- Não podemos esquecer de fazer as migrações!!!
+
+Pronto desta forma podemos adicionar um argumento personalizado às entradas do LOG para que possamos extrair as informações.
+
+#######################################################################################
+
+EXTRAINDO AS INFORMAÇÕES SALVAS E MOSTRANDDO NO TEMPLATE
+
+- Na views.py do template:
+
+	from eventlog import models
+
+	log_teste = models.Event.objects.order_by('-timestamp').filter(plano_base='teste')
+	context = {
+		'chave_logteste' : log_teste
+			}
+
+- E no template:
+
+	{% if chave_logteste %}
+    	{% for log in chave_logteste %}
+    		<h5>LOG: {{log.message}} por: {{log.initiator}}</h5><br>
+    	{% endfor %}
+    	{% endif %}

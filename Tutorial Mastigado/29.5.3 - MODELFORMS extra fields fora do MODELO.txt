@@ -1,0 +1,48 @@
+Eventualmente surgiu a necessidade de incluirmos um novo FIELD personalizado no nosso MODELFORM que NÃO existe no MODELO (ex: um choice field, enquanto usamos o modelo de User padrao do Django que não tem choice fields)
+
+- O formulário ficou assim:
+
+class FuncionariosForm(forms.ModelForm):
+
+    password2 = forms.CharField(label='Confirme a senha:', widget=forms.PasswordInput(attrs={
+
+        'placeholder': 'Repita a senha...',
+        'class': 'fonte-italic',
+        'required': ''
+    }))
+
+    cargo = forms.ChoiceField(
+        choices=[('-------','-------'),('Membro do colegiado','Membro do colegiado'),('Tesoureiro','Tesoureiro')],
+        label='Cargo:',
+        widget=forms.Select(attrs={
+            'class': 'fonte-italic'
+        }))
+    # funcao = forms.CharField(max_length=20)
+
+    class Meta:
+
+        model = User
+        fields = ['first_name', 'cargo', 'username', 'password', 'password2']
+        labels = {
+            
+        }
+        widgets = {
+            
+            }
+
+- Perceba que os FIELDS "password2" e "cargo" são extrangeiros, e não pertencem ao modelo de User.
+
+- O formulário funciona normalmente, porém, ao tentarmos usar os valores do "password2" e "cargo" na nossa VIEWS porqualquer motivo que seja, recebemos um erro dizendo que o MODELO não possui estes campos (o que é verdade)
+
+	Por Ex: if form_funcionarios.is_valid():
+                	instancia_form = form_funcionarios.save(commit=False)
+			instancia_form.cargo 
+			ou
+			instancia_form.password2
+			DA ERRO!!!!!!!!!!!!
+
+- Para contornar isso temos que puxar essas informações utilizando o cleaned_data
+
+	Ex: cargo1 = form_funcionarios.cleaned_data.get('cargo')
+
+	e dessa forma podemos utilizar o valor do "cargo" na nossa views.

@@ -1,0 +1,104 @@
+.classe-form-modal{
+    margin: 0 20px;
+}
+
+.div-form-plano,
+.div-form-fia,
+.div-form-modelo-fia,
+.div-form-ordem-extra-fia,
+.div-form-edita-plano,
+.div-form-cadastro,
+.div-form-ordem,
+.div-form-codigo,
+.div-form-correcao-acao,
+.div-form-correcao-despesas{
+    display: none;
+}
+
+.linha-input{
+    display: flex;
+    align-items: stretch;
+    margin-bottom: 30px;
+}
+.linha-input2{
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+}
+    .label-input{
+        display: flex;
+        align-items: center;
+        flex: 0.3;
+    }
+    .label-input2{
+        display: flex;
+        align-items: center;
+        flex: 0.16;
+        margin-bottom: 0 !important;
+    }
+    .input-input{
+        flex: 1 !important;
+    }
+    .input-input > input{
+        font-style: italic;
+        width: 100%;
+    }
+
+.linha-input-coluna{
+    flex-direction: column;
+}
+.linha-input-row{
+    flex-direction: row;
+}
+
+    .label-input-form-django{
+        margin-bottom: 5px;
+    }
+
+input{
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    }
+
+textarea{
+    width: 100%;
+    resize: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 12px;
+}
+
+    .linha-submit{
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 5px;
+    }
+
+.fonte-italic{
+    font-style: italic;
+}
+
+#div_id_prazo_execucao_inicial{
+    flex: 1 !important;
+}
+
+#div_id_prazo_execucao_final{
+    flex: 1 !important;
+}
+
+.sugestao-correcao-form{
+    padding: 10px;
+    margin-bottom: 15px;
+    border-bottom: grey dashed 3px;
+}
+
+.div-box-inseridos{
+    display: flex;
+    flex-direction: column;
+}
+
+.div-box-1-inseridos{
+    display: flex;
+    margin-bottom: 5px;
+}

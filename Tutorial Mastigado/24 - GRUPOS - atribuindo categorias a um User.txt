@@ -1,0 +1,47 @@
+Há algumas formas de implementar sistemas de classificação de tipos de usuários (Grupos, roles, permissions...).
+Como não estou familiarizado com essas funcionalidades ainda, faremos isso através de uma EXTENDING do modelo de User.
+
+Ou seja, iremos integrar um usuário a um modelo de classificação que terá um atributo "tipo_de_acesso" e sempre que quisermos saber qual o tipo de acesso do usuário logado, puxaremos essa informação deste modelo de classificação.
+
+No nosso projeto, faremos essa atribuição no momento da criação do usuário.
+A regra do projeto é a seguinte:
+
+- Secretaria só cria usuários do tipo "Escola"
+- Escolas só criam usuários do tipo "Funcionario"
+- Funcionario não cria cadastro.
+
+1 - Em usuarios > models.py
+	
+	from django.contrib.auth.models import User
+
+	class Classificacao(models.Model):
+    		user = models.OneToOneField(User, on_delete=models.CASCADE)
+    		tipo_de_acesso = models.CharField(max_length=50)
+
+	# Temos que dar os comandos makemigratios e migrate
+
+2 - em usuarios > views.py > def cadastro_de_novo_usuario(request)
+
+	.
+	.
+	.
+   **** user = User.objects.create_user(username=Nome_2, first_name=Nome_1, last_name=Nome_3, email='', password=Senha_2)
+        user.save()
+        
+       * u = User.objects.get(username=Nome_2)
+      ** u_id = u.id
+
+        objeto = Classificacao.objects.create(user=u, tipo_de_acesso='Escola')
+        objeto.save()
+
+*  preciso dizer que quero a instancia/classe deste usuario que acabou de ser criado, o código do "u" faz isso
+** se eu puxar o id e colocar numa variável como fiz acima, o Django não aceita, por isso nao usei o "u_id" e sim o "u"
+
+OU SEJA, quando, no formulário de criação de novos usuários fizermos a solicitação, iremos vir parar nesta função que depois de criar este novo usuário (**** funcionalidade de um tutorial anterior) irá também integrá-lo ao modelo de classificação definindo-o como "Escola".
+
+
+Depois disso podemos puxar as informações com um simples codigo:
+
+**** tipo = user.classificacao.tipo_de_acesso ****
+
+# Perceba que "classificacao" no trecho acima, refere-se à classe "Classificacao", porém é escrito com "c" minusculo por estar no meio do codigo.

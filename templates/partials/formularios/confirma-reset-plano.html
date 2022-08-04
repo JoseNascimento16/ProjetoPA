@@ -1,0 +1,19 @@
+{% load static %}
+
+<div class="div-confirma-devolve">
+    <div class="titulo-modal titulo-modal-devolve">
+        <h4>Confirmação</h4>
+        <div style="flex: 0.5;" class="fechar-modal">
+            <a href="#"><i class="fas fa-times fa-2x fecha-modal"></i></a>
+        </div>
+    </div>
+    <div class="classe-form-modal">
+        <form class="form-modal" action="{% url 'resetar_plano' chave_planos.id %}" method="POST">
+            {% csrf_token %}
+            <p style="font-size: 1 em;">Este plano já possui assinaturas. Ao confirmar, ele será RESETADO e sugestões de correção poderão ser refeitas. Todas as assinaturas serão removidas, e o plano terá que ser devolvido à escola para ser assinado novamente!</p>
+            <div class="linha-submit">
+                <input class="myButton" type="submit" value="Confirma">
+            </div>
+        </form>
+    </div>
+</div>

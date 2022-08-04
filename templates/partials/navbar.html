@@ -1,0 +1,21 @@
+{% load static %}
+<!-- NAVBAR -->
+<div class="classe-div-navbar">
+    <ul class="classe-navbar clear">
+      <div class="sub-div-navbar1">
+        <li class=""><a href="{% url 'abre_meu_acesso' user.id %}"><i class="fa fa-user margem-icones-menu"></i>{{user.first_name}}</a></li>
+        {% if user.classificacao.tipo_de_acesso == 'Funcionario'  %}
+        <li><a id="clear">{{user.classificacao.matriz}}</a></li>
+        {% else %}
+        <li><a id="clear">{{user.last_name}}</a></li>
+        {% endif %}
+      </div>
+      <div class="sub-div-navbar2">
+        <li class=""><a href="#"><i class="fa fa-cog"></i></a></li>
+        <li class=""><a href="{% url 'dashboard' %}">Home</a></li>
+        <li class=""><a href="{% url 'fazendo_logout' %}">Sair</a></li>
+        
+      </div>
+    </ul>
+  </div>
+<!-- FIM NAVBAR -->

@@ -1,0 +1,255 @@
+/* HEADER */
+
+@media only screen and (max-width: 1150px) {
+    .header-espacamento{
+      flex: 1;
+    }
+}
+
+@media only screen and (max-width: 1025px) {
+    .header-img{
+        height: 80px;
+    }
+    .header-espacamento{
+        display: none;
+    }
+    .header1{
+        display: none;
+    }
+    .header1-1{
+        font-size: 18px;
+    }
+    .header2{
+        display: none;
+    }
+    .header-img-logo-bahia{
+        width: 140px;
+        height: 60px;
+    }
+}
+
+@media only screen and (max-width: 1560px) {
+    /* .header-espacamento{
+        flex: 1.6;
+    }
+    .classe-header2{
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        margin: 0px;
+        flex: 0.7;
+    } */
+}
+
+@media only screen and (max-width: 1300px) {
+    /* .header-espacamento{
+        flex: 1;
+    }
+    .classe-header1{
+        flex: 0.8;
+    }
+    .classe-header2{
+        flex: 0.6;
+    } */
+}
+
+@media only screen and (max-width: 605px) {
+    .classe-div-header{
+        height: 50px;
+        justify-content: center;
+    }
+    .header-img{
+        height: 50px;
+    }
+    .classe-header2{
+        display: none;
+    }
+}
+
+@media only screen and (max-width: 360px) {
+    .header1{
+        display: flex;
+        font-size: 20px;
+        justify-content: center;
+    }
+    .header1-1{
+        display: none;
+    }
+    .header-espacamento{
+      flex: 1;
+    }
+}
+
+/* NAVBAR */
+@media only screen and (max-width: 1025px) {
+    .classe-div-navbar{
+        height: 45px;
+    }
+    .classe-div-navbar a{
+        font-size: 16px;
+    }
+    .classe-navbar{
+        margin-top: 9px;
+    }
+    
+}
+
+@media only screen and (max-width: 740px) {
+    .sub-div-navbar1 li:nth-child(1){
+        border: none;
+    }
+    .sub-div-navbar1 li:nth-child(2){
+        display: none;
+    }
+    .sub-div-navbar2 li:nth-child(1){
+        display: flex;
+        border: none;
+    }
+    .sub-div-navbar2 li:nth-child(2){
+        display: none;
+    }
+    .sub-div-navbar2 li:nth-child(3){
+        display: none;
+    }
+}
+
+@media only screen and (max-width: 695px) {
+    .classe-navbar li:nth-child(2){
+      flex: 0.4;
+    }
+}
+
+@media only screen and (max-width: 430px) {
+    .sub-div-navbar1 li:nth-child(1){
+        margin-bottom: 20px;
+    }
+}
+
+
+/* MENU LATERAL */
+
+@media only screen and (max-width: 1270px) {
+    .classe-div-container-corpo{
+      flex: 4;
+    }
+    .tooltiptext5-tabela{
+        left: 17% !important;
+      }
+}
+
+@media only screen and (max-width: 1025px) {
+    .classe-container-central{
+      flex-direction: column;
+    }
+
+    .classe-div-container-corpo{
+      flex: 6;
+    }
+    .classe-div-menu-lateral{
+        display: flex;
+        flex-direction: 0.5;
+        flex: 0.4;
+        overflow: initial;
+    }
+    .setinha {
+        display: none;
+    }
+    .classe-div-menu-lateral ul {
+        padding: 5px;
+    }
+    .span-menu{
+        display: none;
+    }
+    .borda1{
+        display: none;
+    }
+    .margem-icones-menu{
+        display: initial;
+    }
+    .sub-menu{
+        margin: 10px 0;
+    }
+
+    .tooltiptext5-tabela{
+        left: 20% !important;
+        bottom: 87% !important;
+      }
+}
+
+@media only screen and (max-width: 785px) {
+    .tooltiptext5-tabela{
+        left: 27% !important;
+    }
+}
+
+@media only screen and (max-width: 605px) {
+    .tooltiptext5-tabela{
+        left: 37% !important;
+        bottom: 90% !important;
+    }
+}
+
+@media only screen and (max-width: 460px) {
+    .classe-div-menu-lateral{
+        flex-direction: column;
+      }
+}
+
+@media only screen and (max-height: 785px) {
+    .classe-div-container-corpo{
+        flex: 5;
+      }
+
+@media only screen and (max-height: 580px) {
+    .classe-div-container-corpo{
+        flex: 4;
+      }
+}
+
+@media only screen and (max-height: 495px) {
+    .classe-div-container-corpo{
+        flex: 3;
+      }
+}
+
+
+/* CORPO */
+
+@media only screen and (max-width: 1025px) {
+
+    .classe-container-central-correcoes{
+        flex-direction: column;
+    }
+}
+
+@media only screen and (max-width: 688px) {
+    .cards-correcoes{
+        flex-direction: column;
+    }
+}
+
+@media only screen and (max-width: 460px) {
+    
+}
+
+/* FORMULARIOS */
+@media only screen and (max-width: 1025px) {
+    .linha-input{
+        flex-direction: column;
+        margin-bottom: 15px !important;
+    }
+    .label-input{
+        margin-bottom: 5px;
+    }
+}
+
+/* @media print {
+    .pagebreak { page-break-before: always; }  page-break-after works, as well 
+} */
+
+@media print {
+    .pagebreak {
+        clear: both;
+        page-break-after: always;
+    }
+}

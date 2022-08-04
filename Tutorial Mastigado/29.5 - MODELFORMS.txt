@@ -1,0 +1,99 @@
+https://docs.djangoproject.com/en/3.2/topics/forms/modelforms/
+
+Para utilizar o modelForms temos que criar o nosso modelo de formulário.(OPCIONAL, podemos utilizar modelos já prontos)
+
+No app > new folder > models
+
+- Dentro do folder models > new file  codigos.py (este será o nosso modelo)
+- Dentro do folder models > new file  __init__.py (este arquivo serve para inicialização no banco de dados)
+
+	* Em codigos.py
+		
+		from django.db import models
+	
+		class ModeloCodigos(models.Model):
+    			TIPO = {('unidade','unidade'),('caixa','caixa')}
+
+    			identificacao = models.CharField(max_length=1)
+   			especificacao = models.CharField(max_length=500)
+    			justificativa = models.CharField(max_length=500)
+    			embalagem = models.CharField(max_length=10, choices=TIPO)
+    			quantidade = models.IntegerField()
+    			preco_unitario = models.DecimalField(max_digits=14, decimal_places=2, max_length=50)
+    			preco_total_capital = models.DecimalField(max_digits=14, decimal_places=2, max_length=50)
+    			preco_total_custeio = models.DecimalField(max_digits=14, decimal_places=2, max_length=50)
+
+	* Em __init__.py
+	
+		from .codigos import *
+
+- Fazemos as migrações
+
+--------------------------------------------------------------------
+
+Agora em forms.py
+
+- importamos o nosso modelo:
+
+	from codigos.models import ModeloCodigos
+
+- E a nossa classe de modelForms ficou assim:
+
+class CodigosForm(forms.ModelForm): ## Note que todo conteudo abaixo está identado dentro desta classe
+
+    class Meta:
+        model = ModeloCodigos
+        fields = '__all__' OU {'identificacao','especificacao'}
+	ou exclude = ['identificacao']
+        labels = {
+            'identificacao':'Identificação',
+            'especificacao':'Especificação da ação negociável',
+            'justificativa':'Justificativa para aquisição do item',
+            'embalagem':'Tipo de embalagem',
+            'quantidade':'Quantidade',
+            'preco_unitario':'Valor unitário (R$)',
+            'preco_total_capital':'Valor total capital (R$)',
+            'preco_total_custeio':'Valor total custeio (R$)'
+        }
+        
+        widgets = {
+            'identificacao': forms.TextInput(attrs={'placeholder': 'Insira uma letra (A, B, C...)','class': 'fonte-italic'}),
+            'especificacao': forms.Textarea(attrs={'placeholder': 'Especifique com o máximo de detalhamento possível...','class': 'fonte-italic', 'rows': '5'}),
+            'justificativa': forms.Textarea(attrs={'placeholder': 'Justificativa...','class': 'fonte-italic', 'rows': '5'}),
+            'quantidade': forms.NumberInput(attrs={'placeholder': '1, 2, 3...','class': 'fonte-italic'}),
+            # 'preco_unitario': forms.TextInput(attrs={'pattern': '[0-9]+([,\.][0-9]+)?','step':'.01'})
+            # 'preco_unitario': forms.NumberInput(attrs={'placeholder': 'Ex: 100.00','class': 'fonte-italic','pattern': '^\d*(\.\d{1,2})?$'})
+            'preco_unitario': forms.NumberInput(attrs={'placeholder': 'Ex: 100.00','class': 'fonte-italic'}),
+            'preco_total_capital': forms.NumberInput(attrs={'placeholder': 'Ex: 100.00','class': 'fonte-italic'}),
+            'preco_total_custeio': forms.NumberInput(attrs={'placeholder': 'Ex: 100.00','class': 'fonte-italic'})
+	    # 'ordem': forms.TextInput(attrs={'disabled':'True'})
+            # 'ordem': forms.HiddenInput()
+            }
+
+# VALIDAÇÕES USANDO METODO CLEAN
+
+    def clean(self):
+        valor_identificacao = self.cleaned_data.get('identificacao')
+        valor_especificacao = self.cleaned_data.get('especificacao')
+        valor_justificativa = self.cleaned_data.get('justificativa')
+        valor_embalagem = self.cleaned_data.get('embalagem')
+        valor_quantidade = self.cleaned_data.get('quantidade')
+        valor_preco_unitario = self.cleaned_data.get('preco_unitario')
+        valor_preco_total_capital = self.cleaned_data.get('preco_total_capital')
+        valor_preco_total_custeio = self.cleaned_data.get('preco_total_custeio')
+        lista_de_erros = {}
+
+        campo_tem_algum_numero(valor_identificacao, 'identificacao', lista_de_erros)
+        campos_sao_iguais(valor_especificacao, valor_justificativa, 'justificativa', lista_de_erros)
+        campos_sao_iguais(valor_especificacao, valor_justificativa, 'especificacao', lista_de_erros)
+        nao_escolheu_embalagem(valor_embalagem, 'embalagem', lista_de_erros)
+        valor_minimo_1(valor_quantidade, 'quantidade', lista_de_erros)
+        somente_valores_positivos(valor_preco_unitario, 'preco_unitario', lista_de_erros)
+        somente_valores_positivos(valor_preco_total_capital, 'preco_total_capital', lista_de_erros)
+        somente_valores_positivos(valor_preco_total_custeio, 'preco_total_custeio', lista_de_erros)
+
+        if lista_de_erros is not None:
+            for erro in lista_de_erros:
+                mensagem_erro = lista_de_erros[erro]
+                self.add_error(erro, mensagem_erro)
+        return self.cleaned_data

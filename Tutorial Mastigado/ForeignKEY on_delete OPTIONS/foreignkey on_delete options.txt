@@ -1,0 +1,4 @@
+https://medium.com/@inem.patrick/django-database-integrity-foreignkey-on-delete-option-db7d160762e4
+
+https://stackoverflow.com/questions/38388423/what-does-on-delete-do-on-django-models
+
