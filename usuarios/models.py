@@ -24,7 +24,7 @@ class Classificacao(models.Model):
     quant_funcionarios = models.IntegerField(default=0)
     plano_associado = models.ManyToManyField(Plano_de_acao, blank=True)
     assina_plano = models.BooleanField(default=False)
-    assinatura = models.ImageField(upload_to='SetupPrincipal/static/img/assinaturas', blank=True, null=True, verbose_name='Assinatura')
+    assinatura = models.ImageField(upload_to='SetupPrincipal/img/signs', blank=True, null=True, verbose_name='Assinatura')
     is_active = models.BooleanField(default=True)
     
 

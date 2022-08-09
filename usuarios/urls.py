@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
   
 urlpatterns = [
     path('cadastro_secretaria/<int:user_id>',views.cadastros_secretaria, name='cadastrar_escolas'),
@@ -27,8 +29,9 @@ urlpatterns = [
     path('profile/change/<int:user_id>/<slug:altera>', views.meu_acesso, name='abre_altera_nome'),
     path('profile/change/<int:user_id>/sign/<slug:altera>', views.meu_acesso, name='abre_altera_assinatura'),
     path('profile/<int:user_id>/sign/cadastro', views.salva_assinatura, name='cadastra_assinatura'),
+    path('profile/sign/remove<int:user_id>', views.remove_assinatura, name='apaga_assinatura'),
     path('profile/altera/<int:user_id>', views.altera_nome, name='altera_nome'),
     path('dashboard/',views.dashboard, name='dashboard'),
     path('index/',views.logout, name='fazendo_logout'),
 
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

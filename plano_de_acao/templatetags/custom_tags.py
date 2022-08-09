@@ -82,3 +82,8 @@ def tag_loop1(numero):
     for elemento in range(numero):
         lista_elementos.append(elemento)
     return lista_elementos
+
+@register.simple_tag
+def tag_first_last_names(valor):
+    lista_elementos = list(valor.split(" "))
+    return lista_elementos

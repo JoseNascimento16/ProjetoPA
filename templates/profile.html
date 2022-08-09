@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load custom_tags %}
 {% block content %}
 
 {{ chave_tipo_usuario|json_script:"id-tipo-usuario" }}
@@ -96,7 +97,12 @@
     </div>
     <div class="box-profile1-2" style="margin-left: 10px;border: none;">
         <h5>Assinatura: </h5>
-        <img class="" src="{% static 'img/assinaturas/myphoto.png' %}" alt="">
+        {% if user.classificacao.assinatura %}
+        <img class="" src="{{ user.classificacao.assinatura.url }}" alt="">
+        {% else %}
+        {% tag_first_last_names user.first_name as nome_em_lista %}
+        <h4 class="assinatura-style">{{nome_em_lista|first}} {{nome_em_lista|last}}</h4>
+        {% endif %}
         <a class="" href="{% url 'abre_altera_assinatura' user.id 'alt_sign' %}" style="font-size: 12px;padding-left: 2px;"> (alterar)</a>
     </div>
         

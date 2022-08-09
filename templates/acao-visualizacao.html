@@ -272,7 +272,11 @@
                 {% if plano.classificacao_set.all %}
                         {% tag_any plano.usuario plano.classificacao_set.all as var3 %}
                         {% if var3 and plano.situacao == 'Finalizado' %}
-                        <td colspan="2", class="assinaturas", style="text-align: center;font-style: italic;font-family: Vladimir Script;font-size: 26px;"> {{plano.usuario.first_name}} </td>
+                            {% if plano.usuario.classificacao.assinatura %}
+                            <td colspan="2"> <img class="assinaturas-foto-size" src="{{ plano.usuario.classificacao.assinatura.url }}" alt=""> </td>
+                            {% else %}
+                            <td colspan="2", class="assinaturas", style="text-align: center;font-style: italic;font-family: Vladimir Script;font-size: 26px;"> {{plano.usuario.first_name}} </td>
+                            {% endif %}
                         {% else %}
                         <td colspan="2", style="text-align: center;">  </td>
                         {% endif %}
@@ -295,7 +299,11 @@
                 {% if plano.classificacao_set.all %}
                     {% tag_any2 chave_funcionarios plano.classificacao_set.all as var3 %}
                     {% if var3 and plano.situacao == 'Finalizado' %}
-                    <td colspan="2", class="assinaturas", style="text-align: center;font-style: italic;font-family: Vladimir Script;font-size: 26px;"> {{var3.user.first_name}} </td>
+                        {% if var3.user.classificacao.assinatura %}
+                        <td colspan="2"> <img class="assinaturas-foto-size" src="{{ var3.user.classificacao.assinatura.url }}" alt=""> </td>
+                        {% else %}
+                        <td colspan="2", class="assinaturas", style="text-align: center;font-style: italic;font-family: Vladimir Script;font-size: 26px;"> {{var3.user.first_name}} </td>
+                        {% endif %}
                     {% else %}
                     <td colspan="2", style="text-align: center;">  </td>
                     {% endif %}
@@ -328,7 +336,11 @@
                             {% if plano.classificacao_set.all %}
                                 {% tag_any3 funcionarios plano.classificacao_set.all as var3 %}
                                 {% if var3 and plano.situacao == 'Finalizado' %}
-                                <td colspan="2", class="assinaturas", style="text-align: center;font-style: italic;font-family: Vladimir Script;font-size: 26px;"> {{var3.user.first_name}}</td>
+                                    {% if var3.user.classificacao.assinatura %}
+                                    <td colspan="2"> <img class="assinaturas-foto-size" src="{{ var3.user.classificacao.assinatura.url }}" alt=""> </td>
+                                    {% else %}
+                                    <td colspan="2", class="assinaturas", style="text-align: center;font-style: italic;font-family: Vladimir Script;font-size: 26px;"> {{var3.user.first_name}}</td>
+                                    {% endif %}
                                 {% else %}
                                 <td colspan="2", style="text-align: center;">  </td>
                                 {% endif %}

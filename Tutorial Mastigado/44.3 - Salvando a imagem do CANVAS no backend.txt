@@ -1,0 +1,26 @@
+Para salvar é simples, só precisamos transformar a imagem que vem no form em formato base64 em uma imagem.png
+
+	* Lembrando que 'canvasData' é o nome do atributo 'name' do input invisivel onde está o canvas.	
+
+- Em views.py
+
+def salva_assinatura(request, user_id):
+    usuario = get_object_or_404(User, pk=user_id)
+    classificacao = get_object_or_404(Classificacao, user=usuario)
+    if request.method == 'POST':
+        form = request.POST
+        imagem = request.POST['canvasData']
+        format, imgstr = imagem.split(';base64,') 
+        ext = format.split('/')[-1] 
+        data = ContentFile(base64.b64decode(imgstr)) 
+        file_name = "'mysign." + ext
+        classificacao.assinatura.save(file_name, data, save=True) 
+        
+        return redirect('abre_meu_acesso', user_id=user_id)
+
+    return redirect('dashboard')
+
+
+	* 'mysign' em file_name será o nome da imagem sendo salva
+
+- Desta forma, acabamos de salvar uma imagem .png no campo 'assinatura' de um modelo chamado 'classificacao' no banco de dados.

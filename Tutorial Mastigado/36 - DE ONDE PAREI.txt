@@ -1,6 +1,10 @@
 TENHO QUE APRENDER A TROCAR DE MODELO DE USUARIO (USAR O ABSTRACT AUTH_USER)
 
 ----------------------------------------------------------------------------------
+- URGENTE
+   - Na validação de cadastro de novos usuários, NÃO PERMITIR nome simples, pedir ao menos 1 sobrenome!!
+   - Na alteração de nomes também na página de perfil
+
 - Fia
    - Estou na pre assinatura de escolas
 	- Saber a melhor forma de incluir assinatura de tecnico responsavel
@@ -9,6 +13,7 @@ TENHO QUE APRENDER A TROCAR DE MODELO DE USUARIO (USAR O ABSTRACT AUTH_USER)
    - Desativar alterabilidade de documento, se ele estiver pré-aprovado
    - testar urls Fia
 
+- menu edicao nao mostra para planis finalizados faunc sec
 - alternancia menu parou de funcionar pós print...
 - menu de impressão com as assinaturas só pode ser mostrado em planos com situação Finalizado
 
