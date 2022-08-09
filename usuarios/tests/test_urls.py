@@ -105,4 +105,9 @@ class Testurls(SimpleTestCase):
         # print(resolve(url))
         self.assertEquals(resolve(url).func, salva_assinatura)
 
+    def test_apaga_assinatura_resolve(self):
+        url = reverse('apaga_assinatura', args=[1])
+        # print(resolve(url))
+        self.assertEquals(resolve(url).func, remove_assinatura)
+
     

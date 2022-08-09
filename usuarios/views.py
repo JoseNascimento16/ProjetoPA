@@ -522,8 +522,19 @@ def salva_assinatura(request, user_id):
         format, imgstr = imagem.split(';base64,') 
         ext = format.split('/')[-1] 
         data = ContentFile(base64.b64decode(imgstr)) 
-        file_name = "'myphoto." + ext
+        file_name = "'mysign." + ext
         classificacao.assinatura.save(file_name, data, save=True) 
+        
+        return redirect('abre_meu_acesso', user_id=user_id)
+
+    return redirect('dashboard')
+
+def remove_assinatura(request, user_id):
+    usuario = get_object_or_404(User, pk=user_id)
+    classificacao = get_object_or_404(Classificacao, user=usuario)
+    if request.method == 'POST':
+        classificacao.assinatura.delete()
+        classificacao.save()
         
         return redirect('abre_meu_acesso', user_id=user_id)
 

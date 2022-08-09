@@ -5,13 +5,24 @@ ctx = canvas.getContext('2d'); // get 2D context
 
 // desenha linha de referencia
 ctx.beginPath();
-ctx.strokeStyle = 'rgb(9, 66, 172)';
+ctx.strokeStyle = 'rgb(9, 66, 172, 0.200)';
 ctx.lineWidth = 0.5;
-ctx.moveTo(0, 57.5);
-ctx.lineTo(400, 57.5);
+ctx.moveTo(0, 40);
+ctx.lineTo(400, 40);
 ctx.stroke();
 
-/*********** handle mouse events on canvas **************/
+// CÓDIGO PARA PEGAR POSIÇÃO DO MOSUE DENTRO DO CANVAS
+
+function fixPosition(event, canvas) {
+    const rect = canvas.getBoundingClientRect()
+    const x = event.clientX - rect.left
+    const y = event.clientY - rect.top
+    // console.log("x: " + x + " y: " + y)
+
+    return {x: x, y:y};
+}
+
+// USA POSIÇÃO DO MOUSE PARA PINTAR O CANVAS
 var mousedown = false;
 ctx.strokeStyle = 'rgb(9, 66, 172)';
 ctx.lineWidth = 0.1;
@@ -37,41 +48,6 @@ canvas.onmouseup = function(e) {
     mousedown = false;
 };
 
-/********** utils ******************/
-// Thanks to http://stackoverflow.com/questions/55677/how-do-i-get-the-coordinates-of-a-mouse-click-on-a-canvas-element/4430498#4430498
-// function fixPosition(e, gCanvasElement) {
-//     var x;
-//     var y;
-//     if (e.pageX || e.pageY) { 
-//       x = e.pageX;
-//       y = e.pageY;
-//     }
-//     else { 
-//       x = e.clientX + document.body.scrollLeft +
-//           document.documentElement.scrollLeft;
-//       y = e.clientY + document.body.scrollTop +
-//           document.documentElement.scrollTop;
-//     } 
-//     x -= gCanvasElement.offsetLeft;
-//     y -= gCanvasElement.offsetTop;
-//     // x -= 256;
-//     // y -= 311;
-//     // x -= 332;
-//     // y -= 135;
-//     return {x: x, y:y};
-// }
-
-// OUTRA SOLUÇÃO PARA PEGAR POSIÇÃO
-
-function fixPosition(event, canvas) {
-    const rect = canvas.getBoundingClientRect()
-    const x = event.clientX - rect.left
-    const y = event.clientY - rect.top
-    // console.log("x: " + x + " y: " + y)
-
-    return {x: x, y:y};
-}
-
 // LIMPA O CANVAS
 $(".clear-canvas").click(function(){
     const context = canvas.getContext('2d');
@@ -79,15 +55,13 @@ $(".clear-canvas").click(function(){
 
     // desenha linha de referencia
     ctx.beginPath();
-    ctx.strokeStyle = 'rgb(9, 66, 172)';
+    ctx.strokeStyle = 'rgb(9, 66, 172, 0.200)';
     ctx.lineWidth = 0.5;
-    ctx.moveTo(0, 57.5);
-    ctx.lineTo(400, 57.5);
+    ctx.moveTo(0, 40);
+    ctx.lineTo(400, 40);
     ctx.stroke();
     ctx.closePath();
 });
-
-
 
 function save_canvas(){
     var canvas = document.getElementById('canvas');

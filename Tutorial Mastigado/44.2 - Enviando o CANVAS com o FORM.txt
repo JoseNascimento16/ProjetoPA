@@ -1,0 +1,21 @@
+O nosso Canvas está dentro de um form html, e para salva-lo no banco de dados como uma imagem, precisamos usar um pequeno truqe no html.
+
+Iremos adicionar uma tag <input> invisível no html. E pelo javascript iremos transformar os dados do <canas> em imagem usando a função toDataUrl().
+
+Depois iremos adicionar esta imagem ao <input> invisível, assim, quando o <form> for enviado, a imagem irá junto como um parametro extra acessível pelo backend.
+
+- Dentro do form no html, criamos o input invisivel
+
+	<input type="hidden" name="canvasData" id="input_hidden_canvas">
+
+- No <form> quando clicarmos em ENVIAR, o botão irá chamar a função javascript save_canvas(), e o submit será feito através do javascript.
+
+	<input class="myButton" type="submit" value="ENVIAR"  onclick="save_canvas()">
+
+- No javascript Adicionamos os dados do canvas ao "value" do input inisivel, transformando ao mesmo tempo em imagem .base64, e dando o submit()
+
+	function save_canvas(){
+	    var canvas = document.getElementById('canvas');
+	    document.getElementById('input_hidden_canvas').value = canvas.toDataURL('assinatura/png');
+	    document.forms["form-canvas"].submit();
+	}

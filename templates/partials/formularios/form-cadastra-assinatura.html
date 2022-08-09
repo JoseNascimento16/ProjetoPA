@@ -9,12 +9,13 @@
         <form class="form-modal" id="form-canvas" action="{% url 'cadastra_assinatura' user.id %}" method="POST">
             {% csrf_token %}
             
-            <canvas id="canvas" width="350" height="115" style="border: 1px solid black; position: relative;"></canvas>
+            <canvas id="canvas" width="250" height="80" style="border: 1px solid black; position: relative;"></canvas>
             <div id="coord"></div>
             <button class="myButton clear-canvas" type="button" style="margin-right: 10px">Limpar</button>
 
             <div class="linha-submit">
                 <input type="hidden" name="canvasData" id="input_hidden_canvas">
+                <input class="myButton" style="margin-right: 10px" type="submit" value="Remover" formaction="{% url 'apaga_assinatura' user.id %}">
                 <input class="myButton" type="submit" value="Confirmar"  onclick="save_canvas()">
             </div>
         </form>
