@@ -1,6 +1,7 @@
 {% extends 'base-despesas-visualizacao.html' %}
 {% load static %}
 {% load definir_acoes %}
+{% load custom_tags %}
 {% load humanize %}
 {% block content %}
 
@@ -14,7 +15,7 @@
 {{ chave_lista_todas_ordens|json_script:"id-todas-ordens" }}
 {{ chave_ordens_com_correcao|json_script:"id-ordens-com-correcao" }}
 
-<div class="div-visualizacao-bloco div-visualizacao-bloco-fia">
+<div class="div-visualizacao-bloco div-visualizacao-bloco-fia" style="width: 1185px">
 
     {% if messages %}
     <ul class="ul-mensagens" style="padding: 0%;">
@@ -218,23 +219,54 @@
             <td></td>
         </tr>
     </table>
-
+    
     <table class="tabela-principal table7-fia">
         <tr>
-            <th style="text-align: left"> 18 - AUTORIZAÇÃO</th>
-            <th style="text-align: left"> DATA: </th>
+            <th style="text-align: left;width: 600px;"> 18 - AUTORIZAÇÃO</th>
+            <th colspan="3" style="text-align: left"> DATA: </th>
         </tr>
         <tr>
             <td style="text-align: left"> 18.1 - DIRETOR - {{chave_planos.usuario.first_name}}</td>
-            <td style="text-align: left"> 18.2 - ASSINATURA: ????????</td>
+            <td style="text-align: left;width: 120px; "> 18.2 - ASSINATURA: </td>
+            <!-- ASSINATURA DIRETOR -->
+            {% tag_first_last_names chave_planos.usuario.first_name as nome_em_lista_diretor %}
+            {% tag_any chave_planos.usuario chave_planos.classificacao_set.all as var3 %}
+            {% if chave_planos.classificacao_set.all %}
+                {% if var3 and chave_planos.situacao == 'Finalizado' %}
+                    {% if chave_planos.usuario.classificacao.assinatura %}
+                    <td colspan="2" style="width: 200px"> <img class="assinaturas-foto-fia" src="{{ chave_planos.usuario.classificacao.assinatura.url }}" alt=""> </td>
+                    {% else %}
+                    <td colspan="2" class="assinaturas-fia", style="text-align: left;width: 140px;font-style: italic;font-family: Vladimir Script;"> {{nome_em_lista_diretor|first}} {{nome_em_lista_diretor|last}} </td>
+                    {% endif %}
+                {% else %}
+                <td colspan="2" style="text-align: left;">  </td>
+                {% endif %}
+            {% else %}
+                <td colspan="2" style="text-align: left;">  </td>
+            {% endif %}
+            <!-- ******** -->
+            <!-- <td style="text-align: left; width: 340px; background-color: rgba(255, 0, 0, 0.404)">????????</td> -->
         </tr>
         <tr>
-            <td style="text-align: left"> 18.3 - COLEGIADO ESCOLAR - ?????????</td>
-            <td style="text-align: left"> 18.4 - ASSINATURA(S): ????????</td>
+            {% if chave_modelo_fia.membro_colegiado_1 and chave_modelo_fia.membro_colegiado_2 %}
+            <td style="text-align: left"> 18.3 - COLEGIADO ESCOLAR - {{chave_modelo_fia.membro_colegiado_1.first_name}} e {{chave_modelo_fia.membro_colegiado_2.first_name}} </td>
+            {% else %}
+            <td style="text-align: left; background-color: rgba(255, 102, 0, 0.404)"> 18.3 - COLEGIADO ESCOLAR - {{chave_modelo_fia.membro_colegiado_1.first_name}} {{chave_modelo_fia.membro_colegiado_2.first_name}} </td>
+            {% endif %}
+            <td style="text-align: left"> 18.4 - ASSINATURA(S): </td>
+            <td style="text-align: left; background-color: rgba(255, 0, 0, 0.404)">????????</td>
+            <td style="text-align: left; background-color: rgba(255, 0, 0, 0.404)">????????</td>
         </tr>
         <tr>
             <td style="text-align: left"> 18.5 - TÉCNICO RESP. P/ACOMPANHAMENTO - ???????</td>
-            <td style="text-align: left"> 18.6 - ASSINATURA: ????????</td>
+            {% if plano_aprovado == True and not chave_modelo_fia.assinatura_tecnico %}
+            <td style="text-align: left"> 18.6 - ASSINATURA: </td>
+            <td colspan="2" style="text-align: left; background-color: rgba(255, 0, 0, 0.404)">????????</td>
+            {% else %}
+            <td style="text-align: left"> 18.6 - ASSINATURA: </td>
+            <td colspan="2" style="text-align: left; background-color: rgba(255, 0, 0, 0.404)">????????</td>
+            {% endif %}
+
         </tr>
     </table>
 

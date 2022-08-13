@@ -14,3 +14,32 @@ campo = forms.ModelChoiceField(
         .
 	.
 	.
+
+#################################################
+
+As vezes queremos ter a opção de usar uma variavel do tipo objeto no filtro do queryset. O formato acima não comporta isso, vamos fazer uma pequena alteração.
+
+No exemplo abaixo, o form foi instanciado com erro, e está recebendo um objeto como parametro pelo super.
+
+class ModeloFiaForm(forms.ModelForm):
+
+	membro1 = forms.ModelChoiceField(
+           queryset=Classificacao.objects.order_by('-user').filter(tipo_de_acesso='Funcionario').filter(cargo_herdado='Membro do colegiado'),
+           empty_label="------------",
+           label='Colegiado escolar 1:',
+           widget=forms.Select)
+
+	def __init__(self, *args, **kwargs):
+           self.modelo_fia_super = kwargs.pop('modelo_fia_super', None)
+           super(ModeloFiaForm, self).__init__(*args, **kwargs) #
+
+           if self.modelo_fia_super:
+              self.fields['membro1'].queryset = Classificacao.objects.order_by('-user').filter(matriz=self.modelo_fia_super.usuario) ##
+
+	class Meta:
+	.
+	.
+	.
+
+	# Perceba que aqui, colocamos o FORM como parâmetro self do super
+	## Aqui instanciamos somente o parametro queryset do campo membro1, ou seja, ele irá substituir o queryset definido no campo lá em cima.            Note que estamos numa instancia de classe, portanto, usamos self.modelo_fia_super para referenciar o objeto

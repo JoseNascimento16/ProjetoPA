@@ -17,6 +17,7 @@ class Usuario(models.Model):
 class Classificacao(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     tipo_de_acesso = models.CharField(max_length=50)
+    cargo_herdado = models.CharField(max_length=50, blank=True)
     municipio = models.CharField(max_length=50, blank=True)
     matriz = models.CharField(max_length=100, blank=True)
     codigo_escola = models.IntegerField(default=0, blank=True)

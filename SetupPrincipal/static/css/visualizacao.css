@@ -121,9 +121,19 @@ td{
   color: rgb(9, 66, 172);
 }
 
+.assinaturas-fia{
+  color: rgb(9, 66, 172) !important;
+  font-size: 18px !important;
+}
+
 .assinaturas-foto-size{
   width: 190px;
-  height: 50px;
+  height: 40px;
+}
+
+.assinaturas-foto-fia{
+  width: 50%;
+  height: 40px;
 }
 
 /* CSS PAGINA DOCUMENTO FIA */

@@ -66,3 +66,9 @@ def nome_contem_numeros(valor, campo, lista_de_erros):
             lista_de_erros[campo] = 'Não inclua números...'
         # if any(char.isdigit() for char in valor):
 
+def sem_sobrenome(valor, campo, lista_de_erros):
+    if valor:
+        lista = list(valor.split(" "))
+        if len(lista) < 2:
+            lista_de_erros[campo] = 'Insira ao menos um sobrenome...'
+

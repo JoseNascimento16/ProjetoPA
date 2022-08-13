@@ -202,6 +202,7 @@ def cadastros_escola(request, user_id, mensagem=''):
                 instancia_form = form_funcionarios.save(commit=False)
                 cargo1 = form_funcionarios.cleaned_data.get('cargo')
                 
+                #cria objeto usuario
                 User.objects.create_user(
                     username=instancia_form.username,
                     first_name=instancia_form.first_name,
@@ -215,8 +216,10 @@ def cadastros_escola(request, user_id, mensagem=''):
                 matriz_objeto = get_object_or_404(User, pk=user_id)
                 matriz_last_name = matriz_objeto.last_name
 
-                Classificacao.objects.create(user=usuario_objeto, tipo_de_acesso='Funcionario', matriz=matriz_last_name, quant_funcionarios=0)
+                #Cria objeto classificacao
+                Classificacao.objects.create(user=usuario_objeto, tipo_de_acesso='Funcionario', cargo_herdado=cargo1, matriz=matriz_last_name, quant_funcionarios=0)
                 
+                # Atualiza quant. funcionarios da matriz
                 classificacao_da_matriz = get_object_or_404(Classificacao, user_id=user_id)
                 quant_funcionarios = Classificacao.objects.filter(tipo_de_acesso='Funcionario').filter(matriz=matriz_last_name).filter(is_active=True)
                 classificacao_da_matriz.quant_funcionarios = len(quant_funcionarios)
@@ -472,17 +475,18 @@ def dashboard(request):
         print('Você está deslogado, faça o login novamente')
         return redirect('fazendo_logout')
 
-def meu_acesso(request, user_id, altera='', form_erro=''):
+def meu_acesso(request, user_id, altera='', altera_erro='', form_erro=''):
     abre_modal = False
     abre_modal_sign = False
     form = ''
     usuario = get_object_or_404(User, pk=user_id)
     if altera == 'alt_name':
         abre_modal = True
-        if altera != 'alt_erro':
+        if not altera_erro:
             form = FormAlteraNome()
         else:
             form = form_erro
+            print(form.errors)
     elif altera == 'alt_sign':
         abre_modal_sign = True
     else:
@@ -506,8 +510,7 @@ def altera_nome(request, user_id):
             usuario.save()
             return meu_acesso(request, user_id)
         else:
-            altera = 'alt_erro'
-            return meu_acesso(request, user_id, altera, form_erro=form)
+            return meu_acesso(request, user_id, altera='alt_name', altera_erro='sim', form_erro=form)
     
     return redirect('dashboard')
 

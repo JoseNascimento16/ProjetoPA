@@ -36,3 +36,11 @@ def somente_valores_positivos_extra(valor, campo, lista_de_erros):
     if valor:
         if valor < 0:
             lista_de_erros[campo] = 'Não inclua valores negativos'
+
+def membros_iguais(valor1, valor2, campo, lista_de_erros):
+    if valor1 == valor2 and valor1:
+        lista_de_erros[campo] = 'Não podem ser a mesma pessoa...'
+
+def nao_escolheu_campo(valor1, campo, lista_de_erros):
+    if valor1 == "------------":
+        lista_de_erros[campo] = 'É necessária a definição de 2 membros do colegiado escolar...'

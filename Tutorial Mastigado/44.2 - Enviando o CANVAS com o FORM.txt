@@ -1,6 +1,6 @@
 O nosso Canvas está dentro de um form html, e para salva-lo no banco de dados como uma imagem, precisamos usar um pequeno truqe no html.
 
-Iremos adicionar uma tag <input> invisível no html. E pelo javascript iremos transformar os dados do <canas> em imagem usando a função toDataUrl().
+Iremos adicionar uma tag <input> invisível no html. E pelo javascript iremos transformar os dados do <canvas> em imagem usando a função toDataUrl().
 
 Depois iremos adicionar esta imagem ao <input> invisível, assim, quando o <form> for enviado, a imagem irá junto como um parametro extra acessível pelo backend.
 

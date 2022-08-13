@@ -1,16 +1,38 @@
 from django import forms
 from django.forms import fields
 from codigos.validation import *
+from usuarios.models import Classificacao
 from .validation import *
 from .models import Extra_fia, Modelo_fia
 
 
 class ModeloFiaForm(forms.ModelForm):
     
+    membro1 = forms.ModelChoiceField(
+        queryset=Classificacao.objects.order_by('-user').filter(tipo_de_acesso='Funcionario').filter(cargo_herdado='Membro do colegiado'),
+        empty_label="------------",
+        label='Colegiado escolar 1:',
+        widget=forms.Select)
+
+    membro2 = forms.ModelChoiceField(
+        queryset=Classificacao.objects.order_by('-user').filter(tipo_de_acesso='Funcionario').filter(cargo_herdado='Membro do colegiado'),
+        empty_label="------------",
+        label='Colegiado escolar 2:',
+        widget=forms.Select)
+
+    def __init__(self, *args, **kwargs):
+        self.modelo_fia_super = kwargs.pop('modelo_fia_super', None)
+        super(ModeloFiaForm, self).__init__(*args, **kwargs)
+
+        if self.modelo_fia_super:
+            self.fields['membro1'].queryset = Classificacao.objects.order_by('-user').filter(matriz=self.modelo_fia_super.plano.usuario.last_name).filter(tipo_de_acesso='Funcionario').filter(cargo_herdado='Membro do colegiado')
+
+    
+
     class Meta:
 
         model = Modelo_fia
-        fields = ['nome_caixa_escolar','ano_exercicio','discriminacao', 'preco_unitario_item', 'justificativa']
+        fields = ['nome_caixa_escolar','ano_exercicio','discriminacao', 'preco_unitario_item', 'justificativa', 'membro1', 'membro2']
         labels = {
             'nome_caixa_escolar':'Nome Caixa Escolar:',
             'ano_exercicio':'Ano de exercício:',
@@ -33,9 +55,15 @@ class ModeloFiaForm(forms.ModelForm):
     def clean(self):
         
         valor_preco_unitario_item = self.cleaned_data.get('preco_unitario_item')
+        valor_membro1 = self.cleaned_data.get('membro1')
+        valor_membro2 = self.cleaned_data.get('membro2')
         lista_de_erros = {}
 
         somente_valores_positivos(valor_preco_unitario_item, 'preco_unitario_item', lista_de_erros)
+        membros_iguais(valor_membro1, valor_membro2, 'membro1', lista_de_erros)
+        membros_iguais(valor_membro1, valor_membro2, 'membro2', lista_de_erros)
+        # nao_escolheu_campo(valor_membro1, 'membro1', lista_de_erros)
+        # nao_escolheu_campo(valor_membro2, 'membro2', lista_de_erros)
         
         if lista_de_erros is not None:
             for erro in lista_de_erros:

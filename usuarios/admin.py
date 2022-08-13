@@ -4,7 +4,7 @@ from .models import Classificacao, Usuario
 # Register your models here.
 
 class ListandoClassificacao(admin.ModelAdmin):
-    list_display = ('id', 'user', 'tipo_de_acesso', 'matriz', 'quant_funcionarios')
+    list_display = ('id', 'user', 'tipo_de_acesso', 'cargo_herdado', 'matriz', 'quant_funcionarios')
 
 admin.site.register(Usuario)
 admin.site.register(Classificacao, ListandoClassificacao)

@@ -1,5 +1,6 @@
 from webbrowser import get
 from django.shortcuts import get_object_or_404, redirect, render
+from django import forms
 from fia.forms import ModeloFiaForm, OrdemExtraForm
 from fia.models import Modelo_fia, Extra_fia
 import plano_de_acao
@@ -9,7 +10,7 @@ from plano_de_acao.models import Correcoes, Plano_de_acao
 from django.db.models import Q
 from django.contrib import messages
 from plano_de_acao.views import pagina_correcoes
-from usuarios.models import Turmas # Turmas_plano
+from usuarios.models import Classificacao, Turmas # Turmas_plano
 
 # Create your views here.
 
@@ -63,12 +64,27 @@ def documento_fia(request, elemento_id, mensagem='', reabreform_modelo_fia='', a
 
     ordens_extras = Extra_fia.objects.order_by('valor_numerico').filter(fia_matriz=modelo_fia_objeto)
     modo_edicao = False
+    var_plano_pre_aprovado = False
     ordem_extra_objeto = ''
     lista_ordens_fia = []
     lista_ordens_com_correcao = []
-    form_fia = ModeloFiaForm()
     form_extra_fia = OrdemExtraForm()
     tipo_usuario = request.user.classificacao.tipo_de_acesso
+
+    ModeloFiaForm.base_fields['membro1'] = forms.ModelChoiceField(
+        queryset=Classificacao.objects.order_by('-user').filter(matriz=plano_objeto.usuario.last_name).filter(tipo_de_acesso='Funcionario').filter(cargo_herdado='Membro do colegiado'),
+        empty_label="------------",
+        label='Colegiado escolar 1:',
+        required=False,
+        widget=forms.Select)
+    ModeloFiaForm.base_fields['membro2'] = forms.ModelChoiceField(
+        queryset=Classificacao.objects.order_by('-user').filter(matriz=plano_objeto.usuario.last_name).filter(tipo_de_acesso='Funcionario').filter(cargo_herdado='Membro do colegiado'),
+        empty_label="------------",
+        label='Colegiado escolar 2:',
+        required=False,
+        widget=forms.Select)
+
+    form_fia = ModeloFiaForm()
     
     form_fia.fields['nome_caixa_escolar'].initial = modelo_fia_objeto.nome_caixa_escolar
     form_fia.fields['ano_exercicio'].initial = modelo_fia_objeto.ano_exercicio
@@ -79,6 +95,8 @@ def documento_fia(request, elemento_id, mensagem='', reabreform_modelo_fia='', a
     else:
         form_fia.fields['preco_unitario_item'].initial = modelo_fia_objeto.preco_unitario_item
     form_fia.fields['justificativa'].initial = modelo_fia_objeto.justificativa
+    form_fia.fields['membro1'].required = False
+    form_fia.fields['membro2'].required = False
 
     form_extra_fia.fields['valor_numerico'].initial = ''
     form_extra_fia.fields['quantidade'].initial = ''
@@ -124,6 +142,11 @@ def documento_fia(request, elemento_id, mensagem='', reabreform_modelo_fia='', a
     for ordem in ordens_extras:
         lista_ordens_fia.append(ordem.valor_numerico)
 
+    if plano_objeto.situacao == 'Publicado' and plano_objeto.devolvido == True and plano_objeto.correcoes_a_fazer == 0 and plano_objeto.pre_assinatura == True:
+        var_plano_pre_aprovado = True
+    elif plano_objeto.situacao == 'Aprovado':
+        var_plano_pre_aprovado = True
+
     dados = {
         'chave_planos':plano_objeto,
         'chave_turmas' : turmas_iteravel,
@@ -139,6 +162,7 @@ def documento_fia(request, elemento_id, mensagem='', reabreform_modelo_fia='', a
         'chave_abre_form_extra_edicao' : abreform_extra_edicao,
         'chave_lista_todas_ordens' : lista_ordens_fia,
         'chave_ordens_com_correcao' : lista_ordens_com_correcao,
+        'plano_aprovado' : var_plano_pre_aprovado,
     }
 
     if reabreform_modelo_fia or reabreform_extra or abre_correcao:
@@ -153,7 +177,7 @@ def altera_fia(request, elemento_id):
     tipo_usuario = request.user.classificacao.tipo_de_acesso
     if tipo_usuario == 'Escola' and modelo_fia.plano.alterabilidade == 'Escola':
         if request.method == 'POST':
-            form_fia = ModeloFiaForm(request.POST)
+            form_fia = ModeloFiaForm(request.POST, modelo_fia_super=modelo_fia)
             if form_fia.is_valid():
                 var_cx_escolar = form_fia.cleaned_data.get('nome_caixa_escolar')
                 var_ano_exercicio = form_fia.cleaned_data.get('ano_exercicio')
@@ -161,12 +185,24 @@ def altera_fia(request, elemento_id):
                 # var_quantidade = form_fia.cleaned_data.get('quantidade')
                 var_preco_unitario_item = form_fia.cleaned_data.get('preco_unitario_item')
                 var_justificativa = form_fia.cleaned_data.get('justificativa')
+                var_membro1 = form_fia.cleaned_data.get('membro1')
+                var_membro2 = form_fia.cleaned_data.get('membro2')
                 modelo_fia.nome_caixa_escolar = var_cx_escolar
                 modelo_fia.ano_exercicio = var_ano_exercicio
                 modelo_fia.discriminacao = var_discriminacao
                 modelo_fia.quantidade = 1
                 modelo_fia.preco_unitario_item = var_preco_unitario_item
                 modelo_fia.justificativa = var_justificativa
+                if var_membro1:
+                    objeto1 = get_object_or_404(User, first_name=var_membro1)
+                    modelo_fia.membro_colegiado_1 = objeto1
+                else:
+                    modelo_fia.membro_colegiado_1 = None
+                if var_membro2:
+                    objeto2 = get_object_or_404(User, first_name=var_membro2)
+                    modelo_fia.membro_colegiado_2 = objeto2
+                else:
+                    modelo_fia.membro_colegiado_2 = None
 
                 var_total_item = 1 * var_preco_unitario_item
                 modelo_fia.valor_total_item = var_total_item

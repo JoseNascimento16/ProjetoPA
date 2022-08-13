@@ -1,9 +1,11 @@
 {% load static %}
+{% load custom_tags %}
 <!-- NAVBAR -->
 <div class="classe-div-navbar">
     <ul class="classe-navbar clear">
       <div class="sub-div-navbar1">
-        <li class=""><a href="{% url 'abre_meu_acesso' user.id %}"><i class="fa fa-user margem-icones-menu"></i>{{user.first_name}}</a></li>
+        {% tag_first_last_names user.first_name as nome_em_lista %}
+        <li class=""><a href="{% url 'abre_meu_acesso' user.id %}"><i class="fa fa-user margem-icones-menu"></i>{{nome_em_lista|first}} {{nome_em_lista|last}}</a></li>
         {% if user.classificacao.tipo_de_acesso == 'Funcionario'  %}
         <li><a id="clear">{{user.classificacao.matriz}}</a></li>
         {% else %}

@@ -454,7 +454,12 @@
                         <div class="div-corretor-flex tooltip5" style="display: flex"> <h5  style="min-width: 148px">Instituição de ensino:</h5><p style="font-style: italic;margin-left: 0;">{{elemento.usuario.last_name|truncatechars:27}}</p>
                             <span class="tooltiptext5" style="left: 100px; width: 300px">{{elemento.usuario.last_name}}</span>
                         </div>
-                        <div class="div-corretor-flex"> <h5>Situação:</h5><p style="font-style: italic;">{{elemento.situacao}} (ver legenda)</p> </div>
+                        {% if elemento.situacao == 'Publicado' and elemento.devolvido == True and elemento.correcoes_a_fazer == 0 and elemento.pre_assinatura == True %}
+                        <div class="div-corretor-flex"> <h5>Situação:</h5><p style="font-style: italic;">Pré-aprovado (ver legenda)</p> </div>
+                        {% else %}
+                            <div class="div-corretor-flex"> <h5>Situação:</h5><p style="font-style: italic;">{{elemento.situacao}} (ver legenda)</p> </div>
+                        {% endif %}
+
                         {% if elemento.corretor_plano != None %}
                             <div class="div-corretor-flex"> <h5>Corretor:</h5><p style="font-style: italic;">{{elemento.corretor_plano.first_name}}</p>
                                 {% if user.classificacao.assina_plano == True and elemento.situacao != 'Finalizado' %}
@@ -594,6 +599,8 @@
         <p>Um plano nesta situação já foi corrigido pela Secretaria da Educação, porém necessita de correção, e portanto, foi devolvido à escola com as devidas sugestões. Um plano pode passar por esta etapa quantas vezes forem necessárrias. Funcionários da SUPROT tem a opção de permitir que planos neste estágio sejam pré assinados pela escola após as correções.</p>
         <h5>- Corrigido pela escola </h5>
         <p>Um plano "Corrigido" já foi corrigido pela escola e reenviado para a Secretaria da Educação com as devidas correções.</p>
+        <h5>- Pré aprovado </h5>
+        <p>Planos entram neste estado quando o corretor responsável da SUPROT permite que ele seja pré assinado pela escola e seus membros após as correções. Apesar de não poderem ser mais alterados por ninguém, o corretor responsável ainda poderá rejeitar e sugerir novas correções caso veja necessidade. </p>
         <h5>- Aprovado </h5>
         <p>Planos "Aprovados" já passaram por quase todas as etapas necessárias, foram aprovados pela Secretaria da Educação e portanto já podem receber as assinaturas dos membros do corpo escolar. A partir deste estágio não podem mais ser alterados por ninguém.</p>
         <h5>- Pronto </h5>

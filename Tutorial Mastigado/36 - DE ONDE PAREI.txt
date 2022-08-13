@@ -1,13 +1,11 @@
 TENHO QUE APRENDER A TROCAR DE MODELO DE USUARIO (USAR O ABSTRACT AUTH_USER)
 
 ----------------------------------------------------------------------------------
-- URGENTE
-   - Na validação de cadastro de novos usuários, NÃO PERMITIR nome simples, pedir ao menos 1 sobrenome!!
-   - Na alteração de nomes também na página de perfil
-
 - Fia
    - Estou na pre assinatura de escolas
-	- Saber a melhor forma de incluir assinatura de tecnico responsavel
+	- Na assinatura do técnico, criar um campo para assinatura no modelo
+	- Na assinatura do técnico, habilitar um campo de assinatura manual e salvar
+	- Mostrar vermelho se não houver assinatura do técnico após aprovado ou pré-aprovado
 	- checar se -0 no form atrapalha
 	- link no documento direto para a correção
    - Desativar alterabilidade de documento, se ele estiver pré-aprovado
