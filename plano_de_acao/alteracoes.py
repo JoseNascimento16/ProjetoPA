@@ -20,7 +20,7 @@ def atualiza_assinaturas_escola(elemento_id):
     assinaturas = plano.classificacao_set.all()
     if assinaturas:
         for item in assinaturas:
-            if item.tipo_de_acesso == 'Funcionario':
+            if item.tipo_de_acesso == 'Funcionario' or item.tipo_de_acesso == 'Escola':
                 lista.append(item)
         plano.assinaturas = len(lista)
     else:
@@ -61,9 +61,24 @@ def plano_inteiramente_assinado(captura_plano):
         nome_plano = captura_plano.ano_referencia
         log_plano_inteiramente_assinado(nome_plano, captura_plano.id)
 
-# def checa_estado_plano_pre_aprovado(request):
-#     planos_pre_aprovados = Plano_de_acao.objects.filter(usuario=request.user, situacao='Publicado', devolvido=True)
-#     for plano in planos_pre_aprovados:
-#         if plano.correcoes_a_fazer == 0:
-#             plano.situacao = 'Aprovado'
-#             plano.save()
+def confere_assinaturas_muda_para_pronto(captura_plano, captura_escola):
+    # Se tiver aprovado e com todas as assinaturas
+    if captura_plano.situacao == 'Aprovado' and captura_plano.assinaturas > 0 and captura_plano.assinaturas == captura_escola.quant_funcionarios:
+        # if request.method == 'POST':
+        captura_plano.situacao = 'Pronto'
+        captura_plano.save()
+
+        nome_plano = captura_plano.ano_referencia
+        log_plano_pronto(nome_plano, captura_plano.id)
+
+    # Se tiver devolvido, corrigido(publicado), permitido assinaturas e já com todas as assinaturas
+    elif captura_plano.situacao == 'Publicado' and captura_plano.pre_assinatura == True and captura_plano.devolvido == True and captura_plano.assinaturas > 0 and captura_plano.assinaturas == captura_escola.quant_funcionarios:
+        # if request.method == 'POST':
+        
+        captura_plano.situacao = 'Pronto'
+        captura_plano.save()
+
+        nome_plano = captura_plano.ano_referencia
+
+        log_plano_aprovado_auto(nome_plano, captura_plano.id)
+        log_plano_pronto(nome_plano, captura_plano.id)

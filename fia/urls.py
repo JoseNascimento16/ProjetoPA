@@ -18,4 +18,6 @@ urlpatterns = [
     path('plano/<int:plano_id>/fia/deleta_correcao/<int:ordem_id>/slug/<slug:tipo_ordem>',views.deleta_correcao_fia, name='chamando_deleta_correcao_fia'),
     path('abre_correcao/fia/<int:elemento_id>/acao/<int:ident_numerica>/slug/<slug:abreFormFia>',views.abre_correcao_fia, name='abrindo_correcao_fia'),
     path('corrigindo/fia/<int:elemento_id>/acao/<int:ident_numerica>',views.corrige_fia, name='corrigindo_fia'),
+    path('fia/<int:modelo_fia_id>/assinatura/tecnico',views.salva_assinatura_tecnico_fia, name='salvando_assinatura_tecnico'),
+    path('fia/sign/<int:modelo_fia_id>/remove', views.remove_assinatura_tecnico, name='apaga_assinatura_tecnico'),
 ]

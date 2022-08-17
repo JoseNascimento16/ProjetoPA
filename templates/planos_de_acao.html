@@ -473,7 +473,8 @@
 
                     <!-- MOSTRA QUAIS AS ASSINATURAS DA ESCOLA -->
                     {% tag_len_funcionarios chave_classificacoes elemento.usuario.last_name elemento as len_funcionarios %}
-                    {% tag_len_assinaturas elemento.classificacao_set.all as len_assinaturas %}
+                    {% tag_len_assinaturas elemento.classificacao_set.all elemento as len_assinaturas %}
+                    <!-- aprovado -->
                     {% if elemento.situacao == 'Aprovado' or elemento.situacao == 'Pronto' or elemento.situacao == 'Assinado' or elemento.situacao == 'Inteiramente assinado' or elemento.situacao == 'Finalizado' %}
                     <div class="div-assinaturas-escolas">
                         <h5 style="margin-left: 0">Assinaturas Escola ({{len_assinaturas}}/{{len_funcionarios}}):</h5>
@@ -482,7 +483,13 @@
                             <p>- {{item}}</p>
                             {% endif %}
                         {% endfor %}
+                        {% for modelo in elemento.modelo_fia_set.all %}<!-- 1 objeto modelo_fia somente -->
+                            {% if modelo.assinatura_tecnico %}
+                                <p>- {{modelo.tecnico_responsavel}} (técnico)</p>
+                            {% endif %}
+                        {% endfor %}
                     </div>
+                    <!-- pré-aprovado -->
                     {% elif elemento.situacao == 'Publicado' and elemento.devolvido == True and elemento.correcoes_a_fazer == 0 and elemento.pre_assinatura == True %}
                     <div class="div-assinaturas-escolas">
                         <h5 style="margin-left: 0">Assinaturas Escola ({{len_assinaturas}}/{{len_funcionarios}}):</h5>
@@ -491,10 +498,15 @@
                             <p>- {{item}}</p>
                             {% endif %}
                         {% endfor %}
+                        {% for modelo in elemento.modelo_fia_set.all %}<!-- 1 objeto modelo_fia somente -->
+                            {% if modelo.assinatura_tecnico %}
+                                <p>- {{modelo.tecnico_responsavel}} (técnico)</p>
+                            {% endif %}
+                        {% endfor %}
                     </div>
                     {% endif %}
                     
-                    <!-- MOSTRA QUAIS AS AASSINATURAS DA SUPROT -->
+                    <!-- MOSTRA QUAIS AS ASSINATURAS DA SUPROT -->
                     {% tag_len_alto_cargo chave_classificacoes as len_alto_cargo %}
                     {% tag_len_suprof elemento.classificacao_set.all as len_suprof %}
                     {% if elemento.situacao == 'Pronto' or elemento.situacao == 'Assinado' or elemento.situacao == 'Inteiramente assinado' or elemento.situacao == 'Finalizado' %}
@@ -508,7 +520,7 @@
                     </div>
                     {% endif %}
                 </div>
-            
+            <!-- FIM ACCORDION INFORMAÇÕES EXTRAS -->
 
         </div>
             

@@ -1502,7 +1502,7 @@ def publica_plano(request, elemento_id):
     return redirect('pagina_planos_de_acao_mensagem', mensagem="Acesso_negado")
 
 def autoriza_plano(request, elemento_id): #ASSINATURA
-    from .alteracoes import atualiza_assinaturas_escola
+    from .alteracoes import atualiza_assinaturas_escola, confere_assinaturas_muda_para_pronto
     captura_plano = get_object_or_404(Plano_de_acao, pk=elemento_id)
     tipo_usuario = request.user.classificacao.tipo_de_acesso
     if tipo_usuario == 'Escola' or tipo_usuario == 'Funcionario':
@@ -1528,27 +1528,13 @@ def autoriza_plano(request, elemento_id): #ASSINATURA
                 nome_plano = captura_plano.ano_referencia
                 log_plano_assinado(nome_plano, checa_usuario, captura_plano.id)
 
-            # Se tiver aprovado e com todas as assinaturas
-            if captura_plano.situacao == 'Aprovado' and captura_plano.assinaturas > 0 and captura_plano.assinaturas == captura_escola.quant_funcionarios:
-                # if request.method == 'POST':
-                captura_plano.situacao = 'Pronto'
-                captura_plano.save()
-
-                nome_plano = captura_plano.ano_referencia
-                log_plano_pronto(nome_plano, captura_plano.id)
-
-            # Se tiver devolvido, corrigido(publicado), permitido assinaturas e já com todas as assinaturas
-            elif captura_plano.situacao == 'Publicado' and captura_plano.pre_assinatura == True and captura_plano.devolvido == True and captura_plano.assinaturas > 0 and captura_plano.assinaturas == captura_escola.quant_funcionarios:
-                # if request.method == 'POST':
+            # PLANO COMUM
+            if not captura_plano.tipo_fia:
+                confere_assinaturas_muda_para_pronto(captura_plano, captura_escola)
                 
-                captura_plano.situacao = 'Pronto'
-                captura_plano.save()
-
-                nome_plano = captura_plano.ano_referencia
-
-                log_plano_aprovado_auto(nome_plano, captura_plano.id)
-                log_plano_pronto(nome_plano, captura_plano.id)
-
+            # PLANO FIA
+            elif captura_plano.tipo_fia:
+                pass
 
             return redirect('pagina_planos_de_acao_mensagem', mensagem='Assinado')
     

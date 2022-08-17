@@ -3,7 +3,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django import forms
 from fia.forms import ModeloFiaForm, OrdemExtraForm
 from fia.models import Modelo_fia, Extra_fia
-import plano_de_acao
+from django.core.files.base import ContentFile
+import base64
 from plano_de_acao.forms import Correcao_FiaForm, FiaForm
 from django.contrib.auth.models import User
 from plano_de_acao.models import Correcoes, Plano_de_acao
@@ -70,7 +71,9 @@ def documento_fia(request, elemento_id, mensagem='', reabreform_modelo_fia='', a
     lista_ordens_com_correcao = []
     form_extra_fia = OrdemExtraForm()
     tipo_usuario = request.user.classificacao.tipo_de_acesso
-
+    from plano_de_acao.alteracoes import atualiza_assinaturas_escola
+    atualiza_assinaturas_escola(elemento_id)
+    
     ModeloFiaForm.base_fields['membro1'] = forms.ModelChoiceField(
         queryset=Classificacao.objects.order_by('-user').filter(matriz=plano_objeto.usuario.last_name).filter(tipo_de_acesso='Funcionario').filter(cargo_herdado='Membro do colegiado'),
         empty_label="------------",
@@ -147,6 +150,7 @@ def documento_fia(request, elemento_id, mensagem='', reabreform_modelo_fia='', a
     elif plano_objeto.situacao == 'Aprovado':
         var_plano_pre_aprovado = True
 
+
     dados = {
         'chave_planos':plano_objeto,
         'chave_turmas' : turmas_iteravel,
@@ -163,6 +167,7 @@ def documento_fia(request, elemento_id, mensagem='', reabreform_modelo_fia='', a
         'chave_lista_todas_ordens' : lista_ordens_fia,
         'chave_ordens_com_correcao' : lista_ordens_com_correcao,
         'plano_aprovado' : var_plano_pre_aprovado,
+        'chave_abre_altera_assinatura_tecnico' : True,
     }
 
     if reabreform_modelo_fia or reabreform_extra or abre_correcao:
@@ -187,6 +192,7 @@ def altera_fia(request, elemento_id):
                 var_justificativa = form_fia.cleaned_data.get('justificativa')
                 var_membro1 = form_fia.cleaned_data.get('membro1')
                 var_membro2 = form_fia.cleaned_data.get('membro2')
+                var_tecnico_responsavel = form_fia.cleaned_data.get('tecnico_responsavel')
                 modelo_fia.nome_caixa_escolar = var_cx_escolar
                 modelo_fia.ano_exercicio = var_ano_exercicio
                 modelo_fia.discriminacao = var_discriminacao
@@ -203,6 +209,8 @@ def altera_fia(request, elemento_id):
                     modelo_fia.membro_colegiado_2 = objeto2
                 else:
                     modelo_fia.membro_colegiado_2 = None
+                    
+                modelo_fia.tecnico_responsavel = var_tecnico_responsavel
 
                 var_total_item = 1 * var_preco_unitario_item
                 modelo_fia.valor_total_item = var_total_item
@@ -526,3 +534,27 @@ def corrige_fia(request, elemento_id, ident_numerica):
             contexto = abre_correcao_fia(request, elemento_id, ident_numerica, abreFormFia='sim')
             contexto['chave_do_form'] = form_extra_fia
             return render(request, 'correcoes.html', contexto)
+
+def salva_assinatura_tecnico_fia(request, modelo_fia_id):
+    modelo_fia = get_object_or_404(Modelo_fia, pk=modelo_fia_id)
+    if request.method == 'POST':
+        imagem = request.POST['canvasData']
+        format, imgstr = imagem.split(';base64,') 
+        ext = format.split('/')[-1] 
+        data = ContentFile(base64.b64decode(imgstr)) 
+        file_name = "'mysign." + ext
+        modelo_fia.assinatura_tecnico.save(file_name, data, save=True) 
+        
+        return redirect('chamando_documento_fia', elemento_id=modelo_fia.plano.id)
+
+    return redirect('dashboard')
+
+def remove_assinatura_tecnico(request, modelo_fia_id):
+    modelo_fia = get_object_or_404(Modelo_fia, pk=modelo_fia_id)
+    if request.method == 'POST':
+        modelo_fia.assinatura_tecnico.delete()
+        modelo_fia.save()
+        
+        return redirect('chamando_documento_fia', elemento_id=modelo_fia.plano.id)
+
+    return redirect('dashboard')

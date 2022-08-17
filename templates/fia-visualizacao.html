@@ -25,10 +25,12 @@
     </ul>
     {% endif %}
 
-    <div class="div-visualizacao-img" style="margin: 0">
-        <img class="visualizacao-img" src="{% static 'img/cabecalho_visualizacao_fiapng.png' %}" alt="">
+    <div class="div-header-fia">
+        <div class="div-visualizacao-img" style="margin: 0">
+            <img class="visualizacao-img-fia" src="{% static 'img/cabecalho_visualizacao_fiapng.png' %}" alt="">
+        </div>
+        <h5 class="h5-1-fia">SUPERINTENDÊNCIA DA EDUCAÇÃO PROFISSIONAL E TECNOLÓGICA - SUPROT</h5>
     </div>
-    <h5 class="h5-1-fia">SUPERINTENDÊNCIA DA EDUCAÇÃO PROFISSIONAL E TECNOLÓGICA - SUPROT</h5>
 
     <table class="div-unidade-bloco tabela-unidade table1-fia">
         <tr>
@@ -73,7 +75,7 @@
             {% endif %}
 
         </tr>
-    </table><br>
+    </table>
 
     
 
@@ -108,7 +110,7 @@
             <td></td>
             <td></td>
             <td></td>
-            <td>O valor será retirado do saldo de Custeio do Caixa Escolar</td>
+            <td style="width: 265px;">O valor será retirado do saldo de Custeio do Caixa Escolar</td>
         </tr>
         <tr>
             <td colspan="2" style="text-align: left;"> 12 - TOTAL </td>
@@ -131,7 +133,7 @@
             <th rowspan="2"> 14 - UNIDADE</th>
             <th colspan="3"> 15 - SITUAÇÃO ANTERIOR</th>
             <th colspan="4"> 16 - SITUAÇÃO ATUAL</th>
-            <th rowspan="2" style="width: 215px;"> 17 - JUSTIFICATIVA</th>
+            <th rowspan="2"> 17 - JUSTIFICATIVA</th>
         </tr>
         <tr>
             <th style="width: 45px;"> 13.1 - Nº ORDEM </th>
@@ -170,7 +172,7 @@
             <td>R$ {{chave_modelo_fia.preco_unitario_item|intcomma}}</td>
             <td>R$ {{chave_modelo_fia.valor_total_item|intcomma}}</td>
             <td></td>
-            <td>{{chave_modelo_fia.justificativa}}</td>
+            <td style="width: 265px;">{{chave_modelo_fia.justificativa}}</td>
         </tr>
 
         <!-- RENDERIZA ORDENS EXTRAS QUANDO HÁ -->
@@ -232,14 +234,14 @@
             {% tag_first_last_names chave_planos.usuario.first_name as nome_em_lista_diretor %}
             {% tag_any chave_planos.usuario chave_planos.classificacao_set.all as var3 %}
             {% if chave_planos.classificacao_set.all %}
-                {% if var3 and chave_planos.situacao == 'Finalizado' %}
+                {% if var3 and plano_aprovado %}
                     {% if chave_planos.usuario.classificacao.assinatura %}
-                    <td colspan="2" style="width: 200px"> <img class="assinaturas-foto-fia" src="{{ chave_planos.usuario.classificacao.assinatura.url }}" alt=""> </td>
+                        <td colspan="2" style="width: 200px"> <img class="assinaturas-foto-fia" src="{{ chave_planos.usuario.classificacao.assinatura.url }}" alt=""> </td>
                     {% else %}
-                    <td colspan="2" class="assinaturas-fia", style="text-align: left;width: 140px;font-style: italic;font-family: Vladimir Script;"> {{nome_em_lista_diretor|first}} {{nome_em_lista_diretor|last}} </td>
+                        <td colspan="2" class="assinaturas-fia", style="text-align: left;width: 140px;font-style: italic;font-family: Vladimir Script;"> {{nome_em_lista_diretor|first}} {{nome_em_lista_diretor|last}} </td>
                     {% endif %}
                 {% else %}
-                <td colspan="2" style="text-align: left;">  </td>
+                    <td colspan="2" style="text-align: left;">  </td>
                 {% endif %}
             {% else %}
                 <td colspan="2" style="text-align: left;">  </td>
@@ -249,22 +251,72 @@
         </tr>
         <tr>
             {% if chave_modelo_fia.membro_colegiado_1 and chave_modelo_fia.membro_colegiado_2 %}
-            <td style="text-align: left"> 18.3 - COLEGIADO ESCOLAR - {{chave_modelo_fia.membro_colegiado_1.first_name}} e {{chave_modelo_fia.membro_colegiado_2.first_name}} </td>
+            <td style="text-align: left"> 18.3 - COLEGIADO ESCOLAR - {{chave_modelo_fia.membro_colegiado_1.first_name}} / {{chave_modelo_fia.membro_colegiado_2.first_name}} </td>
             {% else %}
             <td style="text-align: left; background-color: rgba(255, 102, 0, 0.404)"> 18.3 - COLEGIADO ESCOLAR - {{chave_modelo_fia.membro_colegiado_1.first_name}} {{chave_modelo_fia.membro_colegiado_2.first_name}} </td>
             {% endif %}
             <td style="text-align: left"> 18.4 - ASSINATURA(S): </td>
-            <td style="text-align: left; background-color: rgba(255, 0, 0, 0.404)">????????</td>
-            <td style="text-align: left; background-color: rgba(255, 0, 0, 0.404)">????????</td>
+            <!-- ASSINATURA MEMBRO DO COLEGIADO 1 -->
+            {% if chave_modelo_fia.membro_colegiado_1 %}
+                {% if chave_planos.classificacao_set.all %}
+                    {% tag_membro chave_modelo_fia.membro_colegiado_1 chave_planos.classificacao_set.all as var4 %}
+                    {% if var4 and plano_aprovado %}
+                        {% if var4.classificacao.assinatura %}
+                        <td> <img class="assinaturas-foto-fia" src="{{ var4.classificacao.assinatura.url }}" alt=""> </td>
+                        {% else %}
+                        <td class="assinaturas-fia", style="text-align: left;width: 232px;font-style: italic;font-family: Vladimir Script;font-size: 26px;"> {{var4.first_name}}</td>
+                        {% endif %}
+                    {% else %}
+                        <td class="assinaturas-empty">  </td>
+                    {% endif %}
+                {% else %}
+                    <td class="assinaturas-empty">  </td>
+                {% endif %}
+            {% else %}
+                <td class="assinaturas-empty">  </td>
+            {% endif %}
+            <!-- *********** -->
+            <!-- ASSINATURA MEMBRO DO COLEGIADO 2 -->
+            {% if chave_modelo_fia.membro_colegiado_2 %}
+                {% if chave_planos.classificacao_set.all %}
+                    {% tag_membro chave_modelo_fia.membro_colegiado_2 chave_planos.classificacao_set.all as var4 %}
+                    {% if var4 and plano_aprovado %}
+                        {% if var4.classificacao.assinatura %}
+                        <td> <img class="assinaturas-foto-fia" src="{{ var4.classificacao.assinatura.url }}" alt=""> </td>
+                        {% else %}
+                        <td class="assinaturas-fia", style="text-align: left;width: 232px;font-style: italic;font-family: Vladimir Script;font-size: 26px;"> {{var4.first_name}}</td>
+                        {% endif %}
+                    {% else %}
+                        <td class="assinaturas-empty">  </td>
+                    {% endif %}
+                {% else %}
+                    <td class="assinaturas-empty">  </td>
+                {% endif %}
+            {% else %}
+                <td class="assinaturas-empty"> c </td>
+            {% endif %}
+            <!-- *********** -->
         </tr>
         <tr>
-            <td style="text-align: left"> 18.5 - TÉCNICO RESP. P/ACOMPANHAMENTO - ???????</td>
-            {% if plano_aprovado == True and not chave_modelo_fia.assinatura_tecnico %}
-            <td style="text-align: left"> 18.6 - ASSINATURA: </td>
-            <td colspan="2" style="text-align: left; background-color: rgba(255, 0, 0, 0.404)">????????</td>
+            <!-- ASSINATURA TECNICO -->
+            {% if chave_modelo_fia.tecnico_responsavel %}
+                <td style="text-align: left"> 18.5 - TÉCNICO RESP. P/ACOMPANHAMENTO - {{chave_modelo_fia.tecnico_responsavel}}</td>
+            {% else %}
+                <td style="text-align: left; background-color: rgba(255, 102, 0, 0.404)"> 18.5 - TÉCNICO RESP. P/ACOMPANHAMENTO - </td>
+            {% endif %}
+
+            {% if user.classificacao.tipo_de_acesso == 'Escola' %}
+            <td style="text-align: left"> 18.6 - ASSINATURA: <a id="abre-modal-assinatura-tecnico" class="item-principal-menu-edicao sinal-ordens-js desabilita-js" href="#"><i class="fas fa-edit pull-right"></i></a> </td>
             {% else %}
             <td style="text-align: left"> 18.6 - ASSINATURA: </td>
-            <td colspan="2" style="text-align: left; background-color: rgba(255, 0, 0, 0.404)">????????</td>
+            {% endif %}
+
+            {% if plano_aprovado == True and chave_modelo_fia.assinatura_tecnico %}
+                <td colspan="2"> <img class="assinaturas-foto-fia" src="{{ chave_modelo_fia.assinatura_tecnico.url }}" alt=""> </td>
+            {% elif plano_aprovado == True and chave_modelo_fia.tecnico_responsavel and not chave_modelo_fia.assinatura_tecnico %}
+                <td colspan="2" style="text-align: left; background-color: rgba(255, 102, 0, 0.404)"></td>
+            {% else %}
+                <td colspan="2" style="text-align: left; background-color: rgba(255, 102, 0, 0.404)"></td>
             {% endif %}
 
         </tr>

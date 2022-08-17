@@ -1,5 +1,8 @@
 from sys import api_version
 from django import template
+from django.shortcuts import get_object_or_404
+from fia.models import Modelo_fia
+from plano_de_acao.models import Plano_de_acao
 
 register = template.Library()
 
@@ -22,6 +25,12 @@ def tag_any3(funcionario,b):
     if any(item.user == funcionario.user for item in b):
         if funcionario.user.last_name == 'Membro do colegiado':
             return funcionario
+    return False
+
+@register.simple_tag
+def tag_membro(membro,b):
+    if any(item.user == membro for item in b):
+        return membro
     return False
 
 @register.simple_tag
@@ -68,12 +77,16 @@ def tag_len_funcionarios(classificacoes, escola, objeto_plano_elemento):
         return tamanho
 
 @register.simple_tag
-def tag_len_assinaturas(assinaturas):
+def tag_len_assinaturas(assinaturas, objeto_plano):
     lista_assinaturas=[]
     for item in assinaturas:
         if item.tipo_de_acesso == 'Funcionario' or item.tipo_de_acesso == 'Escola':
             lista_assinaturas.append(item)
     tamanho = len(lista_assinaturas)
+    if objeto_plano.tipo_fia:
+        modelo_fia = get_object_or_404(Modelo_fia, plano=objeto_plano)
+        if modelo_fia.assinatura_tecnico:
+            tamanho += 1
     return tamanho
 
 @register.simple_tag

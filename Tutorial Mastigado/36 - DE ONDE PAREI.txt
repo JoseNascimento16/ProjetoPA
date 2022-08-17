@@ -1,19 +1,24 @@
 TENHO QUE APRENDER A TROCAR DE MODELO DE USUARIO (USAR O ABSTRACT AUTH_USER)
 
+TENHO QUE APRENDER COMO REFERENCIAR UM FOREIGNKEY NO REVERSO QUANDO ESTA FOREIGNKEY TEM UM RELATED_NAME COMO ATRIBUTO(no momento só sei fazer isso quando não tem related_name configurado)
+
 ----------------------------------------------------------------------------------
 - Fia
    - Estou na pre assinatura de escolas
-	- Na assinatura do técnico, criar um campo para assinatura no modelo
-	- Na assinatura do técnico, habilitar um campo de assinatura manual e salvar
-	- Mostrar vermelho se não houver assinatura do técnico após aprovado ou pré-aprovado
+	- Criar campo das assinaturas dos coordenadores
 	- checar se -0 no form atrapalha
 	- link no documento direto para a correção
    - Desativar alterabilidade de documento, se ele estiver pré-aprovado
    - testar urls Fia
 
-- menu edicao nao mostra para planis finalizados faunc sec
+- Corrigir qual a situação do plano quando deve mostrar as assinaturas (publicado ou finalizado)
+- Criar condição para só poder criar/alterar o tipo de cargo (alto cargo) até 3! Só podem existir 3 coordenadores que assinam os planos
+- menu edicao nao mostra para planos finalizados para funcioarios func sec
 - alternancia menu parou de funcionar pós print...
 - menu de impressão com as assinaturas só pode ser mostrado em planos com situação Finalizado
+- Remover capacidade de selecionar texto para burlar impressão
+- Apertar o X na alteração de corretor, não está fechando o modal
+- Modifiquei função autoriza_plano, testar se esta tudo ok, se esta autorizando (assinaturas escola)
 
 - Talvez Inserir funcionalidade de alteração de cadastro de escola.
 

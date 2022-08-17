@@ -59,6 +59,10 @@
             {% include 'partials/formularios/form-cadastra-assinatura.html' %}
             {% endif %}
 
+            {% if chave_abre_altera_assinatura_tecnico %}
+            {% include 'partials/formularios/form-cadastra-assinatura-tecnico.html' %}
+            {% endif %}
+
         </div>
     </div>
 </div>

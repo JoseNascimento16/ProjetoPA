@@ -1,9 +1,10 @@
 from django.db import models
 from datetime import date, datetime
-
-from django.db.models.deletion import CASCADE
 # from usuarios.models import Usuario
 from django.contrib.auth.models import User
+
+# from fia.models import Modelo_fia
+
 
 # Create your models here.
 
@@ -25,6 +26,7 @@ class Plano_de_acao(models.Model):
     tipo_fia = models.BooleanField(default=False)
     pre_analise_fia = models.BooleanField(default=False)
     forca_criacao_modelo_fia = models.BooleanField(default=False)
+    # modelo_fia = models.ForeignKey(Modelo_fia, on_delete=models.SET_NULL, null=True, related_name='modelo_fia')
 
     def __str__(self):
         return self.ano_referencia

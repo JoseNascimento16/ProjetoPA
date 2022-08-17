@@ -48,6 +48,18 @@ $(document).ready(function(){
 			$(".div-form-ordem-extra-fia").css("display", "none")  });
 		});
 
+// MOSTRA MODAL DE ASSINATURA TECNICO RESPONSAVEL FIA
+$(document).ready(function(){
+	$("#abre-modal-assinatura-tecnico").click(function(){ 
+		$(".modelo-modal-edicao").css("display", "flex"),
+		$(".div-confirma-devolve").css("display", "block") });
+  });
+	$(document).ready(function(){
+		$(".fecha-modal").click(function(){ 
+			$(".modelo-modal-edicao").css("display", "none"),
+			$(".div-confirma-devolve").css("display", "none") });
+		});
+
 // MOSTRA MODAL DE EDITAR PLANO
 $(document).ready(function(){
 	$("#chama-form-edita-plano").click(function(){ 

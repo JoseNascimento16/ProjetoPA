@@ -25,20 +25,19 @@ class ModeloFiaForm(forms.ModelForm):
         super(ModeloFiaForm, self).__init__(*args, **kwargs)
 
         if self.modelo_fia_super:
-            self.fields['membro1'].queryset = Classificacao.objects.order_by('-user').filter(matriz=self.modelo_fia_super.plano.usuario.last_name).filter(tipo_de_acesso='Funcionario').filter(cargo_herdado='Membro do colegiado')
-
-    
+            self.fields['membro1'].queryset = Classificacao.objects.order_by('-user').filter(matriz=self.modelo_fia_super.plano.usuario.last_name).filter(tipo_de_acesso='Funcionario').filter(cargo_herdado='Membro do colegiado')   
 
     class Meta:
 
         model = Modelo_fia
-        fields = ['nome_caixa_escolar','ano_exercicio','discriminacao', 'preco_unitario_item', 'justificativa', 'membro1', 'membro2']
+        fields = ['nome_caixa_escolar','ano_exercicio','discriminacao', 'preco_unitario_item', 'justificativa', 'membro1', 'membro2', 'tecnico_responsavel']
         labels = {
             'nome_caixa_escolar':'Nome Caixa Escolar:',
             'ano_exercicio':'Ano de exercício:',
             'discriminacao':'Discriminação:',
             'preco_unitario_item':'Preço unitário:',
             'justificativa':'Justificativa:',
+            'tecnico_responsavel':'Técnico responsável:',
         }
         
         widgets = {
@@ -47,6 +46,7 @@ class ModeloFiaForm(forms.ModelForm):
             'discriminacao': forms.Textarea(attrs={'placeholder': 'Especifique itens, serviços, especificações técnicas...','class': 'fonte-italic', 'rows': '5'}),
             'preco_unitario_item': forms.NumberInput(attrs={'placeholder': 'Ex: 100.00','class': 'fonte-italic'}),
             'justificativa': forms.Textarea(attrs={'placeholder': 'Justificativa...','class': 'fonte-italic', 'rows': '5'}),
+            'tecnico_responsavel': forms.TextInput(attrs={'placeholder': 'Insira o nome...','class': 'fonte-italic'}),
             }
 
 # VALIDAÇÕES USANDO METODO CLEAN
@@ -57,11 +57,13 @@ class ModeloFiaForm(forms.ModelForm):
         valor_preco_unitario_item = self.cleaned_data.get('preco_unitario_item')
         valor_membro1 = self.cleaned_data.get('membro1')
         valor_membro2 = self.cleaned_data.get('membro2')
+        valor_tecnico_responsavel = self.cleaned_data.get('tecnico_responsavel')
         lista_de_erros = {}
 
         somente_valores_positivos(valor_preco_unitario_item, 'preco_unitario_item', lista_de_erros)
         membros_iguais(valor_membro1, valor_membro2, 'membro1', lista_de_erros)
         membros_iguais(valor_membro1, valor_membro2, 'membro2', lista_de_erros)
+        campo_tem_algum_numero(valor_tecnico_responsavel, 'tecnico_responsavel', lista_de_erros)
         # nao_escolheu_campo(valor_membro1, 'membro1', lista_de_erros)
         # nao_escolheu_campo(valor_membro2, 'membro2', lista_de_erros)
         
