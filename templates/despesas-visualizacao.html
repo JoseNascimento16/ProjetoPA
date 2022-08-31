@@ -1,6 +1,7 @@
 {% extends 'base-despesas-visualizacao.html' %}
 {% load static %}
 {% load definir_acoes %}
+{% load custom_tags %}
 {% load humanize %}
 {% block content %}
 
@@ -10,8 +11,10 @@
 {{ chave_devolvido|json_script:"id-chave-devolvido" }}
 {{ chave_tipo_usuario|json_script:"id-tipo-usuario" }}
 {{ chave_situacao_plano|json_script:"id-situacao-plano" }}
+{{ chave_q_linha|json_script:"id-q-linha" }}
+{{ chave_apos_print|json_script:"id-apos-print" }}
 
-<div class="div-visualizacao-bloco">
+<div id="imprimir" class="div-visualizacao-bloco">
 
     {% if messages %}
     <ul class="ul-mensagens" style="padding: 0%;">
@@ -36,7 +39,7 @@
             <td>DIREC: {{ plano.usuario.username }}</td>
         </tr>
         
-    </table><br>
+    </table>
 
     <table class="div-unidade-bloco tabela-unidade">
             {% for turma in chave_turmas_associadas %}
@@ -50,8 +53,8 @@
     </table>
 
     <div class="titulo-plano">
-        <h4 style="margin-top: 30px;">PLANO: {{ chave_planos.ano_referencia }}</h4>
-        <h4>2 - DETALHAMENTO DAS DESPESAS</h4>
+        <p>PLANO: {{ chave_planos.ano_referencia }}</p>
+        <p>2 - DETALHAMENTO DAS DESPESAS</p>
     </div>
 
     <table class="tabela-principal">
@@ -68,41 +71,53 @@
         </tr>
         
         <!-- GERAÇÃO DOS CODIGOS -->
-        {% for ordem in chave_ordens2 %}  <!-- PARA TODAS AS ORDENS DO PLANO X -->
             {% for codigo in chave_codigos %} <!-- PARA CADA CODIGO DO PLANO COMO UM TODO -->
-                {% if codigo.ordem.identificacao_numerica == ordem.identificacao_numerica %}  <!-- SE A ORDEM DESTE CODIGO = INSTANCIA DA ORDEM ATUAL -->
+                <tr class="tr-codigos tr-dinamicos{{codigo.ordem.identificacao_numerica}}{{codigo.identificacao}}">
                     
-                        <tr class="tr-codigos tr-dinamicos{{ordem.identificacao_numerica}}{{codigo.identificacao}}">
-                            
-                            {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
-                                {% if codigo.possui_sugestao_correcao %}
-                                <td style="text-align: center;"> <a class="a-clear-acao tds-trs-{{ordem.identificacao_numerica}}{{codigo.identificacao}} desabilita-js" href="{% url 'chamando_correcao_despesa_plano' plano.id ordem.id codigo.id %}"><div style="height:100%;width:100%">{{ordem.identificacao_numerica}}{{codigo.identificacao}} <span class="tooltiptext3-tabela"> <i class="fas fa-edit"></i> Alterar correção!</span> </div> </a> </td>
-                                {% else %}
-                                <td style="text-align: center;"> <a class="a-clear-acao tds-trs-{{ordem.identificacao_numerica}}{{codigo.identificacao}} desabilita-js" href="{% url 'chamando_correcao_despesa_plano' plano.id ordem.id codigo.id %}"><div style="height:100%;width:100%">{{ordem.identificacao_numerica}}{{codigo.identificacao}} <span class="tooltiptext4-tabela"> <i class="fa-solid fa-arrow-left"></i> Sugerir correção!</span> </div> </a> </td>
-                                {% endif %}
-                            {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
-                                {% if codigo.possui_sugestao_correcao %}
-                                <td style="text-align: center;"> <a class="a-clear-acao tds-trs-{{ordem.identificacao_numerica}}{{codigo.identificacao}}" href="{% url 'abrindo_correcao_despesa' plano.id ordem.identificacao_numerica codigo.identificacao 'Sim' %}"><div style="height:100%;width:100%">{{ordem.identificacao_numerica}}{{codigo.identificacao}} <span class="tooltiptext3-tabela"> <i class="fas fa-edit"></i> Corrigir!</span> </div> </a> </td>
-                                {% else %}
-                                <td style="text-align: center;"> <a class="a-clear-acao tds-trs-{{ordem.identificacao_numerica}}{{codigo.identificacao}}"><div style="height:100%;width:100%">{{ordem.identificacao_numerica}}{{codigo.identificacao}} </div> </a> </td>
-                                {% endif %}
-                            {% elif user.classificacao.tipo_de_acesso == 'Funcionario' %}
-                                <td style="text-align: center;"> <a class="a-clear-acao tds-trs-{{ordem.identificacao_numerica}}{{codigo.identificacao}}"><div style="height:100%;width:100%">{{ordem.identificacao_numerica}}{{codigo.identificacao}} </div> </a> </td>
-                            {% endif %}
+                    {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
+                        {% if codigo.possui_sugestao_correcao %}
+                        <td style="text-align: center;"> <a class="a-clear-acao tds-trs-{{codigo.ordem.identificacao_numerica}}{{codigo.identificacao}} desabilita-js" href="{% url 'chamando_correcao_despesa_plano' plano.id codigo.ordem.id codigo.id %}"><div style="height:100%;width:100%">{{codigo.ordem.identificacao_numerica}}{{codigo.identificacao}} <span class="tooltiptext3-tabela"> <i class="fas fa-edit"></i> Alterar correção!</span> </div> </a> </td>
+                        {% else %}
+                        <td style="text-align: center;"> <a class="a-clear-acao tds-trs-{{codigo.ordem.identificacao_numerica}}{{codigo.identificacao}} desabilita-js" href="{% url 'chamando_correcao_despesa_plano' plano.id codigo.ordem.id codigo.id %}"><div style="height:100%;width:100%">{{codigo.ordem.identificacao_numerica}}{{codigo.identificacao}} <span class="tooltiptext4-tabela"> <i class="fa-solid fa-arrow-left"></i> Sugerir correção!</span> </div> </a> </td>
+                        {% endif %}
+                    {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
+                        {% if codigo.possui_sugestao_correcao %}
+                        <td style="text-align: center;"> <a class="a-clear-acao tds-trs-{{codigo.ordem.identificacao_numerica}}{{codigo.identificacao}}" href="{% url 'abrindo_correcao_despesa' plano.id codigo.ordem.identificacao_numerica codigo.identificacao 'Sim' %}"><div style="height:100%;width:100%">{{codigo.ordem.identificacao_numerica}}{{codigo.identificacao}} <span class="tooltiptext3-tabela"> <i class="fas fa-edit"></i> Corrigir!</span> </div> </a> </td>
+                        {% else %}
+                        <td style="text-align: center;"> <a class="a-clear-acao tds-trs-{{codigo.ordem.identificacao_numerica}}{{codigo.identificacao}}"><div style="height:100%;width:100%">{{codigo.ordem.identificacao_numerica}}{{codigo.identificacao}} </div> </a> </td>
+                        {% endif %}
+                    {% elif user.classificacao.tipo_de_acesso == 'Funcionario' %}
+                        <td style="text-align: center;"> <a class="a-clear-acao tds-trs-{{codigo.ordem.identificacao_numerica}}{{codigo.identificacao}}"><div style="height:100%;width:100%">{{codigo.ordem.identificacao_numerica}}{{codigo.identificacao}} </div> </a> </td>
+                    {% endif %}
 
-                            <td class="td-especificacao-justificativa tds-trs-{{ordem.identificacao_numerica}}{{codigo.identificacao}}"> {{codigo.especificacao}} </td>
-                            <td class="td-especificacao-justificativa tds-trs-{{ordem.identificacao_numerica}}{{codigo.identificacao}}"> {{codigo.justificativa}} </td>
-                            <td class="tds-trs-{{ordem.identificacao_numerica}}{{codigo.identificacao}}" style="text-align: center;"> {{codigo.embalagem}} </td>
-                            <td class="tds-trs-{{ordem.identificacao_numerica}}{{codigo.identificacao}}" style="text-align: center;"> {{codigo.quantidade}} </td>
-                            <td class="tds-trs-{{ordem.identificacao_numerica}}{{codigo.identificacao}}" style="text-align: center;"> R$ {{codigo.preco_unitario|intcomma}} </td>
-                            <td class="tds-trs-{{ordem.identificacao_numerica}}{{codigo.identificacao}}" style="text-align: center;"> R$ {{codigo.preco_total_capital|intcomma}} </td>
-                            <td class="tds-trs-{{ordem.identificacao_numerica}}{{codigo.identificacao}}" style="text-align: center;"> R$ {{codigo.preco_total_custeio|intcomma}} </td>
+                    <td class="td-especificacao-justificativa tds-trs-{{codigo.ordem.identificacao_numerica}}{{codigo.identificacao}}"> {{codigo.especificacao}} </td>
+                    <td class="td-especificacao-justificativa tds-trs-{{codigo.ordem.identificacao_numerica}}{{codigo.identificacao}}"> {{codigo.justificativa}} </td>
+                    <td class="tds-trs-{{codigo.ordem.identificacao_numerica}}{{codigo.identificacao}}" style="text-align: center;"> {{codigo.embalagem}} </td>
+                    <td class="tds-trs-{{codigo.ordem.identificacao_numerica}}{{codigo.identificacao}}" style="text-align: center;"> {{codigo.quantidade}} </td>
+                    <td class="tds-trs-{{codigo.ordem.identificacao_numerica}}{{codigo.identificacao}}" style="text-align: center;"> R$ {{codigo.preco_unitario|intcomma}} </td>
+                    <td class="tds-trs-{{codigo.ordem.identificacao_numerica}}{{codigo.identificacao}}" style="text-align: center;"> R$ {{codigo.preco_total_capital|intcomma}} </td>
+                    <td class="tds-trs-{{codigo.ordem.identificacao_numerica}}{{codigo.identificacao}}" style="text-align: center;"> R$ {{codigo.preco_total_custeio|intcomma}} </td>
+                
+                </tr>
+
+                <!-- INSERE QUEBRA DE LINHA NA IMPRESSÃO APÓS OS CODIGOS -->
+                {% if codigo.quebra_de_linha > 0 %}
+
+                    {% tag_loop1 codigo.quebra_de_linha as valor_linhas %}
+                    {% for quantidade in valor_linhas %}
+                        <tr class="tr-extra display-none2">
+                            <td style="border: none;"> 
+                            </td>
                         </tr>
-                    
+                    {% endfor %}
+
                 {% endif %}
+                <!-- ********* -->
+
             {% endfor %}
-        {% endfor %}
         
+        
+
                 <tr>
                     <td colspan="6">  </td>
                     <td style="text-align: center;font-size: 14px;font-weight: bold;"> R$ {{var_capital|intcomma}} </td>
@@ -110,7 +125,7 @@
                 </tr>
 
                 <tr>
-                    <td colspan="6", style="font-size: 16px;font-weight: bold;"> VALOR TOTAL DO PLANO </td>
+                    <td colspan="6", style="font-size: 12px;font-weight: bold;"> VALOR TOTAL DO PLANO </td>
                     <td colspan="2", style="text-align: center;font-size: 16px;font-weight: bold;"> R$ {{var_total|intcomma}} </td>
                 </tr>
 
@@ -129,20 +144,43 @@
         </tr>
 
         <tr>
-            <td colspan="4"> DATA:    /     /      </td>
+            {% if chave_planos.data_assinaturas_escola %}
+            <td colspan="3" style="text-align: left"> DATA: {{chave_planos.data_assinaturas_escola}} </td>
+            {% else %}
+            <td colspan="3" style="text-align: left"> DATA: </td>
+            {% endif %}
         </tr>
 
         <tr>
             <th style="width: 100px;"> POSIÇÃO </th>
             <th> NOME </th>
             <th colspan="2", style="width: 200px;"> ASSINATURA </th>
-            <td colspan="2"> DATA:    /     /      </td>
+            {% if chave_planos.data_assinaturas_suprof %}
+            <td colspan="3" style="text-align: left"> DATA: {{chave_planos.data_assinaturas_suprof}} </td>
+            {% else %}
+            <td colspan="3" style="text-align: left"> DATA: </td>
+            {% endif %}
         </tr>
 
         <tr>
             <td style="text-align: center;"> Presidente Cx Escolar </td>
             <td style="text-align: center;width: 200px;font-weight: bold;"> {{plano.usuario.first_name}} </td>
-            <td colspan="2", style="text-align: center;">  </td>
+            <!-- ASSINATURA DIRETOR -->
+            {% if chave_planos.classificacao_set.all %}
+            {% tag_any chave_planos.usuario chave_planos.classificacao_set.all as var3 %}
+                {% if var3 and plano_aprovado or var3 and chave_planos.alterabilidade == 'Desativada' %}
+                    {% if chave_planos.usuario.classificacao.assinatura %}
+                    <td colspan="2"> <img class="assinaturas-foto-size" src="{{ chave_planos.usuario.classificacao.assinatura.url }}" alt=""> </td>
+                    {% else %}
+                    <td colspan="2", class="assinaturas", style="text-align: center;font-style: italic;font-family: Vladimir Script;font-size: 26px;"> {{chave_planos.usuario.first_name}} </td>
+                    {% endif %}
+                {% else %}
+                <td colspan="2", style="text-align: center;">  </td>
+                {% endif %}
+            {% else %}
+                <td colspan="2", style="text-align: center;">  </td>
+            {% endif %}
+            <!-- ******** -->
             <td colspan="2"> VISTO SUPROT: </td>
         </tr>
 
@@ -153,18 +191,36 @@
                 <td style="text-align: center;width: 200px;font-weight: bold;"> {{funcionarios.user.first_name}} </td>
                 {% endif %}
             {% endfor %}
-            <td colspan="2", style="text-align: center;">  </td>
+
+            <!-- ASSINATURA TESOUREIRO -->
+            {% if chave_planos.classificacao_set.all %}
+            {% tag_any2 chave_funcionarios chave_planos.classificacao_set.all as var3 %}
+                {% if var3 and plano_aprovado or var3 and chave_planos.alterabilidade == 'Desativada' %}
+                    {% if var3.user.classificacao.assinatura %}
+                    <td colspan="2"> <img class="assinaturas-foto-size" src="{{ var3.user.classificacao.assinatura.url }}" alt=""> </td>
+                    {% else %}
+                    <td colspan="2", class="assinaturas", style="text-align: center;font-style: italic;font-family: Vladimir Script;font-size: 26px;"> {{var3.user.first_name}} </td>
+                    {% endif %}
+                {% else %}
+                <td colspan="2", style="text-align: center;">  </td>
+                {% endif %}
+            {% else %}
+                <td colspan="2", style="text-align: center;">  </td>
+            {% endif %}
+            <!-- ********* -->
+
             <td colspan="2"> CADASTRO: </td>
         </tr>
 
+        {% tag_len_suprof chave_planos.classificacao_set.all as len_suprof %}
 
         {% set '' as var2 %}
-        {% for funcionarios in chave_funcionarios %}
+        {% for funcionarios in chave_membros_colegiado %}
         <tr>
             
             {% if not var2 %}
                     {% if varmembros > 0 %}
-                    <td rowspan="{{varmembros}}", style="text-align: center;"> Membros do colegiado escolar </td>
+                    <td rowspan="4", style="text-align: center;"> Membros do colegiado escolar </td>
                     {% else %}
                     <td style="text-align: center;"> Membros do colegiado escolar </td>
                     {% endif %}
@@ -172,11 +228,40 @@
                 
                     {% if funcionarios.user.last_name == 'Membro do colegiado' %}
                     <td style="text-align: center;width: 200px;font-weight: bold;"> {{funcionarios.user.first_name}} </td>
+                    
+                    <!-- ASSINATURA MEMBROS DO COLEGIADO -->
+                    {% if chave_planos.classificacao_set.all %}
+                    {% tag_any3 funcionarios chave_planos.classificacao_set.all as var3 %}
+                        {% if var3 and plano_aprovado or var3 and chave_planos.alterabilidade == 'Desativada' %}
+                            {% if var3.user.classificacao.assinatura %}
+                            <td colspan="2"> <img class="assinaturas-foto-size" src="{{ var3.user.classificacao.assinatura.url }}" alt=""> </td>
+                            {% else %}
+                            <td colspan="2", class="assinaturas", style="text-align: center;font-style: italic;font-family: Vladimir Script;font-size: 26px;"> {{var3.user.first_name}}</td>
+                            {% endif %}
+                        {% else %}
+                        <td colspan="2", style="text-align: center;">  </td>
+                        {% endif %}
+                    {% else %}
+                        <td colspan="2", style="text-align: center;">  </td>
                     {% endif %}
-                
-                    {% if funcionarios.user.last_name == 'Membro do colegiado' %}
-                    <td colspan="2", style="text-align: center;">  </td>
+                    <!-- *********** -->
+                    
                     {% endif %}
+
+                    
+                    <!-- ASSINATURAS FUNC_SEC -->
+                    {% if chave_planos.alterabilidade == 'Desativada' %}
+                        {% if forloop.counter0 < len_suprof %}
+                        {% tag_assinaturas_suprof forloop.counter0 chave_planos.classificacao_set.all as Func_sec %}
+                            {% if Func_sec.assinatura %}
+                            <td style="text-align: left"> {{Func_sec}} <img class="assinaturas-foto-size display-block" src="{{ Func_sec.assinatura.url }}" alt=""> </td>
+                            {% else %}
+                            <td style="text-align: left"> {{Func_sec}} <p class="assinaturas assinatura-style", style="text-align: left;font-style: italic;margin: 0;"> {{Func_sec}} </p> </td>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                    <!-- ******** -->
+                    
 
         </tr>
 

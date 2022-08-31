@@ -75,9 +75,9 @@ td{
 .titulo-plano{
   text-align: center;
 }
-.titulo-plano h4{
-  margin: 5px;
-  font-size: 16px;
+.titulo-plano p{
+  margin: 3px 0;
+  font-size: 12px;
   font-weight: bold;
 }
 
@@ -93,6 +93,7 @@ td{
   -webkit-print-color-adjust: exact;
   color-adjust: exact;
   text-align: center;
+  font-size: 11px;
 }
 
 .tabela-principal td{
@@ -103,8 +104,12 @@ td{
   background-color: rgba(46, 137, 255, 0.137);
 }
 
-#id-background-hover:hover{
+.background-hover:hover{
   background-color: rgba(46, 137, 255, 0.137);
+}
+
+#id-background-hover:hover{
+  /* background-color: rgba(46, 137, 255, 0.137); */
 }
 
 #id-background-hover:hover span{
@@ -155,12 +160,16 @@ td{
 }
 
 /* CSS PAGINA DOCUMENTO FIA */
+.titulo-fia{
+  margin: 2px 0 2px 0;
+  font-weight: bold;
+}
 
 .table1-fia{
   margin: auto;
   text-align: center;
 }
-  .table1-fia td{
+  .table1-fia > td{
     padding: 1px;
   }
 
@@ -181,7 +190,7 @@ td{
   font-size: 12px;
 }
 
-  .table3-fia td{
+  .table3-fia > td{
     text-align: left;
   }
 
@@ -190,7 +199,7 @@ td{
   width: 100%;
   font-size: 12px;
 }
-  .table4-fia td{
+  .table4-fia > td{
     border-top: none;
     text-align: left;
   }
@@ -199,7 +208,7 @@ td{
   width: 100%;
   margin: 5px 0 5px 0;
 }
-  .table5-fia th,td{
+  .table5-fia > th td{
     font-size: 11px;
     text-align: center;
   }
@@ -207,7 +216,7 @@ td{
 .table6-fia{
   width: 100%;
 }
-  .table6-fia th,td{
+  .table6-fia > th td{
     font-size: 11px;
     text-align: center;
   }
@@ -216,8 +225,25 @@ td{
   width: 100%;
   margin-top: 5px;
 }
-  .table7-fia th,td{
+  .table7-fia > th td{
     font-size: 11px;
+  }
+
+.table8-fia{
+  width: 100%;
+  
+}
+  .table8-fia > th td{
+    font-size: 11px;
+  }
+  
+.table9-fia{
+  width: 100%;
+  border-top: none !important;
+}
+  .table9-fia th, td{
+    font-size: 11px;
+    /* border-top: none !important; */
   }
 
 .classe-discriminacao{

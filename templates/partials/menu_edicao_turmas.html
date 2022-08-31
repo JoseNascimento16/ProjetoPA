@@ -1,8 +1,12 @@
 {% load static %}
 {% load definir_acoes %}
 <!-- MENU -->
-<div class="classe-div-menu-lateral-edicao">
-    <div class="classe-menu-lateral1-edicao borda1"><span class="span-menu">Menu de edição</span></div>
+<div class="classe-div-menu-lateral-edicao menu-edicao">
+    {% if user.classificacao.tipo_de_acesso == 'Escola' %}
+    <div class="classe-menu-lateral1-edicao borda1"><span class="span-menu-edicao">Menu de edição</span><a><i class="fa-solid fa-arrow-right-arrow-left margem-left-10 icone-alternancia"></i></a></div>
+    {% else %}
+    <div class="classe-menu-lateral1-edicao borda1"><span class="span-menu-edicao">Menu de edição</span></div>
+    {% endif %}
     <div class="classe-menu-lateral1-edicao borda1"><span class="span-menu">Plano: {{ chave_planos.ano_referencia }}</span></div>
 
         
@@ -61,27 +65,29 @@
                 {% endfor %}
             </ul>
             <ul class="sub-menu-edicao mensagem-menu-js">
+                {% if not chave_planos.alterabilidade == 'Desativada' %}
                 <h5 class="fonte-h5">As sugestões são opcionais  <i class="fa-solid fa-lightbulb"></i></h4>
+                {% endif %}
             </ul>
         </ul>
 
         <div class="box-botao-cadastro1">
             
-            {% if not chave_planos.pre_analise_despesa and chave_planos.devolvido == False and chave_planos.tipo_fia == False %}
+            {% if not chave_planos.pre_analise_despesa and chave_planos.devolvido == False and chave_planos.tipo_fia == False and not chave_planos.alterabilidade == 'Desativada' %}
             <ul class="sub-menu-edicao botao-concluir-js">
                 <form action="{% url 'chamando_concluir_sugestao' chave_planos.id 'despesa' %}" method="POST" onclick="return confirm('Confirma que já sugeriu todas as correções necessárias para este documento? Esta ação não poderá ser desfeita! ')">
                     {% csrf_token %}
                     <input class="myButton" type="submit" value="Concluir">
                 </form>
             </ul>
-            {% elif not chave_planos.pre_analise_fia and chave_planos.devolvido == False and chave_planos.tipo_fia == True %}
+            {% elif not chave_planos.pre_analise_fia and chave_planos.devolvido == False and chave_planos.tipo_fia == True and not chave_planos.alterabilidade == 'Desativada' %}
             <ul class="sub-menu-edicao botao-concluir-js">
                 <form action="{% url 'chamando_concluir_sugestao' chave_planos.id 'fia' %}" method="POST" onclick="return confirm('Confirma que já sugeriu todas as correções necessárias para este documento? Esta ação não poderá ser desfeita! ')">
                     {% csrf_token %}
                     <input class="myButton" type="submit" value="Concluir">
                 </form>
             </ul>
-            {% else %}
+            {% elif not chave_planos.alterabilidade == 'Desativada' %}
             <ul class="sub-menu-edicao">
                 <h4 class="cor-aviso-h4">As sugestões de correção para o documento já foram concluídas!   <i class="fa-solid fa-check"></i></h4>
             </ul>
@@ -90,6 +96,15 @@
                     <a href="{% url 'pagina_planos_de_acao' %}" class="myButton a-cadastros">Voltar</a>
                 </div>
             </ul>
+            {% elif chave_planos.situacao == 'Assinado' and chave_planos.alterabilidade == 'Desativada' %}
+            <ul class="classe-menu-lateral1-edicao itens clear-edicao border-none">A situação atual do plano não permite que ele seja modificado!</ul>
+
+            <div class="tooltip5">
+                <button id="botao-reset" class=" myButton botao-reset classe-menu-lateral1-edicao">Reset</button>
+                <span class="tooltiptext5" style="left: 65px;width:200px">Use somente se detectar que correções ainda são necessárias.</span>                                                 
+            </div>
+            {% elif chave_planos.alterabilidade == 'Desativada' %}
+            <ul class="classe-menu-lateral1-edicao itens clear-edicao border-none">A situação atual do plano não permite que ele seja modificado!</ul>
             {% endif %}
 
             <ul class="classe-menu-lateral1-edicao itens clear-edicao border-none display-none mensagem-verde-js">A situação atual do plano não permite que ele seja modificado!</ul>

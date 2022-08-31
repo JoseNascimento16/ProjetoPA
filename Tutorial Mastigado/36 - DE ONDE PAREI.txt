@@ -3,22 +3,50 @@ TENHO QUE APRENDER A TROCAR DE MODELO DE USUARIO (USAR O ABSTRACT AUTH_USER)
 TENHO QUE APRENDER COMO REFERENCIAR UM FOREIGNKEY NO REVERSO QUANDO ESTA FOREIGNKEY TEM UM RELATED_NAME COMO ATRIBUTO(no momento só sei fazer isso quando não tem related_name configurado)
 
 ----------------------------------------------------------------------------------
+- Novo sistema de assinaturas SUPROT
+    - 1 Diretor
+	- Assinatura compulsória (pode assinar qualquer plano)
+    - Varios coordenadores
+	- Assinatura compulsória (somente 1 coordenador assina por plano)
+	- Coordenador pode corrigir planos? Se sim, permitir assinatura de mais um coordenador!
+    - Varios corretores Func_sec
+	- Corretor só assina plano em que ele é o corretor
+
+    - No cadastro de funcionários da SUPROT, diferenciar:
+	- Diretor (usuário único)
+	- Coordenador (varios)
+	- Corretor (varios)
+    
+    - Alterar sistema de mudança de cargo de Func_sec
+
+    - Para o sistema funcionar devem existir:
+	- Ao menos 1 Diretor cadastrado
+	- Ao menos 2 coordenadores cadastrados
+	- 
+
+- Ajustar proporção da tabela fia na impressão quando reduz/aumenta escala! (a tabela de assinaturas da suprot não tem este problema, usar como exemplo. Provavelmente posso corrigir definindo o width.)
+
+- Implementar aviso de que, a partir da primeira assinatura, o plano nao pode mais ser alterado. No caso de planos pre aprovados
 - Fia
-   - Estou na pre assinatura de escolas
-	- Criar campo das assinaturas dos coordenadores
+   - Estou na finalização pela suprot
 	- checar se -0 no form atrapalha
 	- link no documento direto para a correção
-   - Desativar alterabilidade de documento, se ele estiver pré-aprovado
    - testar urls Fia
 
-- Corrigir qual a situação do plano quando deve mostrar as assinaturas (publicado ou finalizado)
-- Criar condição para só poder criar/alterar o tipo de cargo (alto cargo) até 3! Só podem existir 3 coordenadores que assinam os planos
+
+- OK Não permitir que Tesoureiro assine plano FIA
+- OK Não permitir que membros do colegiado não escolhidos assinem planos FIA
+- OK atualizar a quantidade de assinaturas do plano FIA considerando assinatura do tecnico.
+- OK Quando APROVADO, perde alterabilidade. O icone da assinatura do tecnico_fia não irá aparecer para ele assinar, consertar isso
+- OK Não permitir a primeira assinatura se o grupo de Autorização não estiver completo.   
+- OK Remover assinatura, quando remover membro do colegiado do modelo_fia.
+- OK Se sobrescrever o tecnico, remove assinatura tbm
+
+
+
 - menu edicao nao mostra para planos finalizados para funcioarios func sec
 - alternancia menu parou de funcionar pós print...
-- menu de impressão com as assinaturas só pode ser mostrado em planos com situação Finalizado
 - Remover capacidade de selecionar texto para burlar impressão
-- Apertar o X na alteração de corretor, não está fechando o modal
-- Modifiquei função autoriza_plano, testar se esta tudo ok, se esta autorizando (assinaturas escola)
 
 - Talvez Inserir funcionalidade de alteração de cadastro de escola.
 
@@ -76,8 +104,6 @@ TENHO QUE APRENDER COMO REFERENCIAR UM FOREIGNKEY NO REVERSO QUANDO ESTA FOREIGN
    - OK Porém quando um Func_sec REBAIXA outro Func_sec para 'padrão', tenho que remover as assinaturas deste func_sec
 	- OK retornar o plano para Assinado
 
-- formato paisagem no documento
-
 - IMPEDIR ACESSO ÀS VIEWS PARA FUNCIONARIOS/ESCOLAS/SECRETARIA
 
 - DESABILITAR LINKS DESNECESSARIOS 
@@ -87,25 +113,8 @@ TENHO QUE APRENDER COMO REFERENCIAR UM FOREIGNKEY NO REVERSO QUANDO ESTA FOREIGN
 
 - IMPRESSÃO:
    - DECIDI O SEGUINTE:
-	- Não terá quebra de página 'inside' na tabela 1 nem na 2!
-	- Porém se a formatação da impressão ficar ruim, o usuário terá a opção de:
-	   - Quebrar o ultimo TR
-	   - Ou adicionar linhas (tr) extra em branco antes do ultimo TR
-   - Se nada der certo, colocar para o usuario ir adicionando linhas em branco na tabela, para ajustar o layout de impressão:
-	<div class="pagebreak"> </div>
-	
-	- Consegui implementar o page break 'antes' da tabela de aprovação.
-	   - Colocando 	<div class="pagebreak"> </div> por 2 vezes seguidas, ele quebra a pagina na impressão
-	   - Porém ele só está quebrando a pagina, entre as tables, nao estou conseguindo quebrar, no MEIO de uma table
-	   - Lembrar que coloquei um avoid quebra pagina antes da table2
-	   - PAREI EM: AO CARREGAR A PAGINA, ADICIONA A CLASSE QUEBRA-PAGINA AO TR 3 E TENTA QUEBRALO AO IMPRIMIR
-	   - O PENSAMENTO AQUI EH, TENTAR QUEBRAR ANTES DO TR3 E DEPOIS DO TR2 AO MESMO TEMPO!
-	- Agora preciso conseguir implementar o page break 'antes' da ULTIMA ORDEM INSERIDA!!
-	- Ainda não testei 'englobar' as tables e trs dentro de divs, para que sejam page breaks entre divs e divs.
 	- https://jsfiddle.net/qL29aw31/
 	- https://jsfiddle.net/gtkve3hL/2/
-
-- Planos PENDENTE, APROVADO, CONCLUIDO ou CORRIGIDO PELA ESCOLA não podem ser modificados nas paginas específicas
 
 - MENSAGENS
    - 
@@ -117,20 +126,14 @@ TENHO QUE APRENDER COMO REFERENCIAR UM FOREIGNKEY NO REVERSO QUANDO ESTA FOREIGN
 - OK Colocar filtros para textos muito grandes nos cards de planos
 
 - Quando secretaria aprova plano, as turmas sao permanentemente associadas a ele. Será que tenho que checar se elas estão inseridas?(views.py linha 1325)
-- Verificar se funcionalidade de inserção de turmas está normal. Em um documento CONCLUIDO identifiquei turmas inseridas repetidamente. Talvez o problema esteja na associação das turmas ao plano, logo após em que ele é concluido.
-   - Pelo que me lembro, isso está acontecendo quando eu aprovo o mesmo plano varias vezes(durante os testes). Mas em produção varias aprovações também podem ocorrer, portanto, tenho que verificar isso.
 
 - OK Planos PENDENTE, APROVADO, CONCLUIDO ou CORRIGIDO PELA ESCOLA não podem ser modificados nos menus laterais (documentos)(ESCOLA)
 - OK Planos Em desenvolvimento, Publicado, Corrigido, APROVADO, CONCLUIDO ou não podem ser modificados nos menus laterais (documentos)(SECRETARIA)
 
 
-- FUNCIONALIDADE DE ASSINATURAS digitais
+- OK FUNCIONALIDADE DE ASSINATURAS digitais
 
-- FUNCIONALIDADE DE IMPRIMIR PLANO APROVADO
-  - https://stackoverflow.com/questions/66657967/print-a-html-page-using-django
-  - https://docs.djangoproject.com/en/3.1/howto/outputting-pdf/
-  - <button onclick="window.print()">Print this page</button>
-  - Posso usar jS pra remover visualmente os elementos da página na hora do clique e manter só o necessário para a impressão
+- OK FUNCIONALIDADE DE IMPRIMIR PLANO APROVADO
 
 - FUNCIONALIDADE "LEMBRAR DE MIM" NO LOGIN, TALVEZ TROCAR POR ESQUECI MINHA SENHA
 
@@ -148,7 +151,7 @@ TENHO QUE APRENDER COMO REFERENCIAR UM FOREIGNKEY NO REVERSO QUANDO ESTA FOREIGN
    - OK cadastra escola
    - exclui escola (não precisa ainda)
    - OK carrega funcionarios cadastrados
-   - OKcadastra funcionarios
+   - OK cadastra funcionarios
    - OK exclui funcionario
 
 LOG DE EVENTOS
@@ -183,24 +186,6 @@ LOG DE EVENTOS
 - OK EDICAO DE CODIGOS
 
 OK tooltip para informar isso
-
-
-
-- Se remover um funcionario de uma escola que ja tem planos CONCLUIDOS o objeto many-to-many (que indica quais planos este funcionario ja assinou) não é removido para os planos nesse estado, isso implicaria problemas ou gera bugs para os planos nesse estado??? Ainda não pensei sobre isso!! (views de usuarios linha 151 +/-)
-
-
-html filters
-{{ value|add:"2" }}
-
-{{ value|floatformat }}
-
-{{ data_salva|timesince:data_hoje }} (se deixar o segundo parametro vazio, é considerado "now"
-{{ conference_date|timeuntil:from_date }}
-
-{{ value|truncatechars:7 }}
-{{ value|truncatewords:2 }}
-
-
 
 DUVIDAS:
 

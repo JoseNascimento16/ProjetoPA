@@ -6,6 +6,7 @@ urlpatterns = [
     path('cria/fia',views.cria_fia, name='criando_fia'),
     path('formulario/<int:elemento_id>/inclusao/acoes',views.documento_fia, name='chamando_documento_fia'),
     path('formulario/<int:elemento_id>/inclusao/acoes/<slug:mensagem>',views.documento_fia, name='chamando_documento_fia_mensagem'),
+    path('formulario/<int:elemento_id>/inclusao/acoes/<slug:mensagem>/q/<slug:q_linha>',views.documento_fia, name='chamando_documento_fia_mensagem_q_linha'),
     path('fia/<int:elemento_id>/altera/ordemprincipal',views.altera_fia, name='chama_altera_fia'),
     path('chama/<int:elemento_id>/cria/extra/fia/<slug:abreform_extra_criacao>',views.documento_fia, name='chama_cria_extra_fia'),
     path('cria/extra/fia/<int:modelo_fia_id>',views.cria_ordem_extra_fia, name='cria_extra_fia'),

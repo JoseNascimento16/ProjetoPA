@@ -8,8 +8,9 @@ $(document).ready(function(){
     var plano_devolvido = JSON.parse(document.getElementById('id-chave-devolvido').textContent);
     var tipo_de_usuario = JSON.parse(document.getElementById('id-tipo-usuario').textContent);
     var situacao_do_plano = JSON.parse(document.getElementById('id-situacao-plano').textContent);
-    var quebra_linha = JSON.parse(document.getElementById('id-q-linha').textContent);
-    var apos_print = JSON.parse(document.getElementById('id-apos-print').textContent);
+    // var quebra_linha = JSON.parse(document.getElementById('id-q-linha').textContent);
+    // var apos_print = JSON.parse(document.getElementById('id-apos-print').textContent);
+    
     // var planoString2 = planoString.replace('[', '');
     // var planoString3 = planoString2.replace(']', '');
     // var planoArray = new Array(planoString3)
@@ -218,25 +219,5 @@ $(document).ready(function(){
         
     }
 
-    // ALTERNANCIA ENTRE MENUS EDIÇÃO/IMPRESSAO
-
-    $(".icone-alternancia").click(function(){ 
-        if ($(".menu-edicao").is(":visible")){
-            $(".menu-edicao").addClass("display_none"),
-            $(".menu-impressao-js").removeClass("display_none")
-        }else{ 
-            $(".menu-edicao").removeClass("display_none"),
-            $(".menu-impressao-js").addClass("display_none")
-         } 
-    });
-        // mantém menu impressão a mostra caso inseriu quebra de linha
-    if (quebra_linha || apos_print){
-        console.log(quebra_linha)
-        $(".menu-edicao").addClass("display_none"),
-        $(".menu-impressao-js").removeClass("display_none")
-    }
-       // recarrega a página com um parametro adicionado à url 
-    window.onafterprint = function(){
-        window.location.href += "?postprint=conf";
-   }
+    
 })

@@ -23,6 +23,7 @@ class Modelo_fia(models.Model):
     membro_colegiado_2 = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='membro2')
     tecnico_responsavel = models.CharField(max_length=100, blank=True)
     assinatura_tecnico = models.ImageField(upload_to='SetupPrincipal/img/signs', blank=True, null=True, verbose_name='Assinatura')
+    quebra_de_linha = models.IntegerField(default=0)
 
     def __str__(self):
         return self.plano.ano_referencia
@@ -36,3 +37,4 @@ class Extra_fia(models.Model):
     valor_total_item = models.DecimalField(max_digits=14, decimal_places=2, max_length=50, null=True)
     justificativa = models.CharField(max_length=900, blank=True)
     possui_sugestao_correcao = models.BooleanField(default=False)
+    quebra_de_linha = models.IntegerField(default=0)

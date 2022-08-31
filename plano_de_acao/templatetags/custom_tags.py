@@ -3,6 +3,7 @@ from django import template
 from django.shortcuts import get_object_or_404
 from fia.models import Modelo_fia
 from plano_de_acao.models import Plano_de_acao
+from usuarios.models import Classificacao
 
 register = template.Library()
 
@@ -29,7 +30,7 @@ def tag_any3(funcionario,b):
 
 @register.simple_tag
 def tag_membro(membro,b):
-    if any(item.user == membro for item in b):
+    if any(item.user.first_name == membro.first_name for item in b):
         return membro
     return False
 
@@ -60,6 +61,15 @@ def tag_assinaturas_suprof(counter,b):
     
     for item in lista_assinaturas_suprof:
         return lista_assinaturas_suprof[counter]
+
+@register.simple_tag
+def tag_assinaturas_suprof_fia(assinaturas):
+    lista_assinaturas_suprof=[]
+    for item in assinaturas:
+        if item.tipo_de_acesso == 'Func_sec':
+            lista_assinaturas_suprof.append(item)
+    
+    return lista_assinaturas_suprof
 
 @register.simple_tag
 def tag_len_funcionarios(classificacoes, escola, objeto_plano_elemento):
@@ -100,3 +110,13 @@ def tag_loop1(numero):
 def tag_first_last_names(valor):
     lista_elementos = list(valor.split(" "))
     return lista_elementos
+
+@register.simple_tag
+def tag_verifica_membro_colegiado(objeto_plano, user):
+    modelo_fia = get_object_or_404(Modelo_fia, plano=objeto_plano)
+    if modelo_fia.membro_colegiado_1 and user.first_name == modelo_fia.membro_colegiado_1.first_name:
+        return True
+    elif modelo_fia.membro_colegiado_2 and user.first_name == modelo_fia.membro_colegiado_2.first_name:
+        return True
+    else:
+        return False

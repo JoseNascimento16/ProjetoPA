@@ -368,7 +368,7 @@
                      
                     {% elif elemento.situacao == 'Pronto' %}
                     <div class="box-botao-cadastro1 itens-cards-planos">
-                        <form class="tooltip3 display-flex-media" action="{% url 'concluir_plano' elemento.id %}" method="POST" onclick="return confirm('Plano: {{ elemento.ano_referencia }} será concluído. Ao confirmar, ele será enviado à SUPROT para que possa ser assinado pelos coordenadores da Secretaria da Educação!')">
+                        <form class="tooltip3 display-flex-media" action="{% url 'concluir_plano' elemento.id %}" method="POST" onclick="return confirm('Plano: {{ elemento.ano_referencia }} será concluído. Ao confirmar, ele será enviado à Secretaria da educação para que possa ser assinado pelos coordenadores da SUPROT!')">
                             {% csrf_token %}
                             <input class="myButton flex-grow-media" type="submit" value="CONCLUIR !">
                             <span class="tooltiptext3">Plano já assinado pelo (a) diretor(a), tesoureiro(a) e membros do colegiado.</span>                                                 
@@ -403,44 +403,99 @@
                 <!-- POS 5 BOTÃO DE AÇÕES FUNCIONÁRIOS -->
                 {% if user.classificacao.tipo_de_acesso == 'Funcionario' %}
 
-                    {% if elemento.situacao == 'Aprovado' and elemento.ano_referencia in chave_planos_assinados %}
-                        <div class="box-botao-cadastro1 itens-cards-planos">
-                            <form action="#" class="display-flex-media">
-                                <input class="myButtonGrey flex-grow-media" type="submit" value="Assinado">
-                            </form>
-                        </div> 
-                    {% elif elemento.situacao == 'Aprovado' and elemento.ano_referencia not in chave_planos_assinados %}
-                        <div class="box-botao-cadastro1 itens-cards-planos">
-                            <form class="tooltip2 display-flex-media" action="{% url 'autorizar_plano' elemento.id %}" method="POST" onclick="return confirm('Deseja realmente assinar o plano de ação: {{ elemento.ano_referencia }}?')">
-                                {% csrf_token %}
-                                <input class="myButton flex-grow-media" type="submit" value="Assinar">
-                                <span style="left: 70px;" class="tooltiptext2">Você já pode assinar este plano.</span>
-                            </form>
-                        </div>
-                    {% elif elemento.situacao == 'Publicado' and elemento.ano_referencia in chave_planos_assinados %}
+                    {% if not elemento.tipo_fia %}
+
+                        {% if elemento.situacao == 'Aprovado' and elemento.ano_referencia in chave_planos_assinados %}
                             <div class="box-botao-cadastro1 itens-cards-planos">
                                 <form action="#" class="display-flex-media">
                                     <input class="myButtonGrey flex-grow-media" type="submit" value="Assinado">
                                 </form>
+                            </div> 
+                        {% elif elemento.situacao == 'Aprovado' and elemento.ano_referencia not in chave_planos_assinados %}
+                            <div class="box-botao-cadastro1 itens-cards-planos">
+                                <form class="tooltip2 display-flex-media" action="{% url 'autorizar_plano' elemento.id %}" method="POST" onclick="return confirm('Deseja realmente assinar o plano de ação: {{ elemento.ano_referencia }}?')">
+                                    {% csrf_token %}
+                                    <input class="myButton flex-grow-media" type="submit" value="Assinar">
+                                    <span style="left: 70px;" class="tooltiptext2">Você já pode assinar este plano.</span>
+                                </form>
                             </div>
-                    {% elif elemento.situacao == 'Publicado' and elemento.devolvido and elemento.pre_assinatura and elemento.ano_referencia not in chave_planos_assinados %}
-                        <div class="box-botao-cadastro1 itens-cards-planos">
-                            <form class="tooltip2 display-flex-media" action="{% url 'autorizar_plano' elemento.id %}" method="POST" onclick="return confirm('Deseja realmente assinar o plano de ação: {{ elemento.ano_referencia }}?')">
-                                {% csrf_token %}
-                                <input class="myButton flex-grow-media" type="submit" value="Assinar">
-                                <span style="left: 70px;" class="tooltiptext2">Você já pode assinar este plano.</span>
+                        {% elif elemento.situacao == 'Publicado' and elemento.ano_referencia in chave_planos_assinados %}
+                                <div class="box-botao-cadastro1 itens-cards-planos">
+                                    <form action="#" class="display-flex-media">
+                                        <input class="myButtonGrey flex-grow-media" type="submit" value="Assinado">
+                                    </form>
+                                </div>
+                        {% elif elemento.situacao == 'Publicado' and elemento.devolvido and elemento.pre_assinatura and elemento.ano_referencia not in chave_planos_assinados %}
+                            <div class="box-botao-cadastro1 itens-cards-planos">
+                                <form class="tooltip2 display-flex-media" action="{% url 'autorizar_plano' elemento.id %}" method="POST" onclick="return confirm('Deseja realmente assinar o plano de ação: {{ elemento.ano_referencia }}?')">
+                                    {% csrf_token %}
+                                    <input class="myButton flex-grow-media" type="submit" value="Assinar">
+                                    <span style="left: 70px;" class="tooltiptext2">Você já pode assinar este plano.</span>
+                                </form>
+                            </div>
+                        {% elif elemento.situacao == 'Pronto' %}
+                        <div class="box-botao-cadastro1 itens-cards-planos display-flex-media">
+                            <form action="#">
+                                <input class="myButtonGrey flex-grow-media" type="submit" value="Assinado">
                             </form>
                         </div>
-                    {% elif elemento.situacao == 'Pronto' %}
-                    <div class="box-botao-cadastro1 itens-cards-planos display-flex-media">
-                        <form action="#">
-                            <input class="myButtonGrey flex-grow-media" type="submit" value="Assinado">
-                        </form>
-                    </div>
-                    {% else %}
-                        <div class="box-botao-cadastro1 itens-cards-planos">
-                            
-                        </div>   
+                        {% else %}
+                            <div class="box-botao-cadastro1 itens-cards-planos">
+                                
+                            </div>   
+                        {% endif %}
+                    
+                    {% else %}<!-- SE FOR TIPO FIA -->
+
+                        {% tag_verifica_membro_colegiado elemento user as pertencente_ao_plano %} <!-- Verifica se o membro do colegiado é um dos que assinam o plano FIA -->
+                        {% if user.classificacao.cargo_herdado == 'Membro do colegiado' and pertencente_ao_plano %}
+
+                            {% if elemento.situacao == 'Aprovado' and elemento.ano_referencia in chave_planos_assinados %}
+                                <div class="box-botao-cadastro1 itens-cards-planos">
+                                    <form action="#" class="display-flex-media">
+                                        <input class="myButtonGrey flex-grow-media" type="submit" value="Assinado">
+                                    </form>
+                                </div> 
+                            {% elif elemento.situacao == 'Aprovado' and elemento.ano_referencia not in chave_planos_assinados %}
+                                <div class="box-botao-cadastro1 itens-cards-planos">
+                                    <form class="tooltip2 display-flex-media" action="{% url 'autorizar_plano' elemento.id %}" method="POST" onclick="return confirm('Deseja realmente assinar o plano de ação: {{ elemento.ano_referencia }}?')">
+                                        {% csrf_token %}
+                                        <input class="myButton flex-grow-media" type="submit" value="Assinar">
+                                        <span style="left: 70px;" class="tooltiptext2">Você já pode assinar este plano.</span>
+                                    </form>
+                                </div>
+                            {% elif elemento.situacao == 'Publicado' and elemento.ano_referencia in chave_planos_assinados %}
+                                    <div class="box-botao-cadastro1 itens-cards-planos">
+                                        <form action="#" class="display-flex-media">
+                                            <input class="myButtonGrey flex-grow-media" type="submit" value="Assinado">
+                                        </form>
+                                    </div>
+                            {% elif elemento.situacao == 'Publicado' and elemento.devolvido and elemento.pre_assinatura and elemento.ano_referencia not in chave_planos_assinados %}
+                                <div class="box-botao-cadastro1 itens-cards-planos">
+                                    <form class="tooltip2 display-flex-media" action="{% url 'autorizar_plano' elemento.id %}" method="POST" onclick="return confirm('Deseja realmente assinar o plano de ação: {{ elemento.ano_referencia }}?')">
+                                        {% csrf_token %}
+                                        <input class="myButton flex-grow-media" type="submit" value="Assinar">
+                                        <span style="left: 70px;" class="tooltiptext2">Você já pode assinar este plano.</span>
+                                    </form>
+                                </div>
+                            {% elif elemento.situacao == 'Pronto' %}
+                            <div class="box-botao-cadastro1 itens-cards-planos display-flex-media">
+                                <form action="#">
+                                    <input class="myButtonGrey flex-grow-media" type="submit" value="Assinado">
+                                </form>
+                            </div>
+                            {% else %}
+                                <div class="box-botao-cadastro1 itens-cards-planos">
+                                    
+                                </div>   
+                            {% endif %}
+
+                        {% else %}
+                            <div class="box-botao-cadastro1 itens-cards-planos">
+                                
+                            </div> 
+                        {% endif %}
+
                     {% endif %}
 
                 {% endif %}
@@ -612,13 +667,13 @@
         <h5>- Corrigido pela escola </h5>
         <p>Um plano "Corrigido" já foi corrigido pela escola e reenviado para a Secretaria da Educação com as devidas correções.</p>
         <h5>- Pré aprovado </h5>
-        <p>Planos entram neste estado quando o corretor responsável da SUPROT permite que ele seja pré assinado pela escola e seus membros após as correções. Apesar de não poderem ser mais alterados por ninguém, o corretor responsável ainda poderá rejeitar e sugerir novas correções caso veja necessidade. </p>
+        <p>Planos entram neste estado quando o corretor técnico responsável da SUPROT permite que ele seja pré assinado pela escola e seus membros após as correções. A partir da primeira assinatura, não podem mais ser modificados.
         <h5>- Aprovado </h5>
         <p>Planos "Aprovados" já passaram por quase todas as etapas necessárias, foram aprovados pela Secretaria da Educação e portanto já podem receber as assinaturas dos membros do corpo escolar. A partir deste estágio não podem mais ser alterados por ninguém.</p>
         <h5>- Pronto </h5>
         <p>Planos "Prontos" já passaram por correções, já foram assinados pelo tesoureiro e por todos os membros do colegiado e estão prontos para serem concluidos pela escola para receberem as assinaturas dos membros da SUPROT.</p>
         <h5>- Assinado (pela escola - concluídos)</h5>
-        <p>Planos concluídos já foram assinados pelos membros do corpo escolar e devolvidos à SUPROT. Estão no aguardo das assinaturas dos coordenadores da SUPROT.</p>
+        <p>Planos concluídos já foram assinados pelos membros do corpo escolar e devolvidos à SUPROT. Estão no aguardo das assinaturas do diretor e coordenadores da SUPROT. O corretor técnico responsável ainda poderá rejeitar e sugerir novas correções caso haja necessidade. </p></p>
         <h5>- Inteiramente assinado (pela Secretaria)</h5>
         <p>Planos neste estado já foram assinados pelos coordenadores da SUPROT.</p>
         <h5>- Finalizado </h5>

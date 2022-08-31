@@ -1,0 +1,21 @@
+Em models.py
+
+podemos criar os campos:
+
+data_de_criacao = models.DateField(default=date.today, blank=True)
+ou
+data_de_criacao = models.DateTimeField(default=date.now, blank=True)
+ou
+data_de_criacao = models.DateField(null=True, blank=True)
+
+
+Na views.py
+
+from datetime import date
+
+instancia_modelo = get_object_or_404(Modelo, pk=valor)
+
+instancia_modelo.data_de_criacao = date.today()
+
+
+E assim o valor do dia atual é salvo no modelo no banco de dados

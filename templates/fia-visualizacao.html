@@ -6,16 +6,18 @@
 {% block content %}
 
 {{ chave_lista2_codigos|json_script:"id-lista-codigos-correcao" }}
-
 {{ chave_planos.devolvido|json_script:"id-chave-devolvido" }}
 {{ chave_tipo_usuario|json_script:"id-tipo-usuario" }}
-{{ chave_situacao_plano|json_script:"id-situacao-plano" }}
+{{ chave_planos.situacao|json_script:"id-situacao-plano" }}
 {{ chave_planos.alterabilidade|json_script:"id-alterabilidade-plano" }}
 {{ chave_planos.pre_analise_fia|json_script:"id-sugestoes-fia-concluidas" }}
 {{ chave_lista_todas_ordens|json_script:"id-todas-ordens" }}
 {{ chave_ordens_com_correcao|json_script:"id-ordens-com-correcao" }}
+{{ chave_assinatura_tecnico|json_script:"id-assinatura-tecnico" }}
+{{ chave_q_linha|json_script:"id-q-linha" }}
+{{ chave_apos_print|json_script:"id-apos-print" }}
 
-<div class="div-visualizacao-bloco div-visualizacao-bloco-fia" style="width: 1185px">
+<div id="imprimir" class="div-visualizacao-bloco div-visualizacao-bloco-fia" style="width: 1185px">
 
     {% if messages %}
     <ul class="ul-mensagens" style="padding: 0%;">
@@ -29,7 +31,7 @@
         <div class="div-visualizacao-img" style="margin: 0">
             <img class="visualizacao-img-fia" src="{% static 'img/cabecalho_visualizacao_fiapng.png' %}" alt="">
         </div>
-        <h5 class="h5-1-fia">SUPERINTENDÊNCIA DA EDUCAÇÃO PROFISSIONAL E TECNOLÓGICA - SUPROT</h5>
+        <p class="h5-1-fia">SUPERINTENDÊNCIA DA EDUCAÇÃO PROFISSIONAL E TECNOLÓGICA - SUPROT</p>
     </div>
 
     <table class="div-unidade-bloco tabela-unidade table1-fia">
@@ -50,7 +52,7 @@
     </table>
 
     <div class="titulo-plano">
-        <h4 style="margin-top: 10px;">FIA: {{ chave_planos.ano_referencia }}</h4>
+        <p class="titulo-fia">FIA: {{ chave_planos.ano_referencia }}</p>
     </div>
 
     <table class="tabela-unidade table3-fia">
@@ -99,8 +101,8 @@
             <th> 10.3 - VALOR TOTAL </th>
             <th style="width: 67px;"> 10.4 - SALDO </th>
         </tr>
-        <tr id="id-background-hover">
-            <td>{{chave_modelo_fia.valor_numerico}}</td>
+        <tr id="id-background-hover" class="background-hover">
+            <td class="text-center">{{chave_modelo_fia.valor_numerico}}</td>
             <td class="classe-discriminacao">{{chave_modelo_fia.discriminacao}}</td>
             <td></td>
             <td></td>
@@ -121,7 +123,7 @@
             <td></td>
             <td></td>
             <td></td>
-            <td>R$ {{chave_modelo_fia.valor_total_fia|intcomma}}</td>
+            <td class="text-center">R$ {{chave_modelo_fia.valor_total_fia|intcomma}}</td>
             <td></td>
         </tr>
     </table>
@@ -147,64 +149,92 @@
             <th style="width: 67px;"> 16.4 - SALDO </th>
         </tr>
         <!-- RENDERIZA ORDEM 1 -->
-        <tr class="tr-dinamico-fia-{{chave_modelo_fia.valor_numerico}}" id="id-background-hover">
+        <tr class="tr-dinamico-fia-{{chave_modelo_fia.valor_numerico}} background-hover" id="id-background-hover">
                 {% if user.classificacao.tipo_de_acesso == 'Escola' %}
                     {% if chave_modelo_fia.possui_sugestao_correcao %}
-                    <td><a class="a-clear-acao desabilita-js" href="{% url 'abrindo_correcao_fia' chave_planos.id chave_modelo_fia.valor_numerico 'Sim' %}"><div style="height:100%;width:100%">{{chave_modelo_fia.valor_numerico}} <span class="tooltiptext3-tabela" style="font-size: 11px"> <i class="fa-solid fa-arrow-left"></i> corrigir!</span> </div> </a> </td>
+                    <td><a class="a-clear-acao desabilita-js text-center" href="{% url 'abrindo_correcao_fia' chave_planos.id chave_modelo_fia.valor_numerico 'Sim' %}"><div style="height:100%;width:100%">{{chave_modelo_fia.valor_numerico}} <span class="tooltiptext3-tabela" style="font-size: 11px"> <i class="fa-solid fa-arrow-left"></i> corrigir!</span> </div> </a> </td>
                     {% else %}
-                    <td>{{chave_modelo_fia.valor_numerico}}</td>
+                    <td class="text-center">{{chave_modelo_fia.valor_numerico}}</td>
                     {% endif %}
                 {% elif user.classificacao.tipo_de_acesso == 'Func_sec' %}
                     {% if chave_modelo_fia.possui_sugestao_correcao %}
-                    <td><a class="a-clear-acao desabilita-js" href="{% url 'chamando_correcao_modelo_fia' chave_planos.id chave_modelo_fia.id %}"><div style="height:100%;width:100%">{{chave_modelo_fia.valor_numerico}} <span class="tooltiptext3-tabela" style="font-size: 11px"> <i class="fa-solid fa-arrow-left"></i> Alterar correção!</span> </div> </a> </td>
+                    <td><a class="a-clear-acao desabilita-js text-center" href="{% url 'chamando_correcao_modelo_fia' chave_planos.id chave_modelo_fia.id %}"><div style="height:100%;width:100%">{{chave_modelo_fia.valor_numerico}} <span class="tooltiptext3-tabela" style="font-size: 11px"> <i class="fa-solid fa-arrow-left"></i> Alterar correção!</span> </div> </a> </td>
                     {% else %}
-                    <td><a class="a-clear-acao desabilita-js" href="{% url 'chamando_correcao_modelo_fia' chave_planos.id chave_modelo_fia.id %}"><div style="height:100%;width:100%">{{chave_modelo_fia.valor_numerico}} <span class="tooltiptext4-tabela" style="font-size: 11px"> <i class="fa-solid fa-arrow-left"></i> Sugerir correção!</span> </div> </a> </td>
+                    <td><a class="a-clear-acao desabilita-js text-center" href="{% url 'chamando_correcao_modelo_fia' chave_planos.id chave_modelo_fia.id %}"><div style="height:100%;width:100%">{{chave_modelo_fia.valor_numerico}} <span class="tooltiptext4-tabela" style="font-size: 11px"> <i class="fa-solid fa-arrow-left"></i> Sugerir correção!</span> </div> </a> </td>
                     {% endif %}
                 {% else %}
-                <td>{{chave_modelo_fia.valor_numerico}}</td>
+                <td class="text-center">{{chave_modelo_fia.valor_numerico}}</td>
                 {% endif %}
             <td class="classe-discriminacao">{{chave_modelo_fia.discriminacao}}</td>
-            <td> unid. </td>
+            <td class="text-center"> unid. </td>
             <td></td>
             <td></td>
             <td></td>
-            <td>{{chave_modelo_fia.quantidade}}</td>
-            <td>R$ {{chave_modelo_fia.preco_unitario_item|intcomma}}</td>
-            <td>R$ {{chave_modelo_fia.valor_total_item|intcomma}}</td>
+            <td class="text-center">{{chave_modelo_fia.quantidade}}</td>
+            <td class="text-center">R$ {{chave_modelo_fia.preco_unitario_item|intcomma}}</td>
+            <td class="text-center">R$ {{chave_modelo_fia.valor_total_item|intcomma}}</td>
             <td></td>
             <td style="width: 265px;">{{chave_modelo_fia.justificativa}}</td>
         </tr>
+        <!-- --------------- -->
+
+        <!-- INSERE QUEBRA DE LINHA NA IMPRESSÃO APÓS ORDEM 1 -->
+        {% if chave_modelo_fia.quebra_de_linha > 0 %}
+
+            {% tag_loop1 chave_modelo_fia.quebra_de_linha as valor_linhas %}
+            {% for quantidade in valor_linhas %}
+                <tr class="tr-extra display-none2">
+                    <td style="border: none;"> 
+                    </td>
+                </tr>
+            {% endfor %}
+
+        {% endif %}
+        <!-- ********* -->
 
         <!-- RENDERIZA ORDENS EXTRAS QUANDO HÁ -->
         {% if chave_ordens_extra %}
             {% for item in chave_ordens_extra %}
-            <tr class="tr-dinamico-fia-{{item.valor_numerico}}" id="id-background-hover">
+            <tr class="tr-dinamico-fia-{{item.valor_numerico}} background-hover" id="id-background-hover">
                     {% if user.classificacao.tipo_de_acesso == 'Escola' %}
                         {% if item.possui_sugestao_correcao %}
-                        <td><a class="a-clear-acao desabilita-js" href="{% url 'abrindo_correcao_fia' chave_planos.id item.valor_numerico 'Sim' %}"><div style="height:100%;width:100%">{{item.valor_numerico}} <span class="tooltiptext3-tabela" style="font-size: 11px"> <i class="fa-solid fa-arrow-left"></i> corrigir!</span> </div> </a> </td>
+                        <td><a class="a-clear-acao desabilita-js text-center" href="{% url 'abrindo_correcao_fia' chave_planos.id item.valor_numerico 'Sim' %}"><div style="height:100%;width:100%">{{item.valor_numerico}} <span class="tooltiptext3-tabela" style="font-size: 11px"> <i class="fa-solid fa-arrow-left"></i> corrigir!</span> </div> </a> </td>
                         {% else %}
-                        <td>{{item.valor_numerico}}</td>
+                        <td class="text-center">{{item.valor_numerico}}</td>
                         {% endif %}
                     {% elif user.classificacao.tipo_de_acesso == 'Func_sec' %}
                         {% if item.possui_sugestao_correcao %}
-                        <td><a class="a-clear-acao desabilita-js" href="{% url 'chamando_correcao_extra_fia' chave_planos.id item.id %}"><div style="height:100%;width:100%">{{item.valor_numerico}} <span class="tooltiptext3-tabela" style="font-size: 11px"> <i class="fa-solid fa-arrow-left"></i> Alterar correção!</span> </div> </a> </td>
+                        <td><a class="a-clear-acao desabilita-js text-center" href="{% url 'chamando_correcao_extra_fia' chave_planos.id item.id %}"><div style="height:100%;width:100%">{{item.valor_numerico}} <span class="tooltiptext3-tabela" style="font-size: 11px"> <i class="fa-solid fa-arrow-left"></i> Alterar correção!</span> </div> </a> </td>
                         {% else %}
-                        <td><a class="a-clear-acao desabilita-js" href="{% url 'chamando_correcao_extra_fia' chave_planos.id item.id %}"><div style="height:100%;width:100%">{{item.valor_numerico}} <span class="tooltiptext4-tabela" style="font-size: 11px"> <i class="fa-solid fa-arrow-left"></i> Sugerir correção!</span> </div> </a> </td>
+                        <td><a class="a-clear-acao desabilita-js text-center" href="{% url 'chamando_correcao_extra_fia' chave_planos.id item.id %}"><div style="height:100%;width:100%">{{item.valor_numerico}} <span class="tooltiptext4-tabela" style="font-size: 11px"> <i class="fa-solid fa-arrow-left"></i> Sugerir correção!</span> </div> </a> </td>
                         {% endif %}
                     {% else %}
-                    <td>{{item.valor_numerico}}</td>
+                    <td class="text-center">{{item.valor_numerico}}</td>
                     {% endif %}
                 <td class="classe-discriminacao">{{item.discriminacao}}</td>
-                <td> unid. </td>
+                <td class="text-center"> unid. </td>
                 <td>-</td>
                 <td>-</td>
                 <td>-</td>
-                <td>{{item.quantidade}}</td>
-                <td>R$ {{item.preco_unitario_item|intcomma}}</td>
-                <td>R$ {{item.valor_total_item|intcomma}}</td>
+                <td class="text-center">{{item.quantidade}}</td>
+                <td class="text-center">R$ {{item.preco_unitario_item|intcomma}}</td>
+                <td class="text-center">R$ {{item.valor_total_item|intcomma}}</td>
                 <td>-</td>
                 <td>{{item.justificativa}}</td>
             </tr>
+
+            <!-- INSERE QUEBRA DE LINHA NA IMPRESSÃO APÓS CADA ORDEM EXTRA -->
+            {% if item.quebra_de_linha > 0 %}
+                {% tag_loop1 item.quebra_de_linha as valor_linhas %}
+                {% for quantidade in valor_linhas %}
+                    <tr class="tr-extra display-none2">
+                        <td style="border: none;"> 
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            <!-- ********* -->
+
             {% endfor %}
         {% endif %}
 
@@ -213,10 +243,10 @@
             <td></td>
             <td></td>
             <td></td>
-            <td>R$ {{chave_modelo_fia.valor_total_anterior|intcomma}}</td>
+            <td class="text-center">R$ {{chave_modelo_fia.valor_total_anterior|intcomma}}</td>
             <td></td>
             <td></td>
-            <td>R$ {{chave_modelo_fia.valor_total_fia|intcomma}}</td>
+            <td class="text-center">R$ {{chave_modelo_fia.valor_total_fia|intcomma}}</td>
             <td></td>
             <td></td>
         </tr>
@@ -225,26 +255,30 @@
     <table class="tabela-principal table7-fia">
         <tr>
             <th style="text-align: left;width: 600px;"> 18 - AUTORIZAÇÃO</th>
+            {% if chave_planos.data_assinaturas_escola %}
+            <th colspan="3" style="text-align: left"> DATA: {{chave_planos.data_assinaturas_escola}} </th>
+            {% else %}
             <th colspan="3" style="text-align: left"> DATA: </th>
+            {% endif %}
         </tr>
         <tr>
-            <td style="text-align: left"> 18.1 - DIRETOR - {{chave_planos.usuario.first_name}}</td>
+            <td style="text-align: left;width: 200px"> 18.1 - DIRETOR - {{chave_planos.usuario.first_name}}</td>
             <td style="text-align: left;width: 120px; "> 18.2 - ASSINATURA: </td>
             <!-- ASSINATURA DIRETOR -->
             {% tag_first_last_names chave_planos.usuario.first_name as nome_em_lista_diretor %}
             {% tag_any chave_planos.usuario chave_planos.classificacao_set.all as var3 %}
             {% if chave_planos.classificacao_set.all %}
-                {% if var3 and plano_aprovado %}
+                {% if var3 and plano_aprovado or var3 and chave_planos.alterabilidade == 'Desativada' %}
                     {% if chave_planos.usuario.classificacao.assinatura %}
-                        <td colspan="2" style="width: 200px"> <img class="assinaturas-foto-fia" src="{{ chave_planos.usuario.classificacao.assinatura.url }}" alt=""> </td>
+                        <td colspan="2" style="width: 200px"> <img class="assinaturas-foto-fia" style="width: 200px" src="{{ chave_planos.usuario.classificacao.assinatura.url }}" alt=""> </td>
                     {% else %}
                         <td colspan="2" class="assinaturas-fia", style="text-align: left;width: 140px;font-style: italic;font-family: Vladimir Script;"> {{nome_em_lista_diretor|first}} {{nome_em_lista_diretor|last}} </td>
                     {% endif %}
                 {% else %}
-                    <td colspan="2" style="text-align: left;">  </td>
+                    <td colspan="2" style="text-align: left; background-color: rgba(255, 102, 0, 0.404)">  </td>
                 {% endif %}
             {% else %}
-                <td colspan="2" style="text-align: left;">  </td>
+                <td colspan="2" style="text-align: left; background-color: rgba(255, 102, 0, 0.404)">  </td>
             {% endif %}
             <!-- ******** -->
             <!-- <td style="text-align: left; width: 340px; background-color: rgba(255, 0, 0, 0.404)">????????</td> -->
@@ -260,40 +294,40 @@
             {% if chave_modelo_fia.membro_colegiado_1 %}
                 {% if chave_planos.classificacao_set.all %}
                     {% tag_membro chave_modelo_fia.membro_colegiado_1 chave_planos.classificacao_set.all as var4 %}
-                    {% if var4 and plano_aprovado %}
+                    {% if var4 and plano_aprovado or var4 and chave_planos.alterabilidade == 'Desativada' %}
                         {% if var4.classificacao.assinatura %}
                         <td> <img class="assinaturas-foto-fia" src="{{ var4.classificacao.assinatura.url }}" alt=""> </td>
                         {% else %}
                         <td class="assinaturas-fia", style="text-align: left;width: 232px;font-style: italic;font-family: Vladimir Script;font-size: 26px;"> {{var4.first_name}}</td>
                         {% endif %}
                     {% else %}
-                        <td class="assinaturas-empty">  </td>
+                        <td class="assinaturas-empty" style="background-color: rgba(255, 102, 0, 0.404)">  </td>
                     {% endif %}
                 {% else %}
-                    <td class="assinaturas-empty">  </td>
+                    <td class="assinaturas-empty" style="background-color: rgba(255, 102, 0, 0.404)">  </td>
                 {% endif %}
             {% else %}
-                <td class="assinaturas-empty">  </td>
+                <td class="assinaturas-empty" style="background-color: rgba(255, 102, 0, 0.404)">  </td>
             {% endif %}
             <!-- *********** -->
             <!-- ASSINATURA MEMBRO DO COLEGIADO 2 -->
             {% if chave_modelo_fia.membro_colegiado_2 %}
                 {% if chave_planos.classificacao_set.all %}
                     {% tag_membro chave_modelo_fia.membro_colegiado_2 chave_planos.classificacao_set.all as var4 %}
-                    {% if var4 and plano_aprovado %}
+                    {% if var4 and plano_aprovado or var4 and chave_planos.alterabilidade == 'Desativada' %}
                         {% if var4.classificacao.assinatura %}
                         <td> <img class="assinaturas-foto-fia" src="{{ var4.classificacao.assinatura.url }}" alt=""> </td>
                         {% else %}
-                        <td class="assinaturas-fia", style="text-align: left;width: 232px;font-style: italic;font-family: Vladimir Script;font-size: 26px;"> {{var4.first_name}}</td>
+                        <td class="assinaturas-fia", style="text-align: left;width: 232px;font-style: italic;font-family: Vladimir Script;font-size: 26px;"> ggg{{var4.first_name}}</td>
                         {% endif %}
                     {% else %}
-                        <td class="assinaturas-empty">  </td>
+                        <td class="assinaturas-empty" style="background-color: rgba(255, 102, 0, 0.404)">  </td>
                     {% endif %}
                 {% else %}
-                    <td class="assinaturas-empty">  </td>
+                    <td class="assinaturas-empty" style="background-color: rgba(255, 102, 0, 0.404)">  </td>
                 {% endif %}
             {% else %}
-                <td class="assinaturas-empty"> c </td>
+                <td class="assinaturas-empty" style="background-color: rgba(255, 102, 0, 0.404)">  </td>
             {% endif %}
             <!-- *********** -->
         </tr>
@@ -306,20 +340,82 @@
             {% endif %}
 
             {% if user.classificacao.tipo_de_acesso == 'Escola' %}
-            <td style="text-align: left"> 18.6 - ASSINATURA: <a id="abre-modal-assinatura-tecnico" class="item-principal-menu-edicao sinal-ordens-js desabilita-js" href="#"><i class="fas fa-edit pull-right"></i></a> </td>
+            <td style="text-align: left"> 18.6 - ASSINATURA: <a id="abre-modal-assinatura-tecnico" class="icone-tecnico item-principal-menu-edicao sinal-ordens-js desabilita-js" href="#"><i class="fas fa-edit pull-right"></i></a> </td>
             {% else %}
             <td style="text-align: left"> 18.6 - ASSINATURA: </td>
             {% endif %}
 
-            {% if plano_aprovado == True and chave_modelo_fia.assinatura_tecnico %}
-                <td colspan="2"> <img class="assinaturas-foto-fia" src="{{ chave_modelo_fia.assinatura_tecnico.url }}" alt=""> </td>
-            {% elif plano_aprovado == True and chave_modelo_fia.tecnico_responsavel and not chave_modelo_fia.assinatura_tecnico %}
-                <td colspan="2" style="text-align: left; background-color: rgba(255, 102, 0, 0.404)"></td>
+            {% if chave_modelo_fia.assinatura_tecnico %}
+                {% if plano_aprovado == True or chave_planos.alterabilidade == 'Desativada' %}
+                    <td colspan="2"> <img class="assinaturas-foto-fia" src="{{ chave_modelo_fia.assinatura_tecnico.url }}" alt=""> </td>
+                {% elif chave_modelo_fia.tecnico_responsavel and not chave_modelo_fia.assinatura_tecnico %}
+                    <td colspan="2" style="text-align: left; background-color: rgba(255, 102, 0, 0.404)"></td>
+                {% else %}
+                    <td colspan="2" style="text-align: left; background-color: rgba(255, 102, 0, 0.404)"></td>
+                {% endif %}
             {% else %}
                 <td colspan="2" style="text-align: left; background-color: rgba(255, 102, 0, 0.404)"></td>
             {% endif %}
 
         </tr>
+
+        
+
+    </table>
+
+    <table class="tabela-principal table8-fia">
+        <tr>
+            <th style="text-align: left;width: 600px;"> 19 - AUTORIZAÇÃO SUPROT</th>
+            {% if chave_planos.data_assinaturas_suprof %}
+            <th colspan="3" style="text-align: left"> DATA: {{chave_planos.data_assinaturas_suprof}} </th>
+            {% else %}
+            <th colspan="3" style="text-align: left"> DATA: </th>
+            {% endif %}
+        </tr>
+    </table>
+
+    <table class="tabela-principal table9-fia">
+        {% tag_assinaturas_suprof_fia chave_planos.classificacao_set.all as Func_sec %}
+        {% tag_len_suprof chave_planos.classificacao_set.all as len_suprof %}
+        {% if chave_planos.classificacao_set.all and Func_sec %}
+        <tr>
+            <!-- COORDENADOR 1 -->
+            {% for item in Func_sec %}
+                {% if forloop.counter0 == 0 %}
+                    {% if item.assinatura %}
+                        <td style="text-align: left; width: 350px">19.1 - {{item}} <img class="assinaturas-foto-size display-block" src="{{ item.assinatura.url }}" alt=""> </td>
+                    {% else %}
+                        <td style="text-align: left; width: 350px">19.1 - {{item}} <p class="assinaturas assinatura-style" style="font-style: italic;margin: 0"> {{item}} </p> </td>
+                    {% endif %}
+                {% endif %}
+            <!-- COORDENADOR 2 -->
+                {% if forloop.counter0 == 1 %}
+                    {% if item.assinatura %}
+                        <td style="text-align: left; width: 350px;">19.2 - {{item}} <img class="assinaturas-foto-size display-block" src="{{ item.assinatura.url }}" alt=""> </td>
+                    {% else %}
+                        <td style="text-align: left; width: 350px">19.2 - {{item}} <p class="assinaturas assinatura-style" style="font-style: italic;margin: 0"> {{item}} </p> </td>
+                    {% endif %}
+                {% endif %}
+            <!-- COORDENADOR 3 -->
+                {% if forloop.counter0 == 2 %}
+                    {% if item.assinatura %}
+                        <td style="text-align: left; width: 350px">19.3 - {{item}} <img class="assinaturas-foto-size display-block" src="{{ item.assinatura.url }}" alt=""> </td>
+                    {% else %}
+                        <td style="text-align: left; width: 350px">19.3 - {{item}} <p class="assinaturas assinatura-style" style="font-style: italic;margin: 0;"> {{item}} </p> </td>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </tr>
+
+        {% else %}
+
+        <tr>
+            <td style="text-align: left">19.1 - </td>
+            <td style="text-align: left">19.2 - </td>
+            <td style="text-align: left">19.3 - </td>
+        </tr>
+
+        {% endif %}
     </table>
 
     
@@ -329,5 +425,6 @@
 
 {% include 'partials/modal-partial-correcao.html' %}
 {% include 'partials/modal-partial-edicao.html' %}
+{% include 'partials/modal-confirma.html' %}
 
 {% endblock %}

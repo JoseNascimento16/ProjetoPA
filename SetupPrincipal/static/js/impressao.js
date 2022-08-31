@@ -6,7 +6,8 @@ function printDiv(imprimir) {
     $('#impressao').addClass("display-none");
     $('.a-impressao').addClass("a-black").css("text-decoration","none");
     $('.impressao-none').addClass("display-none");
-    $('.tr-extra').removeClass("display-none");
+    $('.tr-extra').removeClass("display-none2"); // Mostra quebra de linhas em branco no layout de impressão
+    $('.titulo-plano').addClass("display-none"); // Esconde titulo para abrir espaço na impressão
     window.print();
 
     document.body.innerHTML = originalContents;

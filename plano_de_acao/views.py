@@ -92,7 +92,8 @@ def planos_de_acao(request, elemento_id='', atribui='', alt_corretor='', mensage
         messages.error(request, 'Acesso negado, já existe um responsável por este plano!')
     elif mensagem == 'preenchimento':
         messages.error(request, 'Para enviar, preencha as informações faltantes no documento FIA!')
-
+    elif mensagem == 'grupo_incompleto':
+        messages.error(request, 'Os membros para autorização do documento ainda não foram totalmente definidos...')
 
     id = request.user.id
     checa_usuario = request.user
@@ -433,6 +434,7 @@ def acao_plano(request, elemento_id, mensagem='', pdf='', ordem_id='', contx_ord
     var_reset = False
     apos_print = False
     quebra_linha = False
+    var_plano_pre_aprovado = False
     ordem_data = ''
     form_datas = Cadastra_datas_Ordem_Form()
 
@@ -532,6 +534,11 @@ def acao_plano(request, elemento_id, mensagem='', pdf='', ordem_id='', contx_ord
     if q_linha:
         quebra_linha = True
 
+    if plano_objeto.situacao == 'Publicado' and plano_objeto.devolvido == True and plano_objeto.correcoes_a_fazer == 0 and plano_objeto.pre_assinatura == True:
+        var_plano_pre_aprovado = True
+    elif plano_objeto.situacao == 'Aprovado':
+        var_plano_pre_aprovado = True
+
     plano_a_exibir = {
         'chave_planos' : plano_objeto,
         'chave_planos2' : plano_iteravel,
@@ -556,6 +563,8 @@ def acao_plano(request, elemento_id, mensagem='', pdf='', ordem_id='', contx_ord
         'chave_reset_plano' : var_reset,
         'chave_q_linha' : quebra_linha,
         'chave_apos_print' : apos_print,
+        'plano_aprovado' : var_plano_pre_aprovado,
+        'pagina_acoes' : True,
     }
 
     if pdf: # A FUNÇÃO 'gera_pdf' CHAMA ESTE CONTEXTO PARA RENDERIZAR O PDF
@@ -808,7 +817,7 @@ def acao_plano_modifica_codigo(request, plano_id, ordem_id, codigo_id):
 
     return redirect('chamando_acao_plano', elemento_id=plano_id)
 
-def despesa_plano(request, elemento_id, mensagem=''): # Visualização principal
+def despesa_plano(request, elemento_id, mensagem='', q_linha=''): # Visualização principal
 
     plano_objeto = get_object_or_404(Plano_de_acao, pk=elemento_id)
     ordem_objeto = get_object_or_404(Ordens, pk=20)
@@ -817,11 +826,14 @@ def despesa_plano(request, elemento_id, mensagem=''): # Visualização principal
     codigos_iteravel=[]
     codigos_lista=[]
     codigos_lista2=[]
+    membros_colegiado=[]
     turmas_iteravel = Turmas.objects.order_by('nome').filter(user=plano_objeto.usuario)
     turmas_associadas_iteravel = Turmas.objects.order_by('nome').filter(user=plano_objeto.usuario).filter(plano_associado=plano_objeto)
     quant_de_membros = 0
     soma_capital = 0
     soma_custeio = 0
+    quebra_linha = False
+    apos_print = False
     var_template = get_object_or_404(ControleOrdens, pk=1)
     funcionarios = Classificacao.objects.filter(tipo_de_acesso='Funcionario').filter(matriz=plano_objeto.usuario.last_name)
     checa_usuario = request.user
@@ -832,10 +844,17 @@ def despesa_plano(request, elemento_id, mensagem=''): # Visualização principal
     checa_usuario = request.user
     tipo_usuario = checa_usuario.classificacao.tipo_de_acesso
 
+    for item in funcionarios:
+        if item.user.last_name == 'Membro do colegiado':
+            membros_colegiado.append(item)
+
     if mensagem == 'Criou':
         messages.success(request, 'Sugestão de correção criada com sucesso!')
     elif mensagem == 'Sucesso':
         messages.success(request, 'Alteração realizada com sucesso!')
+    elif mensagem == 'Sucesso2':
+        if request.method == 'GET' and 'postprint' not in request.GET:
+            messages.success(request, 'Alteração efetuada com sucesso!')
     elif mensagem == 'Deletou':
         messages.success(request, 'Sugestão de correção excluída com sucesso!')
     elif mensagem == 'Editou':
@@ -849,9 +868,9 @@ def despesa_plano(request, elemento_id, mensagem=''): # Visualização principal
 
     for elemento in ordens_iteravel:
         codigos_varredura = ModeloCodigos.objects.order_by('identificacao').filter(ordem=elemento)
-        # print(codigos_varredura)
         for items in codigos_varredura:
             codigos_iteravel.append(items)
+    # print(codigos_iteravel)
 
     for pessoas in funcionarios:
         if pessoas.user.last_name == 'Membro do colegiado':
@@ -880,6 +899,12 @@ def despesa_plano(request, elemento_id, mensagem=''): # Visualização principal
             if items.possui_sugestao_correcao:
                 codigos_lista2.append(str(elemento.identificacao_numerica) + items.identificacao)
 
+    if request.method == 'GET' and 'postprint' in request.GET:
+        apos_print = request.GET.get('postprint','')
+
+    if q_linha:
+        quebra_linha = True
+
     if plano_objeto.pre_analise_despesa:
         sugestoes_despesas_plano_concluidas = 1
     else:
@@ -902,6 +927,7 @@ def despesa_plano(request, elemento_id, mensagem=''): # Visualização principal
         # 'chave_lista_turmas' : lista_turmas_no_menu,
         'vartemplate' : var_template,
         'chave_funcionarios' : funcionarios,
+        'chave_membros_colegiado' : membros_colegiado,
         'varmembros' : quant_de_membros_mais,
         'var_capital' : soma_capital,
         'var_custeio' : soma_custeio,
@@ -912,6 +938,9 @@ def despesa_plano(request, elemento_id, mensagem=''): # Visualização principal
         'chave_devolvido': var_devolvido,
         'chave_tipo_usuario': tipo_usuario,
         'chave_situacao_plano' : situacao_plano,
+        'chave_q_linha' : quebra_linha,
+        'chave_apos_print' : apos_print,
+        'pagina_despesas' : True
     }
 
     return render(request, 'despesas-visualizacao.html', plano_a_exibir)
@@ -1502,7 +1531,8 @@ def publica_plano(request, elemento_id):
     return redirect('pagina_planos_de_acao_mensagem', mensagem="Acesso_negado")
 
 def autoriza_plano(request, elemento_id): #ASSINATURA
-    from .alteracoes import atualiza_assinaturas_escola, confere_assinaturas_muda_para_pronto
+    from .alteracoes import cria_associacao, confere_assinaturas_muda_para_pronto, fia_confere_assinaturas_muda_para_pronto
+    from fia.alteracoes import checa_grupo_de_autorizacao
     captura_plano = get_object_or_404(Plano_de_acao, pk=elemento_id)
     tipo_usuario = request.user.classificacao.tipo_de_acesso
     if tipo_usuario == 'Escola' or tipo_usuario == 'Funcionario':
@@ -1520,21 +1550,28 @@ def autoriza_plano(request, elemento_id): #ASSINATURA
             else: # Significa que este usuário ainda não autorizou este plano, e portanto, criamos a autorização!!
                 print('Nao existe funcionario com ID igual ao atual associado a este plano, CRIANDO AUTORIZAÇÃO!!')
 
-                captura_funcionario.plano_associado.add(captura_plano) #salva no banco dizendo que este usuario acabou de autorizar este plano, e portanto já assinou e não precisa mais assinar. Gera um associação many-too_many.
-                atualiza_assinaturas_escola(elemento_id)
-                captura_plano = get_object_or_404(Plano_de_acao, pk=elemento_id)
+                # PLANO COMUM
+                if not captura_plano.tipo_fia:
+                    cria_associacao(request, captura_plano, captura_funcionario, elemento_id)
 
-                checa_usuario = request.user.first_name
-                nome_plano = captura_plano.ano_referencia
-                log_plano_assinado(nome_plano, checa_usuario, captura_plano.id)
+                # PLANO FIA
+                elif captura_plano.tipo_fia:
+                    modelo_fia = get_object_or_404(Modelo_fia, plano=captura_plano)
+                    pode_assinar = checa_grupo_de_autorizacao(modelo_fia)
+                    if pode_assinar:
+                        cria_associacao(request, captura_plano, captura_funcionario, elemento_id)
+                    else:
+                        return redirect('pagina_planos_de_acao_mensagem', mensagem='grupo_incompleto')
 
             # PLANO COMUM
             if not captura_plano.tipo_fia:
+                captura_plano = get_object_or_404(Plano_de_acao, pk=elemento_id)
                 confere_assinaturas_muda_para_pronto(captura_plano, captura_escola)
                 
             # PLANO FIA
             elif captura_plano.tipo_fia:
-                pass
+                captura_plano = get_object_or_404(Plano_de_acao, pk=elemento_id)
+                fia_confere_assinaturas_muda_para_pronto(captura_plano)
 
             return redirect('pagina_planos_de_acao_mensagem', mensagem='Assinado')
     
@@ -1717,18 +1754,27 @@ def reseta_plano(request, elemento_id):
                     funcionario_associado = Classificacao.objects.filter(plano_associado=plano)#DE TODOS OS FUNCIONARIOS ASSOCIADOS A ESTE PLANO
                     for objeto in funcionario_associado:
                         objeto.plano_associado.remove(plano) # Apaga todas as assinaturas neste plano (escolas, funcionarios, Func_sec)
-                    existem_turmas_associadas = Turmas.objects.filter(plano_associado=plano)
-                    if existem_turmas_associadas:
-                        for turmas in existem_turmas_associadas:
-                            turmas.plano_associado.remove(plano)# Desassocia as turmas associadas a este plano.
+                    # existem_turmas_associadas = Turmas.objects.filter(plano_associado=plano)
+                    # if existem_turmas_associadas:
+                    #     for turmas in existem_turmas_associadas:
+                    #         turmas.plano_associado.remove(plano)# Desassocia as turmas associadas a este plano.
+                    if plano.tipo_fia: 
+                        modelo_fia = get_object_or_404(Modelo_fia, plano=plano)
+                        modelo_fia.assinatura_tecnico.delete() # Apaga assinatura técnico
+                        modelo_fia.save()
                     plano.assinaturas = 0
                     plano.assinaturas_sec = 0
                     plano.situacao = 'Pendente'
+                    plano.data_assinaturas_escola = None
+                    plano.data_assinaturas_suprof = None
                     plano.save()
 
                     log_plano_resetado(plano.ano_referencia, nome_usuario, elemento_id)
 
-                    return redirect('chamando_acao_plano_mensagem', elemento_id=elemento_id, mensagem='Sucesso')
+                    if not plano.tipo_fia:
+                        return redirect('chamando_acao_plano_mensagem', elemento_id=elemento_id, mensagem='Sucesso')
+                    else:
+                        return redirect('chamando_documento_fia_mensagem', elemento_id=elemento_id, mensagem='sucesso2')
 
     return redirect('chamando_acao_plano_mensagem', elemento_id=elemento_id, mensagem='Acesso_negado')
 
@@ -1829,17 +1875,57 @@ def altera_corretor(request, elemento_id):
     return redirect('pagina_planos_de_acao_mensagem', mensagem='Acesso_negado')
 
 def quebra_de_linha(request, plano_id):
-    ordem_id = int(request.GET.get('ordemid',''))
-    valor_quebra_de_linha = int(request.GET.get('valor',''))
-    ordem_objeto = get_object_or_404(Ordens, pk=ordem_id)
-    ordem_objeto.quebra_de_linha = valor_quebra_de_linha
-    ordem_objeto.save()
-    if request.method == 'GET ' and 'postprint' in request.GET:
-        var_mensagem = 'insere'
-    else:
-        var_mensagem = 'Sucesso2'
+    if 'ordemid' in request.GET:
+        ordem_id = int(request.GET.get('ordemid',''))
+        valor_quebra_de_linha = int(request.GET.get('valor',''))
+        ordem_objeto = get_object_or_404(Ordens, pk=ordem_id)
+        ordem_objeto.quebra_de_linha = valor_quebra_de_linha
+        ordem_objeto.save()
+        if request.method == 'GET ' and 'postprint' in request.GET:
+            var_mensagem = 'insere' # Não deve mostrar mensagem alguma
+        else:
+            var_mensagem = 'Sucesso2'
 
-    return redirect('chamando_acao_plano_mensagem_q_linha', elemento_id=plano_id, mensagem=var_mensagem, q_linha='q_linha')
+        return redirect('chamando_acao_plano_mensagem_q_linha', elemento_id=plano_id, mensagem=var_mensagem, q_linha='q_linha')
+    
+    elif 'codigoid' in request.GET:
+        codigo_id = int(request.GET.get('codigoid',''))
+        valor_quebra_de_linha = int(request.GET.get('valor',''))
+        codigo_objeto = get_object_or_404(ModeloCodigos, pk=codigo_id)
+        codigo_objeto.quebra_de_linha = valor_quebra_de_linha
+        codigo_objeto.save()
+        if request.method == 'GET ' and 'postprint' in request.GET:
+            var_mensagem = 'insere' # Não deve mostrar mensagem alguma
+        else:
+            var_mensagem = 'Sucesso2'
+
+        return redirect('chamando_despesa_mensagem_q_linha', elemento_id=plano_id, mensagem=var_mensagem, q_linha='q_linha')
+
+    elif 'modelo_fiaid' in request.GET:
+        modelo_fiaid = int(request.GET.get('modelo_fiaid',''))
+        valor_quebra_de_linha = int(request.GET.get('valor',''))
+        modelo_fia_objeto = get_object_or_404(Modelo_fia, pk=modelo_fiaid)
+        modelo_fia_objeto.quebra_de_linha = valor_quebra_de_linha
+        modelo_fia_objeto.save()
+        if request.method == 'GET ' and 'postprint' in request.GET:
+            var_mensagem = 'insere' # Não deve mostrar mensagem alguma
+        else:
+            var_mensagem = 'Sucesso3'
+
+        return redirect('chamando_documento_fia_mensagem_q_linha', elemento_id=plano_id, mensagem=var_mensagem, q_linha='q_linha')
+
+    elif 'extra_fiaid' in request.GET:
+        extra_fiaid = int(request.GET.get('extra_fiaid',''))
+        valor_quebra_de_linha = int(request.GET.get('valor',''))
+        extra_fia_objeto = get_object_or_404(Extra_fia, pk=extra_fiaid)
+        extra_fia_objeto.quebra_de_linha = valor_quebra_de_linha
+        extra_fia_objeto.save()
+        if request.method == 'GET ' and 'postprint' in request.GET:
+            var_mensagem = 'insere' # Não deve mostrar mensagem alguma
+        else:
+            var_mensagem = 'Sucesso3'
+
+        return redirect('chamando_documento_fia_mensagem_q_linha', elemento_id=plano_id, mensagem=var_mensagem, q_linha='q_linha')
 
 def teste(request):
     pass
@@ -1851,6 +1937,10 @@ def aprova_plano(request, elemento_id):
     if tipo_usuario == 'Func_sec':
         if request.method == 'POST':
             captura_plano.situacao = 'Aprovado'
+
+            if captura_plano.tipo_fia:
+                captura_plano.pre_analise_fia = False
+
             captura_plano.save()
 
             # gera log

@@ -51,7 +51,7 @@ def cria_fia(request): #CRIA UM PLANO TIPO FIA
 
     return redirect('pagina_planos_de_acao')
 
-def documento_fia(request, elemento_id, mensagem='', reabreform_modelo_fia='', abreform_extra_criacao='', abreform_extra_edicao='', reabreform_extra='', ordem_extra_id='', abre_correcao=''):
+def documento_fia(request, elemento_id, mensagem='', reabreform_modelo_fia='', abreform_extra_criacao='', abreform_extra_edicao='', reabreform_extra='', ordem_extra_id='', abre_correcao='', q_linha=''):
     plano_objeto = get_object_or_404(Plano_de_acao, pk=elemento_id)
     # modelo_fia_objeto = get_object_or_404(Modelo_fia, plano=plano_objeto)
     modelo_fia_query = Modelo_fia.objects.filter(plano=plano_objeto)
@@ -66,13 +66,15 @@ def documento_fia(request, elemento_id, mensagem='', reabreform_modelo_fia='', a
     ordens_extras = Extra_fia.objects.order_by('valor_numerico').filter(fia_matriz=modelo_fia_objeto)
     modo_edicao = False
     var_plano_pre_aprovado = False
+    valor_assinatura_tecnico = False
+    var_reset = False
+    quebra_linha = False
+    apos_print = False
     ordem_extra_objeto = ''
     lista_ordens_fia = []
     lista_ordens_com_correcao = []
     form_extra_fia = OrdemExtraForm()
     tipo_usuario = request.user.classificacao.tipo_de_acesso
-    from plano_de_acao.alteracoes import atualiza_assinaturas_escola
-    atualiza_assinaturas_escola(elemento_id)
     
     ModeloFiaForm.base_fields['membro1'] = forms.ModelChoiceField(
         queryset=Classificacao.objects.order_by('-user').filter(matriz=plano_objeto.usuario.last_name).filter(tipo_de_acesso='Funcionario').filter(cargo_herdado='Membro do colegiado'),
@@ -117,6 +119,9 @@ def documento_fia(request, elemento_id, mensagem='', reabreform_modelo_fia='', a
         messages.success(request, 'Sucesso!')
     elif mensagem == 'sucesso2':
         messages.success(request, 'Alteração efetuada com sucesso!')
+    elif mensagem == 'Sucesso3':
+        if request.method == 'GET' and 'postprint' not in request.GET:
+            messages.success(request, 'Alteração efetuada com sucesso!')
     elif mensagem == 'criou':
         messages.success(request, 'Sugestão de correção criada com sucesso!')
     elif mensagem == 'criou_extra':
@@ -131,6 +136,8 @@ def documento_fia(request, elemento_id, mensagem='', reabreform_modelo_fia='', a
         messages.error(request, 'Acesso negado, esta alteração não pode ser efetuada no momento!')
     elif mensagem == 'nao_corretor':
         messages.error(request, 'Você não é o corretor responsável por este plano!!')
+    elif mensagem == 'grupo_incompleto':
+        messages.error(request, 'Os membros para autorização do documento ainda não foram completamente definidos...')
         
     turmas_iteravel = Turmas.objects.order_by('nome').filter(user=plano_objeto.usuario)
     turmas_associadas_iteravel = Turmas.objects.order_by('nome').filter(user=plano_objeto.usuario).filter(plano_associado=plano_objeto)
@@ -141,6 +148,9 @@ def documento_fia(request, elemento_id, mensagem='', reabreform_modelo_fia='', a
         if ordem.possui_sugestao_correcao:
             lista_ordens_com_correcao.append(ordem.valor_numerico)
 
+    if modelo_fia_objeto.assinatura_tecnico:
+        valor_assinatura_tecnico = True
+
     lista_ordens_fia.append(modelo_fia_objeto.valor_numerico)
     for ordem in ordens_extras:
         lista_ordens_fia.append(ordem.valor_numerico)
@@ -150,6 +160,14 @@ def documento_fia(request, elemento_id, mensagem='', reabreform_modelo_fia='', a
     elif plano_objeto.situacao == 'Aprovado':
         var_plano_pre_aprovado = True
 
+    if plano_objeto.situacao == 'Assinado':
+        var_reset = True
+
+    if request.method == 'GET' and 'postprint' in request.GET:
+        apos_print = request.GET.get('postprint','')
+
+    if q_linha:
+        quebra_linha = True
 
     dados = {
         'chave_planos':plano_objeto,
@@ -168,6 +186,11 @@ def documento_fia(request, elemento_id, mensagem='', reabreform_modelo_fia='', a
         'chave_ordens_com_correcao' : lista_ordens_com_correcao,
         'plano_aprovado' : var_plano_pre_aprovado,
         'chave_abre_altera_assinatura_tecnico' : True,
+        'chave_assinatura_tecnico' : valor_assinatura_tecnico,
+        'chave_reset_plano' : var_reset,
+        'chave_q_linha' : quebra_linha,
+        'chave_apos_print' : apos_print,
+        'pagina_fia' : True,
     }
 
     if reabreform_modelo_fia or reabreform_extra or abre_correcao:
@@ -176,7 +199,8 @@ def documento_fia(request, elemento_id, mensagem='', reabreform_modelo_fia='', a
         return render(request, 'fia-visualizacao.html', dados)
 
 def altera_fia(request, elemento_id):
-    from fia.alteracoes import atualiza_valor_total_fia
+    from fia.alteracoes import atualiza_valor_total_fia, remove_assinatura_membro
+    from plano_de_acao.alteracoes import atualiza_assinaturas_escola
     modelo_fia = get_object_or_404(Modelo_fia, pk=elemento_id)
     form_fia = ModeloFiaForm()
     tipo_usuario = request.user.classificacao.tipo_de_acesso
@@ -199,18 +223,34 @@ def altera_fia(request, elemento_id):
                 modelo_fia.quantidade = 1
                 modelo_fia.preco_unitario_item = var_preco_unitario_item
                 modelo_fia.justificativa = var_justificativa
+
                 if var_membro1:
                     objeto1 = get_object_or_404(User, first_name=var_membro1)
                     modelo_fia.membro_colegiado_1 = objeto1
                 else:
-                    modelo_fia.membro_colegiado_1 = None
+                    if modelo_fia.membro_colegiado_1:
+                        remove_assinatura_membro(modelo_fia.plano, modelo_fia.membro_colegiado_1)
+                        modelo_fia.membro_colegiado_1 = None
+                    else:
+                        modelo_fia.membro_colegiado_1 = None
+
                 if var_membro2:
                     objeto2 = get_object_or_404(User, first_name=var_membro2)
                     modelo_fia.membro_colegiado_2 = objeto2
                 else:
-                    modelo_fia.membro_colegiado_2 = None
-                    
-                modelo_fia.tecnico_responsavel = var_tecnico_responsavel
+                    if modelo_fia.membro_colegiado_2:
+                        remove_assinatura_membro(modelo_fia.plano, modelo_fia.membro_colegiado_2)
+                        modelo_fia.membro_colegiado_2 = None
+                    else:
+                        modelo_fia.membro_colegiado_2 = None
+
+                if modelo_fia.tecnico_responsavel:    
+                    modelo_fia.tecnico_responsavel = var_tecnico_responsavel
+                    if modelo_fia.assinatura_tecnico:
+                        modelo_fia.assinatura_tecnico.delete()
+                        atualiza_assinaturas_escola(elemento_id)
+                else:
+                    modelo_fia.tecnico_responsavel = var_tecnico_responsavel
 
                 var_total_item = 1 * var_preco_unitario_item
                 modelo_fia.valor_total_item = var_total_item
@@ -536,25 +576,43 @@ def corrige_fia(request, elemento_id, ident_numerica):
             return render(request, 'correcoes.html', contexto)
 
 def salva_assinatura_tecnico_fia(request, modelo_fia_id):
+    from plano_de_acao.alteracoes import atualiza_assinaturas_escola, fia_confere_assinaturas_muda_para_pronto
+    from .alteracoes import checa_grupo_de_autorizacao
     modelo_fia = get_object_or_404(Modelo_fia, pk=modelo_fia_id)
-    if request.method == 'POST':
-        imagem = request.POST['canvasData']
-        format, imgstr = imagem.split(';base64,') 
-        ext = format.split('/')[-1] 
-        data = ContentFile(base64.b64decode(imgstr)) 
-        file_name = "'mysign." + ext
-        modelo_fia.assinatura_tecnico.save(file_name, data, save=True) 
-        
-        return redirect('chamando_documento_fia', elemento_id=modelo_fia.plano.id)
+    permitido = checa_grupo_de_autorizacao(modelo_fia)
+    if permitido:
+        if request.method == 'POST':
+            imagem = request.POST['canvasData']
+            format, imgstr = imagem.split(';base64,') 
+            ext = format.split('/')[-1] 
+            data = ContentFile(base64.b64decode(imgstr)) 
+            file_name = "'mysign." + ext
+            modelo_fia.assinatura_tecnico.save(file_name, data, save=True) 
+            modelo_fia.plano.alterabilidade = 'Desativada'
+            modelo_fia.plano.save()
+            
+            atualiza_assinaturas_escola(modelo_fia.plano.id)
+
+            modelo_fia = get_object_or_404(Modelo_fia, pk=modelo_fia_id)# Instancio novamente, para atualizar as informações alteradas na função acima que ainda não estão na instancia anterior.
+
+            fia_confere_assinaturas_muda_para_pronto(modelo_fia.plano)
+
+            return redirect('chamando_documento_fia', elemento_id=modelo_fia.plano.id)
+    else:
+        return redirect('chamando_documento_fia_mensagem', elemento_id=modelo_fia.plano.id, mensagem='grupo_incompleto')
 
     return redirect('dashboard')
 
 def remove_assinatura_tecnico(request, modelo_fia_id):
+    from plano_de_acao.alteracoes import atualiza_assinaturas_escola
     modelo_fia = get_object_or_404(Modelo_fia, pk=modelo_fia_id)
     if request.method == 'POST':
         modelo_fia.assinatura_tecnico.delete()
         modelo_fia.save()
         
+        atualiza_assinaturas_escola(modelo_fia.plano.id)
+
         return redirect('chamando_documento_fia', elemento_id=modelo_fia.plano.id)
 
     return redirect('dashboard')
+

@@ -54,8 +54,8 @@
     </table>
 
     <div class="titulo-plano">
-        <h4 style="margin-top: 30px;">PLANO: {{ chave_planos.ano_referencia }}</h4>
-        <h4>1 - IDENTIFICAÇÃO DAS AÇÕES</h4>
+        <h5 style="margin-top: 30px;">PLANO: {{ chave_planos.ano_referencia }}</h5>
+        <h5>1 - IDENTIFICAÇÃO DAS AÇÕES</h5>
     </div>
 
     <table class="tabela-principal quebra-pagina">
@@ -115,7 +115,7 @@
 
                 {% tag_loop1 ordem.quebra_de_linha as valor_linhas %}
                 {% for quantidade in valor_linhas %}
-                    <tr class="tr-extra display-none">
+                    <tr class="tr-extra display-none2">
                         <td style="border: none;"> 
                         </td>
                     </tr>
@@ -204,7 +204,7 @@
 
                     {% tag_loop1 ordem.quebra_de_linha as valor_linhas %}
                     {% for quantidade in valor_linhas %}
-                        <tr class="tr-extra display-none">
+                        <tr class="tr-extra display-none2">
                             <td style="border: none;"> 
                             </td>
                         </tr>
@@ -254,14 +254,22 @@
             </tr>
 
             <tr>
-                <td colspan="4"> DATA:    /     /      </td>
+                {% if chave_planos.data_assinaturas_escola %}
+                <td colspan="3" style="text-align: left"> DATA: {{chave_planos.data_assinaturas_escola}} </td>
+                {% else %}
+                <td colspan="3" style="text-align: left"> DATA: </td>
+                {% endif %}
             </tr>
 
             <tr>
                 <th style="width: 100px;"> POSIÇÃO </th>
                 <th> NOME </th>
                 <th colspan="2", style="width: 200px;"> ASSINATURA </th>
-                <td> DATA:    /     /      </td>
+                {% if chave_planos.data_assinaturas_suprof %}
+                <td colspan="3" style="text-align: left"> DATA: {{chave_planos.data_assinaturas_suprof}} </td>
+                {% else %}
+                <td colspan="3" style="text-align: left"> DATA: </td>
+                {% endif %}
             </tr>
 
             <tr>
@@ -271,7 +279,7 @@
                 <!-- ASSINATURA DIRETOR -->
                 {% if plano.classificacao_set.all %}
                         {% tag_any plano.usuario plano.classificacao_set.all as var3 %}
-                        {% if var3 and plano.situacao == 'Finalizado' %}
+                        {% if var3 and plano_aprovado or var3 and chave_planos.alterabilidade == 'Desativada' %}
                             {% if plano.usuario.classificacao.assinatura %}
                             <td colspan="2"> <img class="assinaturas-foto-size" src="{{ plano.usuario.classificacao.assinatura.url }}" alt=""> </td>
                             {% else %}
@@ -284,7 +292,7 @@
                     <td colspan="2", style="text-align: center;">  </td>
                 {% endif %}
                 <!-- ******** -->
-                <td> CADASTRO: </td>
+                <td class="size-11"> CADASTRO: </td>
             </tr>
 
             <tr>
@@ -298,7 +306,7 @@
                 <!-- ASSINATURA TESOUREIRO -->
                 {% if plano.classificacao_set.all %}
                     {% tag_any2 chave_funcionarios plano.classificacao_set.all as var3 %}
-                    {% if var3 and plano.situacao == 'Finalizado' %}
+                    {% if var3 and plano_aprovado or var3 and chave_planos.alterabilidade == 'Desativada' %}
                         {% if var3.user.classificacao.assinatura %}
                         <td colspan="2"> <img class="assinaturas-foto-size" src="{{ var3.user.classificacao.assinatura.url }}" alt=""> </td>
                         {% else %}
@@ -312,7 +320,7 @@
                 {% endif %}
                 <!-- ********* -->
 
-                <td> VISTO SUPROT: </td>
+                <td class="size-11"> VISTO SUPROT: </td>
             </tr>
 
 
@@ -335,7 +343,7 @@
                         <!-- ASSINATURA MEMBROS DO COLEGIADO -->
                             {% if plano.classificacao_set.all %}
                                 {% tag_any3 funcionarios plano.classificacao_set.all as var3 %}
-                                {% if var3 and plano.situacao == 'Finalizado' %}
+                                {% if var3 and plano_aprovado or var3 and chave_planos.alterabilidade == 'Desativada' %}
                                     {% if var3.user.classificacao.assinatura %}
                                     <td colspan="2"> <img class="assinaturas-foto-size" src="{{ var3.user.classificacao.assinatura.url }}" alt=""> </td>
                                     {% else %}
@@ -352,10 +360,14 @@
                         {% endif %}   
 
                 <!-- ASSINATURAS FUNC_SEC -->
-                {% if plano.situacao == 'Finalizado' %}
+                {% if plano.alterabilidade == 'Desativada' %}
                     {% if forloop.counter0 < len_suprof %}
                     {% tag_assinaturas_suprof forloop.counter0 plano.classificacao_set.all as Func_sec %}
-                        <td class="assinaturas", style="text-align: center;font-style: italic"> {{Func_sec}}</td>
+                        {% if Func_sec.assinatura %}
+                        <td style="text-align: left" class="size-11"> {{Func_sec}} <img class="assinaturas-foto-size display-block" src="{{ Func_sec.assinatura.url }}" alt=""> </td>
+                        {% else %}
+                        <td style="text-align: left" class="size-11"> {{Func_sec}} <p class="assinaturas assinatura-style", style="text-align: left;font-style: italic;margin: 0;"> {{Func_sec}} </p> </td>
+                        {% endif %}
                     {% endif %}
                 {% endif %}
                 <!-- ******** -->

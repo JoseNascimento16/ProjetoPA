@@ -124,10 +124,29 @@ $(document).ready(function(){
 
         if (situacao_do_plano == 'Pendente' || situacao_do_plano == 'Corrigido pela escola' || situacao_do_plano == 'Pronto' || situacao_do_plano == 'Aprovado' || situacao_do_plano == 'Assinado' || situacao_do_plano == 'Finalizado'){
             $(".desabilita-js").removeAttr('href');
+            $('.display-none').removeClass("display-none"); // Mostra mensagem que o plano nao pode ser alterado
         }
         
     }else if (tipo_de_usuario == 'Funcionario'){
         
     }
+
+    // TOOLTIP QUESTION MARK DE IMPRESSÃO
+            
+    showContext = $('.question-menu-impressao').hover(function() {
+        var e = window.event;
+    
+        var posX = e.clientX - 15;
+        var posY = e.clientY - 39;
+        var context = document.getElementById("id-tooltip7-menu")
+        context.style.top = posY + "px";
+        context.style.left = posX + "px";
+        context.style.display = "block";
+
+        $('.question-menu-impressao').mouseleave(function(){
+        $('.question-menu-impressao').removeClass('tooltip7-menu'),
+        $('.tooltiptext7-tabela').css("display","none");
+        })
+    })
 
 })

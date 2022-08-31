@@ -1,22 +1,11 @@
-{% for nome_plano in chave_planos_assinados %}
-                    
-    {% if elemento.situacao == 'Aprovado' and elemento.ano_referencia == nome_plano %}
-        <div class="box-botao-cadastro1 itens-cards-planos">
-            <form action="#">
-                <input class="myButtonGrey" type="submit" value="Assinado">
-            </form>
-        </div>
-    {% elif elemento.situacao == 'Aprovado' and not elemento.ano_referencia == nome_plano %}
-        <div class="box-botao-cadastro1 itens-cards-planos">
-            <form action="{% url 'autorizar_plano' elemento.id %}" method="POST" onclick="return confirm('Deseja realmente assinar o plano de ação: {{ elemento.ano_referencia }}?')">
-                {% csrf_token %}
-                <input class="myButton" type="submit" value="Assinar">
-            </form>
-        </div>
-    {% elif elemento.situacao != 'Aprovado' %}
-    <div class="box-botao-cadastro1 itens-cards-planos">
-        
-    </div>
-    {% endif %}
+ ordem_id = int(request.GET.get('ordemid',''))
+    valor_quebra_de_linha = int(request.GET.get('valor',''))
+    ordem_objeto = get_object_or_404(Ordens, pk=ordem_id)
+    ordem_objeto.quebra_de_linha = valor_quebra_de_linha
+    ordem_objeto.save()
+    if request.method == 'GET ' and 'postprint' in request.GET:
+        var_mensagem = 'insere'
+    else:
+        var_mensagem = 'Sucesso2'
 
-{% endfor %}
+    return redirect('chamando_acao_plano_mensagem_q_linha', elemento_id=plano_id, mensagem=var_mensagem, q_linha='q_linha')

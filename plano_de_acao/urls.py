@@ -63,6 +63,7 @@ urlpatterns = [
     path('plano/<int:elemento_id>/corrigir/despesas/<int:ordem_id>/<int:codigo_id>',views.despesa_plano_correcao, name='chamando_correcao_despesa_plano'),
     path('plano/<int:plano_id>/despesas/<int:ordem_id>/cria_correcao/<int:codigo_id>',views.cria_altera_correcao_despesa, name='chamando_cria_altera_correcao_despesa'),
     path('plano/<int:plano_id>/despesas/deleta_correcao/<int:ordem_id>/<int:codigo_id>',views.deleta_correcao_despesa, name='chamando_deleta_correcao_despesa'),
+    path('plano/<int:elemento_id>/despesas/<slug:mensagem>/q/<slug:q_linha>',views.despesa_plano, name='chamando_despesa_mensagem_q_linha'),
 
     path('plano/<int:plano_id>/modifica_turma/<int:turma_id>',views.adiciona_remove_turma, name='adicionando_removendo_turma'),
 

@@ -11,23 +11,69 @@
             <ul class="sub-menu-edicao sub-menu-edicao-ordens" style="margin: 0 7px 7px 7px; padding: 0">
 
                 <li class="sub-menu-item-edicao li-quebra-linha"><a href="#" class="desabilita-js"><i class="fa fa fa-tasks margem-icones-menu"></i>Quebra de linha após</a></li>
+                {% if pagina_acoes %}
 
-            {% for elemento in chave_ordens2 %}
-                {% if elemento.inserida %}
-                
-                    <li class="sub-menu-item-edicao" style="margin: 0 7px 0 18px"><a class="desabilita-js" method="POST">Ordem: {{elemento.identificacao_numerica}}</a>
-                    </li>
-                    <div class="div-icones-soma-subtracao">
-                        <!-- <a id="menos-ordem-{{elemento.identificacao_numerica}}" href="#"><i class="fas fa-minus setinha"></i></a><p id="figure-ordem-{{elemento.identificacao_numerica}}">{{elemento.quebra_de_linha}}</p><a id="mais-ordem-{{elemento.identificacao_numerica}}" href="#"><i class="fas fa-plus setinha"></i></a> -->
-                        <form action="{% url 'insere_quebra_de_linha' chave_planos.id %}" method="GET">
-                        <a id="menos-ordem-{{elemento.identificacao_numerica}}"><i class="fas fa-minus setinha"></i></a><input class="input-menu-impressao" type="number" min="0" max="10" id="figure-ordem-{{elemento.identificacao_numerica}}" name="valor" value="{{elemento.quebra_de_linha}}"><a id="mais-ordem-{{elemento.identificacao_numerica}}"><i class="fas fa-plus setinha"></i></a>
-                        <input class="input-menu-impressao" type="text" name="ordemid" value="{{elemento.id}}" style="display: none">
-                        <button class="botao-ok-impressao" style="display: inline">ok</button>
-                        </form>
-                    </div>
+                    {% for elemento in chave_ordens2 %}
+                        {% if elemento.inserida %}
+                        
+                            <li class="sub-menu-item-edicao" style="margin: 0 7px 0 18px"><a class="desabilita-js" method="POST">Ordem: {{elemento.identificacao_numerica}}</a>
+                            </li>
+                            <div class="div-icones-soma-subtracao">
+                                <!-- <a id="menos-ordem-{{elemento.identificacao_numerica}}" href="#"><i class="fas fa-minus setinha"></i></a><p id="figure-ordem-{{elemento.identificacao_numerica}}">{{elemento.quebra_de_linha}}</p><a id="mais-ordem-{{elemento.identificacao_numerica}}" href="#"><i class="fas fa-plus setinha"></i></a> -->
+                                <form action="{% url 'insere_quebra_de_linha' chave_planos.id %}" method="GET">
+                                <a id="menos-ordem-{{elemento.identificacao_numerica}}"><i class="fas fa-minus setinha"></i></a><input class="input-menu-impressao" type="number" min="0" max="10" id="figure-ordem-{{elemento.identificacao_numerica}}" name="valor" value="{{elemento.quebra_de_linha}}"><a id="mais-ordem-{{elemento.identificacao_numerica}}"><i class="fas fa-plus setinha"></i></a>
+                                <input class="input-menu-impressao" type="text" name="ordemid" value="{{elemento.id}}" style="display: none">
+                                <button class="botao-ok-impressao" style="display: inline">ok</button>
+                                </form>
+                            </div>
+
+                        {% endif %}
+                    {% endfor %}
+
+                {% elif pagina_despesas %}
+
+                    {% for elemento in chave_codigos %}
+                        <li class="sub-menu-item-edicao" style="margin: 0 7px 0 18px"><a class="desabilita-js" method="POST">Código: {{elemento.ordem.identificacao_numerica}}{{elemento.identificacao}}</a>
+                        </li>
+                        <div class="div-icones-soma-subtracao">
+                            <!-- <a id="menos-ordem-{{elemento.identificacao_numerica}}" href="#"><i class="fas fa-minus setinha"></i></a><p id="figure-ordem-{{elemento.identificacao_numerica}}">{{elemento.quebra_de_linha}}</p><a id="mais-ordem-{{elemento.identificacao_numerica}}" href="#"><i class="fas fa-plus setinha"></i></a> -->
+                            <form action="{% url 'insere_quebra_de_linha' chave_planos.id %}" method="GET">
+                            <a id="menos-codigo-{{elemento.ordem.identificacao_numerica}}{{elemento.identificacao}}"><i class="fas fa-minus setinha"></i></a><input class="input-menu-impressao" type="number" min="0" max="10" id="figure-codigo-{{elemento.ordem.identificacao_numerica}}{{elemento.identificacao}}" name="valor" value="{{elemento.quebra_de_linha}}"><a id="mais-codigo-{{elemento.ordem.identificacao_numerica}}{{elemento.identificacao}}"><i class="fas fa-plus setinha"></i></a>
+                            <input class="input-menu-impressao" type="text" name="codigoid" value="{{elemento.id}}" style="display: none">
+                            <button class="botao-ok-impressao" style="display: inline">ok</button>
+                            </form>
+                        </div>
+                    {% endfor %}
+
+                {% elif pagina_fia %}
+
+                        <!-- ORDEM 1 -->
+                        <li class="sub-menu-item-edicao" style="margin: 0 7px 0 18px"><a class="desabilita-js" method="POST">Ordem: {{chave_modelo_fia.valor_numerico}}</a>
+                        </li>
+                        <div class="div-icones-soma-subtracao">
+                            <!-- <a id="menos-ordem-{{elemento.identificacao_numerica}}" href="#"><i class="fas fa-minus setinha"></i></a><p id="figure-ordem-{{elemento.identificacao_numerica}}">{{elemento.quebra_de_linha}}</p><a id="mais-ordem-{{elemento.identificacao_numerica}}" href="#"><i class="fas fa-plus setinha"></i></a> -->
+                            <form action="{% url 'insere_quebra_de_linha' chave_planos.id %}" method="GET">
+                            <a id="menos-modelo-fia-{{chave_modelo_fia.valor_numerico}}"><i class="fas fa-minus setinha"></i></a><input class="input-menu-impressao" type="number" min="0" max="10" id="figure-ordem-fia-{{chave_modelo_fia.valor_numerico}}" name="valor" value="{{chave_modelo_fia.quebra_de_linha}}"><a id="mais-modelo-fia-{{chave_modelo_fia.valor_numerico}}"><i class="fas fa-plus setinha"></i></a>
+                            <input class="input-menu-impressao" type="text" name="modelo_fiaid" value="{{chave_modelo_fia.id}}" style="display: none">
+                            <button class="botao-ok-impressao" style="display: inline">ok</button>
+                            </form>
+                        </div>
+
+                        <!-- ORDENS EXTRA -->
+                    {% for elemento in chave_ordens_extra %}
+                        <li class="sub-menu-item-edicao" style="margin: 0 7px 0 18px"><a class="desabilita-js" method="POST">Ordem: {{elemento.valor_numerico}}</a>
+                        </li>
+                        <div class="div-icones-soma-subtracao">
+                            <!-- <a id="menos-ordem-{{elemento.identificacao_numerica}}" href="#"><i class="fas fa-minus setinha"></i></a><p id="figure-ordem-{{elemento.identificacao_numerica}}">{{elemento.quebra_de_linha}}</p><a id="mais-ordem-{{elemento.identificacao_numerica}}" href="#"><i class="fas fa-plus setinha"></i></a> -->
+                            <form action="{% url 'insere_quebra_de_linha' chave_planos.id %}" method="GET">
+                            <a id="menos-ordem-extra-{{elemento.valor_numerico}}"><i class="fas fa-minus setinha"></i></a><input class="input-menu-impressao" type="number" min="0" max="10" id="figure-ordem-fia-{{elemento.valor_numerico}}" name="valor" value="{{elemento.quebra_de_linha}}"><a id="mais-ordem-extra-{{elemento.valor_numerico}}"><i class="fas fa-plus setinha"></i></a>
+                            <input class="input-menu-impressao" type="text" name="extra_fiaid" value="{{elemento.id}}" style="display: none">
+                            <button class="botao-ok-impressao" style="display: inline">ok</button>
+                            </form>
+                        </div>
+                    {% endfor %}
 
                 {% endif %}
-            {% endfor %}
             </ul>
 
         </ul>

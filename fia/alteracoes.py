@@ -58,3 +58,19 @@ def salva_form_extra_fia(form_extra_fia, extra_fia):
     extra_fia.justificativa=var_justificativa
     
     extra_fia.save()
+
+def remove_assinatura_membro(plano_objeto, membro):
+    from plano_de_acao.alteracoes import atualiza_assinaturas_escola
+    assinaturas = plano_objeto.classificacao_set.all()
+    for item in assinaturas:
+        if item.user == membro:
+            item.plano_associado.remove(plano_objeto)
+
+            atualiza_assinaturas_escola(plano_objeto.id)
+
+# Checa se um plano fia já tem todos os membros definidos
+def checa_grupo_de_autorizacao(modelo_fia):
+    if modelo_fia.membro_colegiado_1 and modelo_fia.membro_colegiado_2 and modelo_fia.tecnico_responsavel:
+        return True
+    else:
+        return False

@@ -26,7 +26,8 @@ class Plano_de_acao(models.Model):
     tipo_fia = models.BooleanField(default=False)
     pre_analise_fia = models.BooleanField(default=False)
     forca_criacao_modelo_fia = models.BooleanField(default=False)
-    # modelo_fia = models.ForeignKey(Modelo_fia, on_delete=models.SET_NULL, null=True, related_name='modelo_fia')
+    data_assinaturas_escola = models.DateField(null=True, blank=True)
+    data_assinaturas_suprof = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return self.ano_referencia
