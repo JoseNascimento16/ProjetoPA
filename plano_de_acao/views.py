@@ -94,6 +94,8 @@ def planos_de_acao(request, elemento_id='', atribui='', alt_corretor='', mensage
         messages.error(request, 'Para enviar, preencha as informações faltantes no documento FIA!')
     elif mensagem == 'grupo_incompleto':
         messages.error(request, 'Os membros para autorização do documento ainda não foram totalmente definidos...')
+    elif mensagem == 'reset_corretor':
+        messages.error(request, 'Somente o "corretor" deste plano pode efetuar esta ação...')
 
     id = request.user.id
     checa_usuario = request.user
@@ -126,13 +128,22 @@ def planos_de_acao(request, elemento_id='', atribui='', alt_corretor='', mensage
                     valor_pesquisa = request.GET.get('q','')
 
             else:
-                planos1 = Plano_de_acao.objects.filter(corretor_plano=checa_usuario).exclude(situacao='Em desenvolvimento').exclude(situacao='Publicado').exclude(situacao='Necessita correção').exclude(situacao='Aprovado').exclude(situacao='Pronto').exclude(situacao='Finalizado').exclude(situacao='Assinado')
-                planos2 = Plano_de_acao.objects.filter(corretor_plano=None).exclude(situacao='Em desenvolvimento').exclude(situacao='Publicado').exclude(situacao='Necessita correção').exclude(situacao='Aprovado').exclude(situacao='Pronto').exclude(situacao='Finalizado').exclude(situacao='Assinado')
-                # planos = planos1.union(planos2).order_by('-data_de_criação')
-                planos3 = planos1.union(planos2)
-                planos4 = Plano_de_acao.objects.filter(Q(situacao='Assinado') | Q(situacao='Inteiramente assinado'))
-                planos = planos3.union(planos4).order_by('-data_de_criação')
-                # pass
+                if checa_usuario.classificacao.usuario_diretor:
+                    planos = Plano_de_acao.objects.order_by('-data_de_criação').filter(Q(situacao='Assinado') | Q(situacao='Inteiramente assinado'))
+                
+                elif checa_usuario.classificacao.usuario_coordenador:
+                    planos1 = Plano_de_acao.objects.filter(corretor_plano=checa_usuario).exclude(situacao='Em desenvolvimento').exclude(situacao='Publicado').exclude(situacao='Necessita correção').exclude(situacao='Aprovado').exclude(situacao='Pronto').exclude(situacao='Finalizado')
+                    planos2 = Plano_de_acao.objects.filter(corretor_plano=None).exclude(situacao='Em desenvolvimento').exclude(situacao='Publicado').exclude(situacao='Necessita correção').exclude(situacao='Aprovado').exclude(situacao='Pronto').exclude(situacao='Finalizado')
+                    planos3 = planos1.union(planos2)
+                    planos4 = Plano_de_acao.objects.filter(Q(situacao='Assinado') | Q(situacao='Inteiramente assinado')).filter(assinatura_coordenador=False)
+                    planos5 = planos3.union(planos4)
+                    planos_assinados = checa_usuario.classificacao.plano_associado.filter(Q(situacao='Assinado') | Q(situacao='Inteiramente assinado'))
+                    planos = planos5.union(planos_assinados).order_by('-data_de_criação')
+                
+                else:
+                    planos1 = Plano_de_acao.objects.filter(corretor_plano=checa_usuario).exclude(alterabilidade='Escola').exclude(situacao='Finalizado')
+                    planos2 = Plano_de_acao.objects.filter(corretor_plano=None).filter(situacao='Pendente')
+                    planos = planos1.union(planos2).order_by('-data_de_criação')
 
             # transforma em "Inteiramente assinado" o plano caso já tenha todas as assinaturas necessárias
             from .alteracoes import plano_inteiramente_assinado
@@ -1597,6 +1608,15 @@ def autoriza_plano_func_sec(request, elemento_id): #ASSINATURA FUNC_SEC
 
             captura_funcionario.plano_associado.add(captura_plano) #salva no banco dizendo que este usuario acabou de autorizar este plano, e portanto já assinou e não precisa mais assinar. Gera um associação many-too_many.
             
+            # Seta as variaveis booleanas do modelo de plano que dizem quem dos 3 acabou de assinar
+            if captura_funcionario.usuario_diretor:
+                captura_plano.assinatura_diretor = True
+            elif captura_plano.corretor_plano == request.user:
+                captura_plano.assinatura_corretor = True
+            elif captura_funcionario.usuario_coordenador:
+                captura_plano.assinatura_coordenador = True
+            captura_plano.save()
+
             atualiza_assinaturas_sec(elemento_id)
             captura_plano = get_object_or_404(Plano_de_acao, pk=elemento_id)
 
@@ -1751,30 +1771,33 @@ def reseta_plano(request, elemento_id):
             nome_usuario = checa_usuario.first_name
             if plano.situacao == 'Assinado':
                 if checa_usuario.classificacao.tipo_de_acesso == 'Secretaria' or checa_usuario.classificacao.tipo_de_acesso == 'Func_sec':
-                    funcionario_associado = Classificacao.objects.filter(plano_associado=plano)#DE TODOS OS FUNCIONARIOS ASSOCIADOS A ESTE PLANO
-                    for objeto in funcionario_associado:
-                        objeto.plano_associado.remove(plano) # Apaga todas as assinaturas neste plano (escolas, funcionarios, Func_sec)
-                    # existem_turmas_associadas = Turmas.objects.filter(plano_associado=plano)
-                    # if existem_turmas_associadas:
-                    #     for turmas in existem_turmas_associadas:
-                    #         turmas.plano_associado.remove(plano)# Desassocia as turmas associadas a este plano.
-                    if plano.tipo_fia: 
-                        modelo_fia = get_object_or_404(Modelo_fia, plano=plano)
-                        modelo_fia.assinatura_tecnico.delete() # Apaga assinatura técnico
-                        modelo_fia.save()
-                    plano.assinaturas = 0
-                    plano.assinaturas_sec = 0
-                    plano.situacao = 'Pendente'
-                    plano.data_assinaturas_escola = None
-                    plano.data_assinaturas_suprof = None
-                    plano.save()
+                    if plano.corretor_plano == checa_usuario:
+                        funcionario_associado = Classificacao.objects.filter(plano_associado=plano)#DE TODOS OS FUNCIONARIOS ASSOCIADOS A ESTE PLANO
+                        for objeto in funcionario_associado:
+                            objeto.plano_associado.remove(plano) # Apaga todas as assinaturas neste plano (escolas, funcionarios, Func_sec)
+                        # existem_turmas_associadas = Turmas.objects.filter(plano_associado=plano)
+                        # if existem_turmas_associadas:
+                        #     for turmas in existem_turmas_associadas:
+                        #         turmas.plano_associado.remove(plano)# Desassocia as turmas associadas a este plano.
+                        if plano.tipo_fia: 
+                            modelo_fia = get_object_or_404(Modelo_fia, plano=plano)
+                            modelo_fia.assinatura_tecnico.delete() # Apaga assinatura técnico
+                            modelo_fia.save()
+                        plano.assinaturas = 0
+                        plano.assinaturas_sec = 0
+                        plano.situacao = 'Pendente'
+                        plano.data_assinaturas_escola = None
+                        plano.data_assinaturas_suprof = None
+                        plano.save()
 
-                    log_plano_resetado(plano.ano_referencia, nome_usuario, elemento_id)
+                        log_plano_resetado(plano.ano_referencia, nome_usuario, elemento_id)
 
-                    if not plano.tipo_fia:
-                        return redirect('chamando_acao_plano_mensagem', elemento_id=elemento_id, mensagem='Sucesso')
+                        if not plano.tipo_fia:
+                            return redirect('chamando_acao_plano_mensagem', elemento_id=elemento_id, mensagem='Sucesso')
+                        else:
+                            return redirect('chamando_documento_fia_mensagem', elemento_id=elemento_id, mensagem='sucesso2')
                     else:
-                        return redirect('chamando_documento_fia_mensagem', elemento_id=elemento_id, mensagem='sucesso2')
+                        return redirect('pagina_planos_de_acao_mensagem', mensagem='reset_corretor')
 
     return redirect('chamando_acao_plano_mensagem', elemento_id=elemento_id, mensagem='Acesso_negado')
 

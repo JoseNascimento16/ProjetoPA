@@ -177,12 +177,11 @@ class FuncionariosSecretariaForm(forms.ModelForm):
             'required': ''
         }))
 
-    cargo = forms.CharField(
+    cargo = forms.ChoiceField(
+        choices=[('-------','-------'),('Corretor (Técnico)','Corretor (Técnico)'),('Coordenador','Coordenador'),('Diretor','Diretor')],
         label='Cargo:',
-        widget=forms.TextInput(attrs={
-            'placeholder': 'Insira o cargo do funcionário...',
-            'class': 'fonte-italic',
-            'required': ''
+        widget=forms.Select(attrs={
+            'class': 'fonte-italic'
         }))
 
     assina = forms.BooleanField(
@@ -229,6 +228,8 @@ class FuncionariosSecretariaForm(forms.ModelForm):
         login_ja_existe(valor_username, 'username', lista_de_erros)
         campo_none(valor_first_name, 'first_name', lista_de_erros)
         sem_sobrenome(valor_first_name, 'first_name', lista_de_erros)
+        funcao_nao_foi_selecionada(valor_cargo, 'cargo', lista_de_erros)
+        ja_existe_diretor(valor_cargo, 'cargo', lista_de_erros)
         senhas_nao_sao_iguais(valor_password1, valor_password2, 'password', lista_de_erros)
         senhas_nao_sao_iguais(valor_password1, valor_password2, 'password2', lista_de_erros)
         valida_minimo_caracter_senha(valor_password1, 'password', lista_de_erros)
@@ -247,7 +248,7 @@ class FuncionariosSecretariaForm(forms.ModelForm):
 class AlteraCargoForm(forms.ModelForm):
 
     campo = forms.ChoiceField(
-        choices=[('Alto cargo','Alto cargo'),('Padrão','Padrão')],
+        choices=[('Corretor (Técnico)','Corretor (Técnico)'),('Coordenador','Coordenador')],
         label='Tipo de cargo:',
         widget=forms.Select(attrs={
             'class': 'fonte-italic'

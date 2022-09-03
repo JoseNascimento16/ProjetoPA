@@ -11,7 +11,7 @@
     <div class="classe-form-modal">
         <form class="form-modal" action="{% url 'altera_cargo' chave_elemento_id 'edita' %}" method="POST">
             {% csrf_token %}
-            <p style="font-size: 1 em;">Defina o tipo de cargo. Funcionários de "Alto cargo" terão de assinar planos e poderão cadastrar escolas e funcionários.</p>
+            <p style="font-size: 1 em;">Defina o cargo. Corretores só podem assinar planos em que ele são os responsáveis técnicos. Coordenadores, além de poderem ser os responsáveis técnicos, podem também assinar planos na função de coordenador.</p>
             {% for elemento in chave_form_altera_cargo.visible_fields %}
             <div class="linha-input2 linha-input-row">
                 <label style="width: 200px;" class="label-input2 label-input-form-django flex-0-55" for="{{ elemento.id_for_label }}">{{ elemento.label }}</label>

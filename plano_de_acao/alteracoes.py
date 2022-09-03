@@ -62,8 +62,8 @@ def ocorreu_alteracao(elemento_id):
         zera_assinaturas(plano.id)
 
 def plano_inteiramente_assinado(captura_plano):
-    func_que_assinam = Classificacao.objects.filter(assina_plano=True)
-    if captura_plano.situacao == 'Assinado' and captura_plano.assinaturas_sec > 0 and captura_plano.assinaturas_sec == len(func_que_assinam):
+    # func_que_assinam = Classificacao.objects.filter(assina_plano=True)
+    if captura_plano.situacao == 'Assinado' and captura_plano.assinaturas_sec > 0 and captura_plano.assinaturas_sec == 3:
         captura_plano.situacao = 'Inteiramente assinado'
         captura_plano.data_assinaturas_suprof = date.today()
         captura_plano.save()

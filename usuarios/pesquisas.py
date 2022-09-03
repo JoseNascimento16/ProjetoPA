@@ -1,3 +1,4 @@
+from msilib.schema import Class
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from plano_de_acao.models import Plano_de_acao
@@ -47,9 +48,17 @@ def pesquisa_funcionarios_cadastrados(request):
             pass
         else:
             funcionarios = User.objects.filter(first_name__icontains=valor_pesquisa).filter(is_active=True)
+            cargos = User.objects.filter(last_name__icontains=valor_pesquisa).filter(is_active=True)
             
             if funcionarios.exists():
                 for elemento in funcionarios:
+                    if elemento.classificacao.tipo_de_acesso == 'Func_sec':
+                        funcionarios_cadastrados = Classificacao.objects.filter(user=elemento)
+                        for funcionario in funcionarios_cadastrados:
+                            lista_func_pesquisa.append(funcionario)
+            
+            elif cargos.exists():
+                for elemento in cargos:
                     if elemento.classificacao.tipo_de_acesso == 'Func_sec':
                         funcionarios_cadastrados = Classificacao.objects.filter(user=elemento)
                         for funcionario in funcionarios_cadastrados:

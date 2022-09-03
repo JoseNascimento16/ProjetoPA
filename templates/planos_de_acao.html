@@ -161,7 +161,7 @@
                             -----
                         </p>
                     {% endif %}
-                    {% if elemento.situacao == 'Inteiramente assinado' and user.classificacao.assina_plano == False %}
+                    {% if elemento.situacao == 'Inteiramente assinado' and not elemento.corretor_plano == user and not user.classificacao.usuario_diretor %}
                         <p class="itens-cards-planos">
                             -----
                         </p>
@@ -181,8 +181,8 @@
                 {% if user.classificacao.tipo_de_acesso == 'Func_sec' %}
                 
                     {% if elemento.situacao == 'Assinado' %}
-                    
-                        {% if elemento.ano_referencia not in chave_planos_assinados and user.classificacao.assina_plano == True %}
+                            
+                        {% if elemento.ano_referencia not in chave_planos_assinados and user.classificacao.usuario_diretor or elemento.ano_referencia not in chave_planos_assinados and user.classificacao.usuario_coordenador and not elemento.assinatura_coordenador or elemento.ano_referencia not in chave_planos_assinados and elemento.corretor_plano == user %}
                         <div class="box-botao-cadastro1 itens-cards-planos">
                             <form class="tooltip2 display-flex-media" action="{% url 'autorizar_plano_sec' elemento.id %}" method="POST" onclick="return confirm('Deseja realmente assinar o plano de ação: {{ elemento.ano_referencia }}?')">
                                 {% csrf_token %}
@@ -190,15 +190,14 @@
                                 <span style="left: 40px;" class="tooltiptext2">Você já pode assinar este plano.</span>  
                             </form>
                         </div>
-                        {% elif elemento.ano_referencia in chave_planos_assinados and user.classificacao.assina_plano == True %}
+                        {% elif elemento.ano_referencia in chave_planos_assinados and user.classificacao.usuario_diretor or elemento.ano_referencia in chave_planos_assinados and user.classificacao.usuario_coordenador or elemento.ano_referencia in chave_planos_assinados and elemento.corretor_plano == user %}
                         <div class="box-botao-cadastro1 itens-cards-planos">
                             <form class="tooltip2 display-flex-media" method="#">
                                 <input class="myButtonGrey flex-grow-media" type="button" value="Assinado">
                                 <span style="left: 40px;" class="tooltiptext2">Você já assinou. Para finalizar, é preciso que TODOS os funcionários de alto cargo também assinem este plano.</span>                                                 
                             </form>
                         </div>
-                        {% endif %}
-                        {% if user.classificacao.assina_plano == False %}
+                        {% else %}
                             <p class="itens-cards-planos">
                                 -----
                             </p>
@@ -208,7 +207,7 @@
 
                     {% if elemento.situacao == 'Inteiramente assinado' %}
 
-                        {% if user.classificacao.assina_plano == True %}
+                        {% if elemento.corretor_plano == user %}
                         <div class="box-botao-cadastro1 itens-cards-planos">
                             <form class="tooltip3 display-flex-media" action="{% url 'finalizar_plano' elemento.id %}" method="POST" onclick="return confirm('Plano: - {{ elemento.ano_referencia }} - será finalizado (completo). Ao confirmar, ele já poderá ser impresso com todas as assinaturas e a escola poderá dispor dos recursos necessários para a efetivação do mesmo!')">
                                 {% csrf_token %}
@@ -216,6 +215,10 @@
                                 <span style="left: 40px;" class="tooltiptext3">Plano já assinado por todos os envolvidos e pronto para ser finalizado.</span>                                                 
                             </form>
                         </div>
+                        {% elif user.classificacao.usuario_diretor %}
+                            <p class="itens-cards-planos">
+                                -----
+                            </p>
                         {% endif %}
                         
                     {% endif %}
@@ -517,7 +520,7 @@
 
                         {% if elemento.corretor_plano != None %}
                             <div class="div-corretor-flex"> <h5>Corretor:</h5><p style="font-style: italic;">{{elemento.corretor_plano.first_name}}</p>
-                                {% if user.classificacao.assina_plano == True and elemento.situacao != 'Finalizado' %}
+                                {% if user.classificacao.usuario_diretor and elemento.alterabilidade != 'Desativada' or user.classificacao.usuario_coordenador and elemento.alterabilidade != 'Desativada' %}
                                 <a class="" style="font-style: italic;" href="{% url 'abrindo_altera_corretor' elemento.id True %}">(Alterar)</a>
                                 {% endif %}
                             </div>
@@ -562,11 +565,10 @@
                     {% endif %}
                     
                     <!-- MOSTRA QUAIS AS ASSINATURAS DA SUPROT -->
-                    {% tag_len_alto_cargo chave_classificacoes as len_alto_cargo %}
                     {% tag_len_suprof elemento.classificacao_set.all as len_suprof %}
                     {% if elemento.situacao == 'Pronto' or elemento.situacao == 'Assinado' or elemento.situacao == 'Inteiramente assinado' or elemento.situacao == 'Finalizado' %}
                     <div class="div-assinaturas-suprot">
-                        <h5 style="margin-left: 0">Assinaturas SUPROT ({{len_suprof}}/{{len_alto_cargo}}):</h5>
+                        <h5 style="margin-left: 0">Assinaturas SUPROT ({{len_suprof}}/3):</h5>
                         {% for item in elemento.classificacao_set.all %}
                             {% if item.tipo_de_acesso == 'Func_sec' %}
                             <p>- {{item}}</p>
@@ -667,7 +669,7 @@
         <h5>- Corrigido pela escola </h5>
         <p>Um plano "Corrigido" já foi corrigido pela escola e reenviado para a Secretaria da Educação com as devidas correções.</p>
         <h5>- Pré aprovado </h5>
-        <p>Planos entram neste estado quando o corretor técnico responsável da SUPROT permite que ele seja pré assinado pela escola e seus membros após as correções. A partir da primeira assinatura, não podem mais ser modificados.
+        <p>Planos entram neste estado quando o corretor técnico responsável da SUPROT permite que ele seja pré assinado pela escola e seus membros após as correções. A partir da primeira assinatura, não podem mais ser alterados.
         <h5>- Aprovado </h5>
         <p>Planos "Aprovados" já passaram por quase todas as etapas necessárias, foram aprovados pela Secretaria da Educação e portanto já podem receber as assinaturas dos membros do corpo escolar. A partir deste estágio não podem mais ser alterados por ninguém.</p>
         <h5>- Pronto </h5>
@@ -675,9 +677,9 @@
         <h5>- Assinado (pela escola - concluídos)</h5>
         <p>Planos concluídos já foram assinados pelos membros do corpo escolar e devolvidos à SUPROT. Estão no aguardo das assinaturas do diretor e coordenadores da SUPROT. O corretor técnico responsável ainda poderá rejeitar e sugerir novas correções caso haja necessidade. </p></p>
         <h5>- Inteiramente assinado (pela Secretaria)</h5>
-        <p>Planos neste estado já foram assinados pelos coordenadores da SUPROT.</p>
+        <p>Planos neste estado já foram assinados pelo corretor (técnico), por um coordenador e pelo diretor da SUPROT. Estão no aguardo para serem finalizados pelo corretor técnico responsável.</p>
         <h5>- Finalizado </h5>
-        <p>Planos finalizados já foram assinados por todos os envolvidos (escola e SUPROT) e finalizados por um coordenador. Portanto, já podem ser impressos com as assinaturas e a escola já pode dispor dos recursos necessários.</p>
+        <p>Planos finalizados já foram assinados por todos os envolvidos (escola e SUPROT), finalizados pelo corretor técnico responsável e estão arquivados. Já podem ser impressos com as assinaturas e a escola já pode dispor dos recursos necessários.</p>
     </div>
 
 </div>

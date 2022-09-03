@@ -15,10 +15,12 @@ from django.contrib.auth.decorators import login_required
 from plano_de_acao.models import Plano_de_acao
 from usuarios.pesquisas import pesquisa_escolas_cadastradas, pesquisa_funcionarios_cadastrados
 
+
 # Create your views here.
 
 @login_required
-def cadastros_secretaria(request, user_id, mensagem='', cad_funcionarios='', search=''): # Pagina de cadastros quando o usuario é da Secretaria
+def cadastros_secretaria(request, user_id, mensagem='', cad_funcionarios='', search='', retorno_altera_cargo=''): # Pagina de cadastros quando o usuario é da Secretaria
+    from .forms_campos import campo_cargo_func_sec
     usuario = get_object_or_404(User, pk=user_id)
     tipo_usuario = usuario.classificacao.tipo_de_acesso
     controle_form_cadastro_escolas = False
@@ -92,7 +94,7 @@ def cadastros_secretaria(request, user_id, mensagem='', cad_funcionarios='', sea
             return render(request, 'cadastros-secretaria.html', dados_a_exibir)
 
         elif cad_funcionarios: # Cadastro de funcionarios
-            if request.user.classificacao.assina_plano or tipo_usuario == 'Secretaria':
+            if request.user.classificacao.usuario_diretor or request.user.classificacao.usuario_coordenador or tipo_usuario == 'Secretaria':
                 form_funcionarios = ''
                 funcionarios_cadastrados = ''
                 var_pesquisa_func = False
@@ -110,13 +112,17 @@ def cadastros_secretaria(request, user_id, mensagem='', cad_funcionarios='', sea
                     messages.error(request, 'Erro! Você não pode alterar o seu próprio status!')
                 
                 if not search:
-                    form_funcionarios = FuncionariosSecretariaForm()
+
+                    form = campo_cargo_func_sec(request, tipo_usuario)
+
+                    form_funcionarios = form
+
                     if request.method == 'POST':
                         form_funcionarios = FuncionariosSecretariaForm(request.POST)
                         if form_funcionarios.is_valid():
                             instancia_form = form_funcionarios.save(commit=False)
                             cargo1 = form_funcionarios.cleaned_data.get('cargo')
-                            var_assina = form_funcionarios.cleaned_data.get('assina')
+                            # var_assina = form_funcionarios.cleaned_data.get('assina')
                             
                             user = User.objects.create_user(
                                 username=instancia_form.username,
@@ -137,7 +143,12 @@ def cadastros_secretaria(request, user_id, mensagem='', cad_funcionarios='', sea
                                 matriz_objeto = get_object_or_404(User, pk=user_id)
                                 matriz_last_name = matriz_objeto.last_name
 
-                            classificacao = Classificacao.objects.create(user=usuario_objeto, tipo_de_acesso='Func_sec', assina_plano=var_assina, matriz=matriz_last_name, quant_funcionarios=0)
+                            if cargo1 == 'Corretor (Técnico)':
+                                classificacao = Classificacao.objects.create(user=usuario_objeto, tipo_de_acesso='Func_sec', assina_plano=False, matriz=matriz_last_name)
+                            if cargo1 == 'Coordenador':
+                                classificacao = Classificacao.objects.create(user=usuario_objeto, tipo_de_acesso='Func_sec', assina_plano=False, usuario_coordenador=True, matriz=matriz_last_name)
+                            if cargo1 == 'Diretor':
+                                classificacao = Classificacao.objects.create(user=usuario_objeto, tipo_de_acesso='Func_sec', assina_plano=True, usuario_diretor=True, matriz=matriz_last_name)
                             # Um signal pre_save é gerado
                             classificacao.save()
 
@@ -157,7 +168,8 @@ def cadastros_secretaria(request, user_id, mensagem='', cad_funcionarios='', sea
             else:
                 return redirect('dashboard')
 
-            funcionarios_cadastrados = Classificacao.objects.filter(tipo_de_acesso='Func_sec').filter(is_active=True)
+            funcionarios_cadastrados = Classificacao.objects.order_by('-user__last_name').filter(tipo_de_acesso='Func_sec').filter(is_active=True)
+            
 
             if search:
                 print('PESQUISA FUNCIONÁRIOS CADASTRADOS')
@@ -174,7 +186,10 @@ def cadastros_secretaria(request, user_id, mensagem='', cad_funcionarios='', sea
                 'chave_var_pesquisa_func' : var_pesquisa_func,
             }
 
-            return render(request, 'cadastros-secretaria.html', dados_a_exibir)
+            if not retorno_altera_cargo:
+                return render(request, 'cadastros-secretaria.html', dados_a_exibir)
+            else:
+                return dados_a_exibir
 
     return redirect('dashboard')
 
@@ -282,13 +297,15 @@ def deleta_funcionario(request, elemento_id):
 
         return redirect('cadastrar_funcionarios_mensagem', user_id=usuario_logado.id, mensagem='Deletou')
     
-    if tipo_usuario == 'Secretaria' or tipo_usuario == 'Func_sec' and usuario_logado.classificacao.assina_plano == True:
+    if tipo_usuario == 'Secretaria' or tipo_usuario == 'Func_sec' and usuario_logado.classificacao.usuario_diretor == True:
         # planos = Plano_de_acao.objects.filter(usuario=escola)
 
         # Desativa classificação Func_sec,escolas,funcionarios (inativação)
         objeto_classificacao = get_object_or_404(Classificacao, pk=elemento_id)
         objeto_classificacao.is_active = False
         objeto_classificacao.assina_plano = False
+        objeto_classificacao.usuario_diretor = False
+        objeto_classificacao.usuario_coordenador = False
         objeto_classificacao.save()
 
         # exclusão de Func_sec,escolas,funcionarios (inativação)
@@ -314,8 +331,6 @@ def deleta_funcionario(request, elemento_id):
                 funcionario_objeto.is_active = False
                 funcionario_objeto.save()
 
-            
-
         id_do_usuario = request.user.id
         return redirect('cadastrar_funcionarios_secretaria_mensagem', user_id=usuario_logado.id, mensagem='Deletou', cad_funcionarios='Sim')
 
@@ -325,25 +340,17 @@ def deleta_funcionario(request, elemento_id):
 def altera_cargo(request, elemento_id, edita=''):
     checa_usuario = request.user
     tipo_usuario_logado = checa_usuario.classificacao.tipo_de_acesso
-    if tipo_usuario_logado == 'Func_sec':
+    if tipo_usuario_logado == 'Secretaria' or checa_usuario.classificacao.usuario_diretor:
         if not edita:
             altera_cargo = True
-            funcionarios_cadastrados = Classificacao.objects.filter(tipo_de_acesso='Func_sec')
-            cad_funcionarios = True
-
             form = AlteraCargoForm()
 
-            dados_a_exibir = {
+            contexto = cadastros_secretaria(request, user_id=checa_usuario.id, cad_funcionarios=True, retorno_altera_cargo=True)
+            contexto['chave_form_altera_cargo'] = form
+            contexto['chave_altera_cargo'] = altera_cargo
+            contexto['chave_elemento_id'] = elemento_id
+            return render(request, 'cadastros-secretaria.html', contexto)
 
-                'funcionarios_a_exibir' : funcionarios_cadastrados,
-                'chave_tipo_usuario' : tipo_usuario_logado,
-                'chave_cad_funcionarios' : cad_funcionarios,
-                'chave_altera_cargo' : altera_cargo,
-                'chave_form_altera_cargo': form,
-                'chave_elemento_id' : elemento_id,
-            }
-
-            return render(request, 'cadastros-secretaria.html', dados_a_exibir)
         else:
             usuario = request.user.id
             form = AlteraCargoForm(request.POST)
@@ -353,12 +360,20 @@ def altera_cargo(request, elemento_id, edita=''):
             if request.method == 'POST':
                 if form.is_valid():
                     valor_campo = form.cleaned_data.get('campo')
-                    if valor_campo == 'Alto cargo':
-                        classificacao_func.assina_plano = True
-                        classificacao_func.save()
-                    else:
+                    if valor_campo == 'Coordenador':
+                        print('entrou coordenador')
                         classificacao_func.assina_plano = False
+                        classificacao_func.usuario_coordenador = True
+                        classificacao_func.user.last_name = 'Coordenador'
                         classificacao_func.save()
+                        classificacao_func.user.save()
+                    else:
+                        print('entrou corretor')
+                        classificacao_func.assina_plano = False
+                        classificacao_func.usuario_coordenador = False
+                        classificacao_func.user.last_name = 'Corretor (Técnico)'
+                        classificacao_func.save()
+                        classificacao_func.user.save()
 
                     # GERAR LOG
 

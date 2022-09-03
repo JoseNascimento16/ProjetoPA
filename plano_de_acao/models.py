@@ -16,6 +16,9 @@ class Plano_de_acao(models.Model):
     data_de_criação = models.DateField(default=date.today, blank=True)
     assinaturas = models.IntegerField(default=0, blank=True)
     assinaturas_sec = models.IntegerField(default=0, blank=True)
+    assinatura_corretor = models.BooleanField(default=False)
+    assinatura_coordenador = models.BooleanField(default=False)
+    assinatura_diretor = models.BooleanField(default=False)
     user_autorizou = models.BooleanField(default=False) # Define se o usuário atual já assinou este plano específico
     correcoes_a_fazer = models.IntegerField(default=0, blank=True)
     pre_analise_acao = models.BooleanField(default=False)
