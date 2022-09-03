@@ -216,7 +216,7 @@ class PreAssinaturaForm(forms.ModelForm):
 class AlteraCorretorForm(forms.ModelForm):
 
     campo = forms.ModelChoiceField(
-        queryset=Classificacao.objects.order_by('-user').filter(tipo_de_acesso='Func_sec'),
+        queryset=Classificacao.objects.order_by('-user').filter(tipo_de_acesso='Func_sec').exclude(usuario_diretor=True),
         empty_label="------------",
         label='Novo corretor:',
         widget=forms.Select)

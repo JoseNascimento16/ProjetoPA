@@ -3,26 +3,7 @@ TENHO QUE APRENDER A TROCAR DE MODELO DE USUARIO (USAR O ABSTRACT AUTH_USER)
 TENHO QUE APRENDER COMO REFERENCIAR UM FOREIGNKEY NO REVERSO QUANDO ESTA FOREIGNKEY TEM UM RELATED_NAME COMO ATRIBUTO(no momento só sei fazer isso quando não tem related_name configurado)
 
 ----------------------------------------------------------------------------------
-- Novo sistema de assinaturas SUPROT
-    - 1 Diretor
-	- Assinatura compulsória (pode assinar qualquer plano)
-    - Varios coordenadores
-	- Assinatura compulsória (somente 1 coordenador assina por plano)
-	- Coordenador pode corrigir planos? Se sim, permitir assinatura de mais um coordenador!
-    - Varios corretores Func_sec
-	- Corretor só assina plano em que ele é o corretor
 
-    - No cadastro de funcionários da SUPROT, diferenciar:
-	- Diretor (usuário único)
-	- Coordenador (varios)
-	- Corretor (varios)
-    
-    - Alterar sistema de mudança de cargo de Func_sec
-
-    - Para o sistema funcionar devem existir:
-	- Ao menos 1 Diretor cadastrado
-	- Ao menos 2 coordenadores cadastrados
-	- 
 
 - Ajustar proporção da tabela fia na impressão quando reduz/aumenta escala! (a tabela de assinaturas da suprot não tem este problema, usar como exemplo. Provavelmente posso corrigir definindo o width.)
 
@@ -33,7 +14,7 @@ TENHO QUE APRENDER COMO REFERENCIAR UM FOREIGNKEY NO REVERSO QUANDO ESTA FOREIGN
 	- link no documento direto para a correção
    - testar urls Fia
 
-
+- Form de cadastro de funcionarios func_sec nao esta abrindo quando acabou de ser criado um func_sec do mesmo tipo
 - OK Não permitir que Tesoureiro assine plano FIA
 - OK Não permitir que membros do colegiado não escolhidos assinem planos FIA
 - OK atualizar a quantidade de assinaturas do plano FIA considerando assinatura do tecnico.
@@ -50,8 +31,17 @@ TENHO QUE APRENDER COMO REFERENCIAR UM FOREIGNKEY NO REVERSO QUANDO ESTA FOREIGN
 
 - Talvez Inserir funcionalidade de alteração de cadastro de escola.
 
-- OK Aplicar alterabilidade.
+- OK Novo sistema de assinaturas SUPROT
+    - OK Não precisa ajustar Many-To-Many 
+    - OK Configurar modelos para comportar novo sistema
+    - OK Verificar a variavel assina_planos, a checagem da len(assinaturas) nao sera mais atrelada a ela.
+    - OK Configurar página 'cadastros funcionarios' para cadastro de novos funcionarios e seus 3 tipos
+    - OK Configurar página 'planos de ação' para mostrar os botões corretamente
+    - OK Configurar accordion: Diretor não deve mostrar como opção de corretor
+    - OK Configurar página 'cadastros funcionarios' na mudança de tipo de cargo(removido)
+    - OK Alterar sistema de mudança de cargo de Func_sec
 
+- OK Aplicar alterabilidade.
 - OK Não permitir exclusão de usuários, somente inativação! (Sempre?)
    - OK Configurar as dependências para quando isso acontece
 - OK incluir icone de seta para o accordion planos de outras paginas

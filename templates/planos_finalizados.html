@@ -79,8 +79,10 @@
                     <div class="div-corretor-flex"> <h5>Situação:</h5><p style="font-style: italic;">{{elemento.situacao}} (ver legenda)</p> </div>
                     {% if elemento.corretor_plano != None %}
                         <div class="div-corretor-flex"> <h5>Corretor:</h5><p style="font-style: italic;">{{elemento.corretor_plano.first_name}}</p>
-                            {% if user.classificacao.assina_plano == True and elemento.situacao != 'Finalizado' %}
-                            <a class="" style="font-style: italic;" href="{% url 'abrindo_altera_corretor' elemento.id True %}">(Alterar)</a>
+                            {% if user.classificacao.usuario_diretor or user.classificacao.usuario_coordenador %}
+                                {% if elemento.alterabilidade != 'Desativada' %}
+                                <a class="" style="font-style: italic;" href="{% url 'abrindo_altera_corretor' elemento.id True %}">(Alterar)</a>
+                                {% endif %}
                             {% endif %}
                         </div>
                     {% else %}

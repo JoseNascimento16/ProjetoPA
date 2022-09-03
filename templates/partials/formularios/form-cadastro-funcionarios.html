@@ -23,14 +23,14 @@
                 {{elemento|add_class:'input-input'}}
             </div>
             {% elif forloop.counter0 == 5 %}
-            <div class="linha-input2 linha-input-row">
+            <!-- <div class="linha-input2 linha-input-row">
                 <label class="label-input2 label-input-form-django" for="{{ elemento.id_for_label }}">{{ elemento.label }}</label>
                 {{elemento}} 
                 <div class="tooltip5">
                 <i class="fa-solid fa-circle-info margem-left-10"></i>
                 <span class="tooltiptext5">Marque caso o funcionário sendo cadastrado seja de alto cargo. Este funcionário terá de assinar planos e poderá cadastrar escolas e funcionários. </span>
-                </div>
-            </div>
+                </div> 
+            </div>-->
             {% endif %}
         {% for error in elemento.errors %}
         <section class="alert alert-danger" role="alert"> {{ elemento.errors }} </section>

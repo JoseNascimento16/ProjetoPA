@@ -40,11 +40,7 @@
             {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
             <li class="sub-menu-item"><a href="{% url 'cadastrar_escolas' user.id %}">Cadastro de Escolas</a>
             </li>
-              {% if user.classificacao.assina_plano %}
-                <li class="sub-menu-item"><a href="{% url 'cadastrar_funcionarios_secretaria' user.id 'Sim' %}">Cadastro de funcionários</a>
-                </li>
-              {% endif %}
-              {% if user.classificacao.tipo_de_acesso == 'Secretaria' %}
+              {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.usuario_diretor == True or user.classificacao.usuario_coordenador == True %}
                 <li class="sub-menu-item"><a href="{% url 'cadastrar_funcionarios_secretaria' user.id 'Sim' %}">Cadastro de funcionários</a>
                 </li>
               {% endif %}

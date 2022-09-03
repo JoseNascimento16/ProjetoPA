@@ -2,14 +2,16 @@ No forms.py não é comum termos a informação de algum objeto específico do c
 
 Podemos usar o SUPER para isso, porém há um outro método, INSTANCIAR O CAMPO DO FORM NA PROPRIA VIEWS.
 
-Ao utilizar a views.py para fazer isso, conseguimos tem ao nosso dispor para usar no formulário todos os objetos que temos na views. Isso antes mesmo do usuário enviar o formulario, ou seja, antes do request.POST (Portanto não temos a opção de usar o super)
+Ao utilizar a views.py para fazer isso, conseguimos ter ao nosso dispor para usar no formulário todos os objetos que temos na views. Isso antes mesmo do usuário enviar o formulario, ou seja, antes do request.POST (Portanto não temos a opção de usar o super)
 
 Em views.py:
+
+from django import forms
 
 def funcao_qualquer(request, objeto_id):
    objeto_contexto = get_object_or_404(Modelo, pk=objeto_id)
 
-   ModeloDoForm.base_fields['campo'] = forms.ModelChoiceField(
+   ModeloDoForm.base_fields['campo'] = forms.ModelChoiceField( ###
 	queryset=Modelo.objects.filter(objeto=objeto_contexto), #
 	empty_label="------------",
         label='Colegiado escolar 1:',
@@ -20,3 +22,4 @@ def funcao_qualquer(request, objeto_id):
 
    # Aqui conseguimos usar tranquilamente a informação do objeto que queremos utilizar como parametro
    ## Perceba que somente instanciamos o FORM numa variável DEPOIS de definirmos o campo que estamos sobrescrevendo o padrão do forms.py
+   ### Nesta linha usamos o forms.ModelChoiceFiel. O ModelChoiceField nos obriga a ter um 'queryset' como parametro (como misto logo na linha abaixo dele). Se não quisermos o queryset, usamos o forms.ChoiceField.

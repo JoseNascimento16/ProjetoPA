@@ -1,6 +1,8 @@
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 import re
+
+from usuarios.models import Classificacao
 # from django.core import validators
 
 # VALIDACAO DE FUNCIONARIOS
@@ -14,6 +16,12 @@ def funcao_nao_foi_selecionada(valor_cargo, cargo, lista_de_erros):
     if valor_cargo == '-------':
         lista_de_erros[cargo] = 'Escolha o cargo do funcionário'
 
+def ja_existe_diretor(valor_cargo, cargo, lista_de_erros):
+    if valor_cargo == 'Diretor':
+        lista_func_sec = Classificacao.objects.filter(tipo_de_acesso='Func_sec').filter(usuario_diretor=True)
+        if lista_func_sec:
+            lista_de_erros[cargo] = 'Já existe um diretor da SUPROT cadastrado no sistema...'
+        
 def login_ja_existe(valor, campo, lista_de_erros):
     instancia_user = User.objects.filter(username=valor).exists()
     if instancia_user:
