@@ -1,0 +1,10 @@
+- Criamos a branch secundária
+- Depois de salvarmos as nossas alterações, damos commit e push na branch secundaria
+- Voltamos pra branch MAIN (que não alteramos desde então)
+- O VSC irá identificar conflitos (dar stage neles)
+- nos 3 pontinhos ... escolher Branch > merge branch
+- Escolher de qual branch queremos dar merge from (estamos na main, vamos escolher a secundaria onde estão as novas alterações)
+- As alterações aparecerão na lista de modificações para dar commit, dessa vez já estamos na branch main
+- Damos stage nos conflitos
+- Damos commit
+- Damos Sync.
