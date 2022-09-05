@@ -1,11 +1,26 @@
- ordem_id = int(request.GET.get('ordemid',''))
-    valor_quebra_de_linha = int(request.GET.get('valor',''))
-    ordem_objeto = get_object_or_404(Ordens, pk=ordem_id)
-    ordem_objeto.quebra_de_linha = valor_quebra_de_linha
-    ordem_objeto.save()
-    if request.method == 'GET ' and 'postprint' in request.GET:
-        var_mensagem = 'insere'
-    else:
-        var_mensagem = 'Sucesso2'
-
-    return redirect('chamando_acao_plano_mensagem_q_linha', elemento_id=plano_id, mensagem=var_mensagem, q_linha='q_linha')
+<!-- COORDENADOR 1 -->
+            {% for item in Func_sec %}
+                {% if forloop.counter0 == 0 %}
+                    {% if item.assinatura %}
+                        <td style="text-align: left; width: 350px">19.1 - {{item}} <img class="assinaturas-foto-size display-block" src="{{ item.assinatura.url }}" alt=""> </td>
+                    {% else %}
+                        <td style="text-align: left; width: 350px">19.1 - {{item}} <p class="assinaturas assinatura-style" style="font-style: italic;margin: 0"> {{item}} </p> </td>
+                    {% endif %}
+                {% endif %}
+            <!-- COORDENADOR 2 -->
+                {% if forloop.counter0 == 1 %}
+                    {% if item.assinatura %}
+                        <td style="text-align: left; width: 350px;">19.2 - {{item}} <img class="assinaturas-foto-size display-block" src="{{ item.assinatura.url }}" alt=""> </td>
+                    {% else %}
+                        <td style="text-align: left; width: 350px">19.2 - {{item}} <p class="assinaturas assinatura-style" style="font-style: italic;margin: 0"> {{item}} </p> </td>
+                    {% endif %}
+                {% endif %}
+            <!-- COORDENADOR 3 -->
+                {% if forloop.counter0 == 2 %}
+                    {% if item.assinatura %}
+                        <td style="text-align: left; width: 350px">19.3 - {{item}} <img class="assinaturas-foto-size display-block" src="{{ item.assinatura.url }}" alt=""> </td>
+                    {% else %}
+                        <td style="text-align: left; width: 350px">19.3 - {{item}} <p class="assinaturas assinatura-style" style="font-style: italic;margin: 0;"> {{item}} </p> </td>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}

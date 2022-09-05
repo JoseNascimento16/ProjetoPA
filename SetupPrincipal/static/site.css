@@ -124,3 +124,11 @@ h5 {
 .flex-02{
   flex: 0.2 !important;
 }
+
+/* impede seleção de partes da tabela */
+
+.prevent-select {
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+}

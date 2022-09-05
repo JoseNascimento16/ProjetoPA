@@ -7,12 +7,7 @@ TENHO QUE APRENDER COMO REFERENCIAR UM FOREIGNKEY NO REVERSO QUANDO ESTA FOREIGN
 
 - Ajustar proporção da tabela fia na impressão quando reduz/aumenta escala! (a tabela de assinaturas da suprot não tem este problema, usar como exemplo. Provavelmente posso corrigir definindo o width.)
 
-- Implementar aviso de que, a partir da primeira assinatura, o plano nao pode mais ser alterado. No caso de planos pre aprovados
-- Fia
-   - Estou na finalização pela suprot
-	- checar se -0 no form atrapalha
-	- link no documento direto para a correção
-   - testar urls Fia
+- OK Planos Fia
 
 - Form de cadastro de funcionarios func_sec nao esta abrindo quando acabou de ser criado um func_sec do mesmo tipo
 - OK Não permitir que Tesoureiro assine plano FIA
@@ -25,8 +20,8 @@ TENHO QUE APRENDER COMO REFERENCIAR UM FOREIGNKEY NO REVERSO QUANDO ESTA FOREIGN
 
 
 
-- menu edicao nao mostra para planos finalizados para funcioarios func sec
-- alternancia menu parou de funcionar pós print...
+- menu edicao nao mostra para planos finalizados para funcioarios func sec (este bug não consigo reproduzir)
+- alternancia menu parou de funcionar pós print...(este bug parou)
 - Remover capacidade de selecionar texto para burlar impressão
 
 - Talvez Inserir funcionalidade de alteração de cadastro de escola.

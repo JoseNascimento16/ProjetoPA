@@ -17,7 +17,7 @@
 {{ chave_q_linha|json_script:"id-q-linha" }}
 {{ chave_apos_print|json_script:"id-apos-print" }}
 
-<div id="imprimir" class="div-visualizacao-bloco div-visualizacao-bloco-fia" style="width: 1185px">
+<div id="imprimir" class="div-visualizacao-bloco div-visualizacao-bloco-fia prevent-select" style="width: 1185px">
 
     {% if messages %}
     <ul class="ul-mensagens" style="padding: 0%;">
@@ -99,7 +99,7 @@
             <th style="width: 45px;"> 10.2 - QUANT. </th>
             <th style="width: 75px;"> 10.1 - PREÇO UNITÁRIO DO ITEM (R$). </th>
             <th> 10.3 - VALOR TOTAL </th>
-            <th style="width: 67px;"> 10.4 - SALDO </th>
+            <th style="width: 72px;"> 10.4 - SALDO </th>
         </tr>
         <tr id="id-background-hover" class="background-hover">
             <td class="text-center">{{chave_modelo_fia.valor_numerico}}</td>
@@ -262,8 +262,8 @@
             {% endif %}
         </tr>
         <tr>
-            <td style="text-align: left;width: 200px"> 18.1 - DIRETOR - {{chave_planos.usuario.first_name}}</td>
-            <td style="text-align: left;width: 120px; "> 18.2 - ASSINATURA: </td>
+            <td style="text-align: left;width: 600px"> 18.1 - DIRETOR - {{chave_planos.usuario.first_name}}</td>
+            <td style="text-align: left;width: 130px; "> 18.2 - ASSINATURA: </td>
             <!-- ASSINATURA DIRETOR -->
             {% tag_first_last_names chave_planos.usuario.first_name as nome_em_lista_diretor %}
             {% tag_any chave_planos.usuario chave_planos.classificacao_set.all as var3 %}
@@ -285,11 +285,11 @@
         </tr>
         <tr>
             {% if chave_modelo_fia.membro_colegiado_1 and chave_modelo_fia.membro_colegiado_2 %}
-            <td style="text-align: left"> 18.3 - COLEGIADO ESCOLAR - {{chave_modelo_fia.membro_colegiado_1.first_name}} / {{chave_modelo_fia.membro_colegiado_2.first_name}} </td>
+            <td style="text-align: left;width: 600px"> 18.3 - COLEGIADO ESCOLAR - {{chave_modelo_fia.membro_colegiado_1.first_name}} / {{chave_modelo_fia.membro_colegiado_2.first_name}} </td>
             {% else %}
             <td style="text-align: left; background-color: rgba(255, 102, 0, 0.404)"> 18.3 - COLEGIADO ESCOLAR - {{chave_modelo_fia.membro_colegiado_1.first_name}} {{chave_modelo_fia.membro_colegiado_2.first_name}} </td>
             {% endif %}
-            <td style="text-align: left"> 18.4 - ASSINATURA(S): </td>
+            <td style="text-align: left;width: 130px"> 18.4 - ASSINATURA(S): </td>
             <!-- ASSINATURA MEMBRO DO COLEGIADO 1 -->
             {% if chave_modelo_fia.membro_colegiado_1 %}
                 {% if chave_planos.classificacao_set.all %}
@@ -316,7 +316,7 @@
                     {% tag_membro chave_modelo_fia.membro_colegiado_2 chave_planos.classificacao_set.all as var4 %}
                     {% if var4 and plano_aprovado or var4 and chave_planos.alterabilidade == 'Desativada' %}
                         {% if var4.classificacao.assinatura %}
-                        <td> <img class="assinaturas-foto-fia" src="{{ var4.classificacao.assinatura.url }}" alt=""> </td>
+                        <td style="width: 232px"> <img class="assinaturas-foto-fia" src="{{ var4.classificacao.assinatura.url }}" alt=""> </td>
                         {% else %}
                         <td class="assinaturas-fia", style="text-align: left;width: 232px;font-style: italic;font-family: Vladimir Script;font-size: 26px;"> ggg{{var4.first_name}}</td>
                         {% endif %}
@@ -334,15 +334,15 @@
         <tr>
             <!-- ASSINATURA TECNICO -->
             {% if chave_modelo_fia.tecnico_responsavel %}
-                <td style="text-align: left"> 18.5 - TÉCNICO RESP. P/ACOMPANHAMENTO - {{chave_modelo_fia.tecnico_responsavel}}</td>
+                <td style="text-align: left;width: 600px"> 18.5 - TÉCNICO RESP. P/ACOMPANHAMENTO - {{chave_modelo_fia.tecnico_responsavel}}</td>
             {% else %}
                 <td style="text-align: left; background-color: rgba(255, 102, 0, 0.404)"> 18.5 - TÉCNICO RESP. P/ACOMPANHAMENTO - </td>
             {% endif %}
 
             {% if user.classificacao.tipo_de_acesso == 'Escola' %}
-            <td style="text-align: left"> 18.6 - ASSINATURA: <a id="abre-modal-assinatura-tecnico" class="icone-tecnico item-principal-menu-edicao sinal-ordens-js desabilita-js" href="#"><i class="fas fa-edit pull-right"></i></a> </td>
+            <td style="text-align: left;width: 130px"> 18.6 - ASSINATURA: <a id="abre-modal-assinatura-tecnico" class="icone-tecnico item-principal-menu-edicao sinal-ordens-js desabilita-js" href="#"><i class="fas fa-edit pull-right"></i></a> </td>
             {% else %}
-            <td style="text-align: left"> 18.6 - ASSINATURA: </td>
+            <td style="text-align: left;width: 130px"> 18.6 - ASSINATURA: </td>
             {% endif %}
 
             {% if chave_modelo_fia.assinatura_tecnico %}
@@ -379,31 +379,36 @@
         {% tag_len_suprof chave_planos.classificacao_set.all as len_suprof %}
         {% if chave_planos.classificacao_set.all and Func_sec %}
         <tr>
-            <!-- COORDENADOR 1 -->
+
             {% for item in Func_sec %}
-                {% if forloop.counter0 == 0 %}
+            
+                <!-- COORDENADOR 1 -->
+                {% if item.usuario_diretor %}
                     {% if item.assinatura %}
-                        <td style="text-align: left; width: 350px">19.1 - {{item}} <img class="assinaturas-foto-size display-block" src="{{ item.assinatura.url }}" alt=""> </td>
+                        <td style="text-align: left; width: 350px">19.3 - {{item}} - Diretor(a) <img class="assinaturas-foto-size display-block" src="{{ item.assinatura.url }}" alt=""> </td>
                     {% else %}
-                        <td style="text-align: left; width: 350px">19.1 - {{item}} <p class="assinaturas assinatura-style" style="font-style: italic;margin: 0"> {{item}} </p> </td>
+                        <td style="text-align: left; width: 350px">19.3 - {{item}} - Diretor(a) <p class="assinaturas assinatura-style" style="font-style: italic;margin: 0;"> {{item}} </p> </td>
                     {% endif %}
                 {% endif %}
-            <!-- COORDENADOR 2 -->
-                {% if forloop.counter0 == 1 %}
+
+                <!-- COORDENADOR 2 -->
+                {% if item.usuario_coordenador %}
                     {% if item.assinatura %}
-                        <td style="text-align: left; width: 350px;">19.2 - {{item}} <img class="assinaturas-foto-size display-block" src="{{ item.assinatura.url }}" alt=""> </td>
+                        <td style="text-align: left; width: 350px">19.1 - {{item}} - Coordenador(a) <img class="assinaturas-foto-size display-block" src="{{ item.assinatura.url }}" alt=""> </td>
                     {% else %}
-                        <td style="text-align: left; width: 350px">19.2 - {{item}} <p class="assinaturas assinatura-style" style="font-style: italic;margin: 0"> {{item}} </p> </td>
+                        <td style="text-align: left; width: 350px">19.1 - {{item}} - Coordenador(a) <p class="assinaturas assinatura-style" style="font-style: italic;margin: 0"> {{item}} </p> </td>
                     {% endif %}
                 {% endif %}
-            <!-- COORDENADOR 3 -->
-                {% if forloop.counter0 == 2 %}
+
+                <!-- COORDENADOR 3 -->
+                {% if not item.usuario_diretor and not item.usuario_coordenador %}
                     {% if item.assinatura %}
-                        <td style="text-align: left; width: 350px">19.3 - {{item}} <img class="assinaturas-foto-size display-block" src="{{ item.assinatura.url }}" alt=""> </td>
+                        <td style="text-align: left; width: 350px;">19.2 - {{item}} - Corretor (técnico) <img class="assinaturas-foto-size display-block" src="{{ item.assinatura.url }}" alt=""> </td>
                     {% else %}
-                        <td style="text-align: left; width: 350px">19.3 - {{item}} <p class="assinaturas assinatura-style" style="font-style: italic;margin: 0;"> {{item}} </p> </td>
+                        <td style="text-align: left; width: 350px">19.2 - {{item}} - Corretor (técnico) <p class="assinaturas assinatura-style" style="font-style: italic;margin: 0"> {{item}} </p> </td>
                     {% endif %}
                 {% endif %}
+
             {% endfor %}
         </tr>
 

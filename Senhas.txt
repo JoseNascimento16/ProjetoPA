@@ -1,3 +1,9 @@
+Nome: Administrador Sipa
+nascimento: 05/09/1988
+mails.sistema.sipa@gmail.com
+SistemaSIPA*123
+senha de app: bgkyhthqmocgfvht
+
 SecretariaSIPA - SIPA123
 
 NTE26 - tina123123

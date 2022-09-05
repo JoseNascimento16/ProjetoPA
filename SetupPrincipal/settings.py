@@ -155,3 +155,9 @@ LOGIN_URL = '/index/'
 MESSAGE_TAGS = {
     messages.ERROR: 'danger',
 }
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'mails.sistema.sipa@gmail.com'
+EMAIL_HOST_PASSWORD = 'bgkyhthqmocgfvht'

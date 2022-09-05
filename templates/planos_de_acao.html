@@ -389,15 +389,20 @@
                         <div class="box-botao-cadastro1 itens-cards-planos">
                             <p class="clear-2 itens-cards-planos">
 
+                                {% if elemento.situacao != 'Finalizado' %}
+
                                 <a class="a-clear-href" href="{% url 'abrindo_edicao_plano' elemento.id 'edita' %}">
                                     <i class="fas fa-edit margem-icones-menu"></i>
                                 </a>
 
+                                
                                 <a href="{% url 'deletar_plano' elemento.id %}" method="POST" onclick="return confirm('Deseja realmente apagar o plano de ação: {{ elemento.ano_referencia }}?')" >
                                     <i class="fa fa-trash tooltip4 lixeira" aria-hidden="true">
                                     <span class="tooltiptext4">Excluir plano!</span>
                                     </i>
                                 </a>
+                                
+                                {% endif  %}
                             </p>
                         </div>
                     {% endif %}

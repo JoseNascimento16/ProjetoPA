@@ -1789,7 +1789,7 @@ def reseta_plano(request, elemento_id):
                         plano.data_assinaturas_escola = None
                         plano.data_assinaturas_suprof = None
                         plano.save()
-
+    
                         log_plano_resetado(plano.ano_referencia, nome_usuario, elemento_id)
 
                         if not plano.tipo_fia:
