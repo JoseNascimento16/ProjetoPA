@@ -29,6 +29,8 @@ class Classificacao(models.Model):
     is_active = models.BooleanField(default=True)
     usuario_diretor = models.BooleanField(default=False)
     usuario_coordenador = models.BooleanField(default=False)
+    email_ativado = models.BooleanField(default=False)
+    primeira_senha = models.BooleanField(default=True)
     
     def __str__(self):
         return self.user.first_name

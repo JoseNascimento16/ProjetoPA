@@ -1,0 +1,12 @@
+# Signal que detecta se houve mudança de senha                        
+@receiver(pre_save, sender=User)
+def user_updated(sender, **kwargs):
+    user = kwargs.get('instance', None)
+    if user:
+        new_password = user.password
+        try:
+            old_password = User.objects.get(pk=user.pk).password
+        except User.DoesNotExist:
+            old_password = None
+        if new_password != old_password:
+            # do what you need here...

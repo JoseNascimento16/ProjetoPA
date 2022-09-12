@@ -1,0 +1,53 @@
+A função é simples,
+
+Em views.py:
+
+from django.conf import settings
+
+def envia_email(request):
+    assunto = 'Primeiro e-mail enviado com sucesso'
+    mensagem = 'Este é o conteúdo do primeiro email'
+    remetente = settings.EMAIL_HOST_USER
+    destinatario = request.user.email
+    
+    try:
+        send_mail(subject, message, remetente, [destinatario], fail_silently=False)
+
+        return redirect('url_name')
+        
+    except BadHeaderError:
+	    return HttpResponse('Invalid header found.')
+
+- No remetente, usamos o email do HOST, ou seja, aquele que cadastramos o SMTP
+- No destinatário, no nosso caso do exemplo, estamos enviando um email para o proprio usuario logado no momento no sistema
+
+##############################
+
+Podemos usar um documento .txt ou .html como sendo o BODY(mensagem) do email e assim termos informações dinâmicas.
+
+Perceba a mudança no atributo 'mensagem' e o novo import:
+
+from django.template.loader import render_to_string
+
+def envia_email(request):
+    contexto = {
+        'nome' : request.user.first_name
+    }
+    subject = 'Assunto do email'
+    message = render_to_string('arquivo.txt', contexto)
+    remetente = settings.EMAIL_HOST_USER
+    destinatario = request.user.email
+
+    send_mail(subject, message, remetente, [destinatario], fail_silently=False)
+
+arquivo.txt
+###################
+Olá {{nome}},
+
+este é o novo corpo do e-mail
+
+Attenciosamente,
+#####################
+
+# Garanta que o arquivo.txt esteja na pasta templates
+# Pode ser que nem todo provedor de email seja capaz de renderizar arquivos html como corpo de email, então mantemos como texto mesmo

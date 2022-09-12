@@ -161,3 +161,4 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'mails.sistema.sipa@gmail.com'
 EMAIL_HOST_PASSWORD = 'bgkyhthqmocgfvht'
+DEFAULT_FROM_EMAIL = 'Sistema SIPA <noreply@sistema.sipa>'

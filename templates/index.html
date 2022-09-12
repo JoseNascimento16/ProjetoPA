@@ -37,8 +37,8 @@
           {% csrf_token %}    
           <h2 class="form-signin-heading">Acesso</h2>
           <input type="text" class="form-control" name="username" placeholder="Usuário/DIREC" required="" autofocus="" />
-          <input type="password" class="form-control" name="password" placeholder="Senha" required="" style="margin-bottom: 3px;"/>      
-          
+          <input type="password" class="form-control" name="senha" placeholder="Senha" required="" style="margin-bottom: 3px;"/>
+   
           {% if messages %}
               <ul style="padding-left: 0;" class="ul-mensagens">
                   {% for message in messages %}
@@ -47,8 +47,9 @@
               </ul>
           {% endif %}
 
-          <label class="checkbox">
-            <input type="checkbox" value="remember-me" id="rememberMe" name="rememberMe"> Lembrar de mim
+          <label class="checkbox" style="margin-left: 0">
+            <!-- <input type="checkbox" value="remember-me" id="rememberMe" name="rememberMe"> Lembrar de mim -->
+            <a class="" href="{% url 'reset_password' %}" style="font-size: 12px;">Esqueceu a senha?</a>
           </label>
           <button class="btn btn-lg btn-primary btn-block cor-botao-entrar" type="submit">Entrar</button>   
         </form>

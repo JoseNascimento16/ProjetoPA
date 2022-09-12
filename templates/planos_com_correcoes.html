@@ -65,8 +65,8 @@
                     </a>
                 </p>
                 {% if user.classificacao.tipo_de_acesso == 'Escola' %}
-                <div class="clear-2 itens-cards-planos">
-                    <a class="myButton a-cadastros" href="{% url 'pagina_correcoes' elemento.id %}" style="text-decoration: none;">Corrigir</a>
+                <div class="clear-2 itens-cards-planos display-flex-media">
+                    <a class="myButton a-cadastros flex-grow-media" href="{% url 'pagina_correcoes' elemento.id %}" style="text-decoration: none;">Corrigir</a>
                 </div>
                 {% endif %}
                 

@@ -1,0 +1,20 @@
+https://www.youtube.com/watch?v=TZL-WFzvDJg&ab_channel=CodeBand
+
+Usando o SMTP do Gmail. (se formos usar outro SMTP, teriamos que configurar no proprio fornecedor e mudar as informações abaixo)
+
+Em settings.py:
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'mails.sistema.sipa@gmail.com' 
+EMAIL_HOST_PASSWORD = 'bgkyhthqmocgfvht'
+DEFAULT_FROM_EMAIL = 'Sistema SIPA <noreply@sistema.sipa>'
+
+Onde,
+EMAIL_HOST_USER - Conta de email onde configuramos a senha de APP
+EMAIL_HOST_PASSWORD  - A senha de app
+DEFAULT_FROM_EMAIL  - Esta opção deveria mostrar um noreply@sistema.sipa no título do email quando enviado, mas não entendi bem para que serve
+
+
+# Após estes passos, o nosso sistema já deve ser capaz de enviar emails. No proximo tutorial veremos a estrutura da função para envio de emails.

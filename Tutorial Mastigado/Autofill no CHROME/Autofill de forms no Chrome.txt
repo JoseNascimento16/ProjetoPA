@@ -1,0 +1,47 @@
+https://stackoverflow.com/questions/15738259/disabling-chrome-autofill
+
+O autofill do chrome é uma opção útil, mas em determinados casos, indesejada para nós desenvolvedores.
+
+No nosso caso, o Chrome algumas vezes preenche alguns campos quando não queremos, ou até mesmo preenche eles com a informação errada (data de aniversário no campo de usuario, ou usuario no lugar campo de email).
+
+Das informações que garimpei da internet, aparentemente a indústria de navegadores decidiu que é o usuário final quem deve habilitar ou não o autofill no seu navegador.
+
+Então temos 2 problemas:
+- Não conseguir desabilitar o autofill
+- O autofill preenchendo com as informações erradas
+
+*****
+
+1 - No primeiro problema, a solução que encontrei foi explicada no link acima. Basicamente, nós mascaramos qualquer informação no input que dê ao navegador entender que tipo de input é aquele em questão, e como ele não sabe qual tipo de input temos ali, ele não preenche.
+
+	- No atributo 'name', 'autocomplete' ou 'id' colocamos qualquer informação para que o browser nao pense que se trata de um campo de login
+
+	    <input type="email" name="qualquer-coisa" autocomplete="nao-faca-isso" id="id_icognito">
+
+	- Outra técnica é transformar o campo em readonly, e só habilita-lo quando tiver focus. Porém as sugestões ainda aparecem
+
+	    <input type="email" name="email" autocomplete="email" id="id_email" readonly="" onfocus="this.removeAttribute('readonly')">
+
+	- A ultima técnica que encontrei (a melhor) foi a de adicionar mais 'inputs' de texto genéricos com atributo HIDDEN = True
+
+	    <input type="email" name="email" autocomplete="email" required="" id="id_email"> #PRINCIPAL
+            <input type="text" name="text" autocomplete="nao-faca-isso" hidden="True" id="id_text" value="None"> #INPUT ESCONDIDO
+
+	    # Esta técnica de alguma forma 'mascara' o input principal atrás de um input inutilizado e que está invisível
+	    # Perceba que o segundo input tem id, name e type configurados, para que não hajam ambiguidades no backend
+	    # Perceba que o segundo input também tem um 'value' qualquer hardcoded já preenchido
+
+2 - O segundo problema as vezes surge somente por falta de informação no cache do navegador.
+
+	- Por exemplo, se no navegador só temos informações de login do tipo texto normal, o autofill não tem como preencer um campo de login de email, 		pois não existe informação de email cadastrada no autofill para este determinado site.
+	- Então quando lançamos un input do tipo email, o navegador irá pensar que é um input de login pro email, e as únicas informações de login 	cadastradas são do tipo 'texto', e aí ele preenche com tal, mesmo sendo um campo de login por email.
+	- Nesses casos, eu simplesmente desabilito o autofill usando algumas das técnicas acima.
+
+	# No nosso caso, não podíamos usar a primeira técnica do tópico 1, pois estavamos usando uma built-in class based view e eu ainda não tinha o 		know-how de como alterar o atributo name="email" do input para ser processado com um 'name'(ex:name="personalizado") diferente no backend, 	portanto tive que usar a terceira técnica do topico 1, pois assim, o atributo 'name' ainda chega no backend com o valor original.
+
+
+# O link abaixo nos ensina um pouco sobre o atributo autocomplete
+
+https://web.dev/learn/forms/autofill/#an_example_of_a_payment_form
+
+## Vale ressaltar que para inputs type='password', os navegadores até a data de hoje SEMPRE irão mostrar as sugestões de senha salvas, porque isso, segundo a indústria de navegadores, é pra ser uma opção do usuário. Não há 'turn around' simples para este caso.

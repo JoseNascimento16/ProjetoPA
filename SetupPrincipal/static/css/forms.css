@@ -36,6 +36,12 @@
         flex: 0.16;
         margin-bottom: 0 !important;
     }
+    .label-input3{
+        display: flex;
+        align-items: center;
+        width: 108px;
+        margin-bottom: 0 !important;
+    }
     .input-input{
         flex: 1 !important;
     }

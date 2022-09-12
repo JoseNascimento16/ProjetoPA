@@ -379,8 +379,8 @@
                     </div>
 
                     {% elif elemento.situacao == 'Necessita correção' and chave_pagina_correcoes %}
-                    <div class="clear-2 itens-cards-planos">
-                        <a class="myButton a-cadastros" href="{% url 'pagina_correcoes' elemento.id %}" style="text-decoration: none;">Corrigir</a>
+                    <div class="clear-2 itens-cards-planos display-flex-media">
+                        <a class="myButton a-cadastros flex-grow-media" href="{% url 'pagina_correcoes' elemento.id %}" style="text-decoration: none;">Corrigir</a>
                     </div>
                     {% endif %}
                 
@@ -603,11 +603,11 @@
         {% endif %}
         {% if user.classificacao.tipo_de_acesso == 'Escola' %}
         <div class="div-botoes-criar">
-            <div class="box-botao-cadastro1">
-                <a id="chama-form-plano" class="myButton a-cadastros">Criar Plano</a>
+            <div class="box-botao-cadastro1 div-botoes-criar2">
+                <a id="chama-form-plano" class="myButton a-cadastros a-criar-planos">Criar Plano</a>
             </div>
-            <div class="box-botao-cadastro1">
-                <a id="chama-form-fia" class="myButton a-cadastros">Criar FIA</a>
+            <div class="box-botao-cadastro1 div-botoes-criar2">
+                <a id="chama-form-fia" class="myButton a-cadastros a-criar-planos">Criar FIA</a>
             </div>
         </div>
         {% endif %}
