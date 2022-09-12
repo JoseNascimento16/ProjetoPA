@@ -1,0 +1,14 @@
+{% autoescape off %}
+
+Olá, {{user.first_name}}
+
+Clique no link abaixo para verificar o seu e-mail cadastrado.
+
+http://{{domain}}{% url 'ativacao_email' uidb64=uid token=token %}
+
+Atenciosamente,
+
+Equipe SIPA
+Sistema de Planos de Ação
+
+{% endautoescape %}

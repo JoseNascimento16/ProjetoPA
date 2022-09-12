@@ -1,0 +1,29 @@
+{% load static %}
+{% load widget_tweaks %}
+
+<div class="div-confirma-devolve">
+    <div class="titulo-modal">
+        <h2>Cadastrar/Alterar e-mail</h2>
+    </div>
+    <div class="classe-form-modal">
+        <form class="form-modal" action="{% url 'altera_mail' user.id %}" method="POST">
+            {% csrf_token %}
+            {% for elemento in chave_form_altera_mail.visible_fields %}
+            <div class="linha-input linha-input-coluna">
+                <label class="label-input3 label-input-form-django" for="{{ elemento.id_for_label }}">{{ elemento.label }}</label>
+                {{elemento|add_class:'input-input'}}
+                <p style="font-size: 12px">(Assegure que o e-mail cadastrado está correto)</p>
+            </div>
+
+            {% for error in elemento.errors %}
+            <section class="alert alert-danger" role="alert"> {{ elemento.errors }} </section>
+            {% endfor %}
+
+            {% endfor %}
+            <div class="linha-submit">
+                <input class="myButton" style="margin-right: 10px" type="submit" value="Remover" formaction="{% url 'apaga_mail' user.id %}">
+                <input class="myButton" type="submit" value="Confirmar">
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,39 @@
+TUTORIAL:
+
+https://www.youtube.com/watch?v=Rbkc-0rqSw8&ab_channel=CryceTruly
+
+Requisitos:
+- Envio de e-mails já configurado (tutoriais anteriores)
+- Uso do tutorial 46 sobre ENCODING (essa parte do vídeo acabou não funcionando a codificação do uid, por isso fiz o tutorial 46)
+
+Resumo:
+- Chamo uma função para enviar o email de ativação (normalmente após um cadastro de usuario)
+- Essa função: Gera um token, codifica o id do usuario e mais algumas informações
+- Depois ela empacota tudo isso num unico link que está presente no template do corpo do e-mail
+- Uma outra função (na views) recebe esse link, verifica se é valido e autentica o email.
+- Usei um User normal(não ABSTRACT) portanto, a informação de email_verificado ficou num outro modelo(classificacao) que possui herança
+	user.classificacao.email_ativado = True
+
+TOPICOS A RESSALTAR A PARTIR DO VIDEO:
+
+## No local adequado do código chamo essa função: envia_email_ativacao(request, request.user, var_email) ##
+
+   Esta função separei à parte em alteracoes.py 
+
+#####################################################################################
+
+## O arquivo utils.py e alteracoes.py ficam na pasta do app ##
+
+########################################################################################
+
+## Os templates(estao na pasta do tutorial) ficam na pasta templates/authentication do app ##
+
+########################################################################################
+
+## A url que recebe o link codificado está na urls.py do tutorial ##
+
+########################################################################################
+
+## A função que recebe o link codificado está na views.py do tutorial ##
+
+	def ativacao_email(request, uidb64, token):

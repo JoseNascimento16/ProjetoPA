@@ -34,7 +34,9 @@
             <div class="classe-icone-perfil">
             <i class="fa fa-user"></i>
             </div>
-            <a class="" href="#" style="font-size: 12px;">(alterar senha)</a>
+            {% if user.classificacao.primeira_senha %}
+            <a class="" href="{% url 'reset_password' %}" style="font-size: 12px;">(alterar senha)</a>
+            {% endif %}
         </div>
         <div class="box-profile1-1-2">
             <div class="box-profile1-1-2-1">
@@ -93,8 +95,14 @@
     </div>
     <div class="box-profile1-2" style="margin-left: 10px">
         <h5>E-mail: </h5>
+        {% if user.classificacao.email_ativado %}
         <p>{{user.email}}</p>
-        <a class="" href="#" style="font-size: 12px;padding-left: 2px;"> (alterar)</a>
+        {% elif not user.email %}
+        <p>( Cadastrar e-mail )</p>
+        {% else %}
+        <p>( Verifique sua caixa de entrada )</p>
+        {% endif %}
+        <a class="" href="{% url 'abre_altera_mail' user.id 'chng_mail' %}" style="font-size: 12px;padding-left: 2px;"> (alterar/confirmar)</a>
     </div>
     <div class="box-profile1-2" style="margin-left: 10px;border: none;">
         <h5>Assinatura: </h5>

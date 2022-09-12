@@ -64,6 +64,9 @@
     .classe-header2{
         display: none;
     }
+    .box-plano1-1{
+        flex-direction: column;
+    }
 }
 
 @media only screen and (max-width: 360px) {
@@ -204,6 +207,24 @@
     .box-profile1-2{
         display: flex !important;
     }
+    .div-botoes-criar{
+        flex-direction: column;
+    }
+    .div-botoes-criar2{
+        display: flex;
+    }
+    .a-criar-planos{
+        /* width: -webkit-fill-available ;*/
+        text-align: center; 
+        flex-grow: 1;
+    }
+}
+
+@media only screen and (max-width: 322px) {
+    .search-bar{
+        width: 170px;
+      }
+    
 }
 
 @media only screen and (max-height: 785px) {
@@ -277,10 +298,11 @@
         display: flex !important;
     }
     .tooltip5{
-        display: flex !important;
+        /* display: flex !important; */
     }
     .flex-grow-media{
         flex-grow: 1 !important;
+        text-align: center;
     }
     .tooltiptext5{
         flex-grow: 1 !important;

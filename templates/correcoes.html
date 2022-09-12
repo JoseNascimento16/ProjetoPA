@@ -55,8 +55,8 @@
                 
                 <h5>Sugestão de correção:</h5>
                 <textarea class="textarea-cards" cols="30" rows="10" disabled="True">{{correcao.sugestao}}</textarea>
-                <div class="form-botao-verificar clear-2 itens-cards-planos">
-                    <a class="myButton a-cadastros cards-botao-corrigir" href="{% url 'abrindo_correcao_despesa' chave_plano.id correcao.ordem_associada correcao.codigo_associado 'Sim' %}" style="text-decoration: none;">Corrigir</a>
+                <div class="form-botao-verificar clear-2 itens-cards-planos display-flex-media">
+                    <a class="myButton a-cadastros cards-botao-corrigir flex-grow-media" href="{% url 'abrindo_correcao_despesa' chave_plano.id correcao.ordem_associada correcao.codigo_associado 'Sim' %}" style="text-decoration: none;">Corrigir</a>
                 </div>
             </div>
         {% endfor %}

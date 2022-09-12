@@ -3,13 +3,54 @@ TENHO QUE APRENDER A TROCAR DE MODELO DE USUARIO (USAR O ABSTRACT AUTH_USER)
 TENHO QUE APRENDER COMO REFERENCIAR UM FOREIGNKEY NO REVERSO QUANDO ESTA FOREIGNKEY TEM UM RELATED_NAME COMO ATRIBUTO(no momento só sei fazer isso quando não tem related_name configurado)
 
 ----------------------------------------------------------------------------------
+- Desassociar usuário de diretor de usuário de escola
+    - Criar usuário de diretor(escolar) na pagina do cadastro de escola pela SECRETARIA
+
+- Talvez já cadastrar e-mail(opcional) no cadastro de novo usuário
+- OK Primeiro acesso(senha padrão):
+    - OK Sugerir cadastro de e-mail(se já não houver cadastro)
+    - OK Sugerir troca de senha
+
+- Verificar as chamadas de incluir assinaturas e logs, se estão todas funcionando (teste)
+- Se uma alteração for feita num plano a partir de publicado, gera LOG. (SIGNALS)
+
+- Enviar e-mail sempre que determinadas ações forem executadas. (plano aprovado, plano devolvido, plano enviado)(SIGNALS)
+- Botão de engrenagem para telas pequenas
 
 
-- Ajustar proporção da tabela fia na impressão quando reduz/aumenta escala! (a tabela de assinaturas da suprot não tem este problema, usar como exemplo. Provavelmente posso corrigir definindo o width.)
+LOG DE EVENTOS
 
+- OK ASSOCIAR O LOG AO ID DO PLANO, E NAO AO NOME. OK
+- OK Criar modelo OK
+- OK Quando publicar, gerar log(OK). 
+- A partir deste estado, sempre gerar log quando uma alteração for feita.
+- OK Centralizar a criação de logs num unico arquivo.
+- inserir a geração de logs nas devidas views e afins.
+- Gerar log quando Func_sec altera cargo
+- Talvez já começar a mecher no DashBoard.(ainda nao)
+
+- ok IMPEDIR ACESSO ÀS VIEWS PARA FUNCIONARIOS/ESCOLAS/SECRETARIA
+
+- ok DESABILITAR LINKS DESNECESSARIOS 
+   - Secretaria
+   - Escolas
+   - Funcionários
+
+- ok SISTEMA DE MENSAGENS
+
+- Talvez Inserir funcionalidade de alteração de cadastro de escola.
+
+- BUGS
+    - menu edicao nao mostra para planos finalizados para funcioarios func sec (este bug não consigo reproduzir)
+    - alternancia menu parou de funcionar pós print...(este bug parou)
+
+######################################################
+- OK FUNCIONALIDADE de cadastro de EMAIL
+- OK FUNCIONALIDADE DE ATIVAÇÃO DE EMAIL
+- OK FUNCIONALIDADE DE ENVIO DE EMAIL
+- OK Criar funcionalidade de TROCA de SENHA 
 - OK Planos Fia
-
-- Form de cadastro de funcionarios func_sec nao esta abrindo quando acabou de ser criado um func_sec do mesmo tipo
+- OK Form de cadastro de funcionarios func_sec nao esta abrindo quando acabou de ser criado um func_sec do mesmo tipo
 - OK Não permitir que Tesoureiro assine plano FIA
 - OK Não permitir que membros do colegiado não escolhidos assinem planos FIA
 - OK atualizar a quantidade de assinaturas do plano FIA considerando assinatura do tecnico.
@@ -18,13 +59,7 @@ TENHO QUE APRENDER COMO REFERENCIAR UM FOREIGNKEY NO REVERSO QUANDO ESTA FOREIGN
 - OK Remover assinatura, quando remover membro do colegiado do modelo_fia.
 - OK Se sobrescrever o tecnico, remove assinatura tbm
 
-
-
-- menu edicao nao mostra para planos finalizados para funcioarios func sec (este bug não consigo reproduzir)
-- alternancia menu parou de funcionar pós print...(este bug parou)
-- Remover capacidade de selecionar texto para burlar impressão
-
-- Talvez Inserir funcionalidade de alteração de cadastro de escola.
+- OK Remover capacidade de selecionar texto para burlar impressão
 
 - OK Novo sistema de assinaturas SUPROT
     - OK Não precisa ajustar Many-To-Many 
@@ -79,77 +114,31 @@ TENHO QUE APRENDER COMO REFERENCIAR UM FOREIGNKEY NO REVERSO QUANDO ESTA FOREIGN
    - OK Mostrar assinaturas da escola no documento ações
    - OK Mostrar assinaturas de Func_sec no documento ações.
 
-   - OK Criar página de PERFIL
-	- Criar funcionalidade de TROCA de SENHA (precisa de funcionalidade de e-mail)
+- OK Página de PERFIL
 
-- Verificar as chamadas de incluir assinaturasm e logs, se estão todas funcionando (teste)
+- OK Novo sistema de Diretor/Coordenador/corretor
+- OK Alteração de cargo coordenador/corretor
 
-- OK Talvez criar checagem, caso um func_sec de alto cargo seja adicionado, voltar todos os planos 'inteiramente assinados' para 'Assinados'
-   - OK O mesmo para caso um Func_sec altere algum outro Func_sec para alto cargo
-   - OK Porém quando um Func_sec REBAIXA outro Func_sec para 'padrão', tenho que remover as assinaturas deste func_sec
-	- OK retornar o plano para Assinado
+- OK SISTEMA DE IMPRESSÃO:
 
-- IMPEDIR ACESSO ÀS VIEWS PARA FUNCIONARIOS/ESCOLAS/SECRETARIA
-
-- DESABILITAR LINKS DESNECESSARIOS 
-   - Secretaria
-   - Escolas
-   - Funcionários
-
-- IMPRESSÃO:
-   - DECIDI O SEGUINTE:
-	- https://jsfiddle.net/qL29aw31/
-	- https://jsfiddle.net/gtkve3hL/2/
-
-- MENSAGENS
-   - 
-
-- OK PENSAR como implementar uma função para resetar um plano para um estado ALTERÁVEL, ou seja, APÓS aprovado
-
-- Se uma alteração for feita num plano a partir de publicado, gera LOG. (SIGNALS)
-
+- OK função para resetar um plano para um estado ALTERÁVEL, APÓS assinado
 - OK Colocar filtros para textos muito grandes nos cards de planos
-
-- Quando secretaria aprova plano, as turmas sao permanentemente associadas a ele. Será que tenho que checar se elas estão inseridas?(views.py linha 1325)
-
+- OK Associação de turmas
 - OK Planos PENDENTE, APROVADO, CONCLUIDO ou CORRIGIDO PELA ESCOLA não podem ser modificados nos menus laterais (documentos)(ESCOLA)
 - OK Planos Em desenvolvimento, Publicado, Corrigido, APROVADO, CONCLUIDO ou não podem ser modificados nos menus laterais (documentos)(SECRETARIA)
 
-
 - OK FUNCIONALIDADE DE ASSINATURAS digitais
-
-- OK FUNCIONALIDADE DE IMPRIMIR PLANO APROVADO
-
-- FUNCIONALIDADE "LEMBRAR DE MIM" NO LOGIN, TALVEZ TROCAR POR ESQUECI MINHA SENHA
-
-- FUNCIONALIDADE DE TROCA DE SENHA
-  - Criar campo para preenchimento de email de escola/funcionarios cadastrada
-
-- Enviar e-mail sempre que determinadas ações forem executadas. (plano aprovado, plano devolvido, plano enviado)(SIGNALS)
-
-- Botão de engrenagem para telas pequenas
+- OK FUNCIONALIDADE DE IMPRIMIR PLANO FINALIZADO
+- OK FUNCIONALIDADE DE TROCA DE SENHA
 
 - Cadastros SERCRETARIA:
    - OK Alternância de HTMLs
    - OK Checar se a classificação BUGA por qualquer motivo que seja quando gera funcionario da secretaria
    - OK carrega escola cadastradas
    - OK cadastra escola
-   - exclui escola (não precisa ainda)
    - OK carrega funcionarios cadastrados
    - OK cadastra funcionarios
    - OK exclui funcionario
-
-LOG DE EVENTOS
-
-- OK ASSOCIAR O LOG AO ID DO PLANO, E NAO AO NOME. OK
-- OK Criar modelo OK
-- OK Quando publicar, gerar log(OK). 
-- A partir deste estado, sempre gerar log quando uma alteração for feita.
-- OK Centralizar a criação de logs num unico arquivo.
-- inserir a geração de logs nas devidas views e afins.
-- Gerar log quando Func_sec altera cargo
-- Talvez já começar a mecher no DashBoard.(ainda nao)
-
 
 - OK Assinatura de planos
 - OK Criar funcionalidade de aprovação para membos do colegiado e tesoureiro, gerando logs.
@@ -159,20 +148,12 @@ LOG DE EVENTOS
 - OK Link para a criação de ordens e códigos a partir do menu do documento AÇÃO
 - OK Secretaria e funcionarios não acessam páginas de ordens nem códigos
 
-- OK Se um funcionario for apagado:
-   - OK remove todas as assinaturas deste usuario
-   - OK reduz em 1 a quant de assinaturas de cada plano desse, SE o mesmo ja tiver alguma assinatura, ou seja ja estiver em estado de aprovado
-   - OK reduz a quant de funcionarios da matriz
-
 - OK FUNÇÃO DE EDIÇÃO DE PLANO/ORDENS/CODIGOS
 - OK CADASTRO DE ESCOLAS E FUNCIONARIOS
 - OK FUNCIONALIDADE DE CORREÇÃO
 - OK EDIÇÃO DE ORDENS
 - OK EDICAO DE CODIGOS
 
-OK tooltip para informar isso
+- OK FUNCIONALIDADE DE TOOLTIP
 
 DUVIDAS:
-
-- Nas DESPESAS
-- Só pode haver 1 tesoureiro? SIM

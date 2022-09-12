@@ -1,6 +1,7 @@
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from plano_de_acao.alteracoes import atualiza_assinaturas_sec
+from django.contrib.auth.models import User
 from .models import Classificacao
 from plano_de_acao.models import Plano_de_acao
 
@@ -43,4 +44,18 @@ def retorna_situacao(sender, instance, created, *args, **kwargs):
                         elemento_id = item.id
                         atualiza_assinaturas_sec(elemento_id)
                         
+# Signal que detecta se houve mudança de senha                        
+@receiver(pre_save, sender=User)
+def user_updated(sender, **kwargs):
+    user = kwargs.get('instance', None)
+    if user:
+        new_password = user.password
+        try:
+            old_password = User.objects.get(pk=user.pk).password
+        except User.DoesNotExist:
+            old_password = None
+        if new_password != old_password:
+            user.classificacao.primeira_senha = False
+            user.classificacao.save()
+            # do what you need here
                     

@@ -1,4 +1,5 @@
-from base64 import b64decode
+from base64 import b64decode, urlsafe_b64decode
+from multiprocessing import context
 from django.core.files.base import ContentFile
 import base64
 import io
@@ -6,14 +7,25 @@ from PIL import Image
 from tkinter import Image
 from django.dispatch import Signal
 from plano_de_acao.alteracoes import atualiza_assinaturas_escola
+from usuarios.alteracoes import envia_email_ativacao
 from usuarios.models import Classificacao, Turmas, Usuario
-from usuarios.forms import FuncionariosForm, TurmasForm, EscolasForms, FuncionariosSecretariaForm, AlteraCargoForm, FormAlteraNome
+from usuarios.forms import FuncionariosForm, TurmasForm, EscolasForms, FuncionariosSecretariaForm, AlteraCargoForm, FormAlteraNome, FormAlteraMail
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
 from plano_de_acao.models import Plano_de_acao
 from usuarios.pesquisas import pesquisa_escolas_cadastradas, pesquisa_funcionarios_cadastrados
+from django.core.mail import send_mail, BadHeaderError
+from django.conf import settings
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+from django import forms
+from .utils import generate_token
+from django.utils.encoding import force_text
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+
 
 
 # Create your views here.
@@ -277,7 +289,11 @@ def deleta_funcionario(request, elemento_id):
         funcionario_id = funcionario_classificacao.user.id
         funcionario_objeto = get_object_or_404(User, pk=funcionario_id)
         funcionario_objeto.is_active = False
+        funcionario_objeto.email = ''
         funcionario_classificacao.is_active = False
+        funcionario_classificacao.email_ativado = False
+        if funcionario_classificacao.assinatura:
+            funcionario_classificacao.assinatura.delete()
         funcionario_objeto.save()
         funcionario_classificacao.save()
 
@@ -303,15 +319,19 @@ def deleta_funcionario(request, elemento_id):
         # Desativa classificação Func_sec,escolas,funcionarios (inativação)
         objeto_classificacao = get_object_or_404(Classificacao, pk=elemento_id)
         objeto_classificacao.is_active = False
+        objeto_classificacao.email_ativado = False
         objeto_classificacao.assina_plano = False
         objeto_classificacao.usuario_diretor = False
         objeto_classificacao.usuario_coordenador = False
+        if objeto_classificacao.assinatura:
+            objeto_classificacao.assinatura.delete()
         objeto_classificacao.save()
 
         # exclusão de Func_sec,escolas,funcionarios (inativação)
         funcionario_id = objeto_classificacao.user.id
         usuario_objeto = get_object_or_404(User, pk=funcionario_id)
         usuario_objeto.is_active = False
+        usuario_objeto.email = ''
         usuario_objeto.save()
 
         # atualiza quant_func da matriz
@@ -325,10 +345,17 @@ def deleta_funcionario(request, elemento_id):
         if objeto_classificacao.tipo_de_acesso == 'Escola':
             funcionarios_da_escola = Classificacao.objects.filter(matriz=usuario_objeto.last_name)
             for item in funcionarios_da_escola:
-                funcionario_objeto = get_object_or_404(User, first_name=item.user.first_name )
                 item.is_active = False
+                item.email_ativado = False
+                item.assina_plano = False
+                item.usuario_diretor = False
+                item.usuario_coordenador = False
+                if item.assinatura:
+                    item.assinatura.delete()
                 item.save()
+                funcionario_objeto = get_object_or_404(User, first_name=item.user.first_name )
                 funcionario_objeto.is_active = False
+                funcionario_objeto.email = ''
                 funcionario_objeto.save()
 
         id_do_usuario = request.user.id
@@ -447,7 +474,8 @@ def deleta_turma(request, turma_id):
     return redirect('dashboard')
 
 def login(request, mensagem=''):
-
+    # if not request.user.is_authenticated:
+        
     if mensagem == 'Vazio':
             messages.error(request, 'Preencha os campos vazios')
     if mensagem == 'Falhou':
@@ -455,8 +483,7 @@ def login(request, mensagem=''):
 
     if request.method == 'POST':
         Usuario = request.POST['username']
-        Senha = request.POST['password']
-        
+        Senha = request.POST['senha']
 
         if not Usuario.strip() or not Senha.strip() :      
             var_mensagem = 'Vazio'
@@ -475,11 +502,11 @@ def login(request, mensagem=''):
             else:
                 var_mensagem='Falhou'
                 return redirect('fazendo_login_mensagem', mensagem=var_mensagem)
-                print('Informações de login incorretas!')
+                
         else:
             var_mensagem='Falhou'
             return redirect('fazendo_login_mensagem', mensagem=var_mensagem)
-
+    
     return render(request, 'index.html')
 
 @login_required
@@ -490,26 +517,51 @@ def dashboard(request):
         print('Você está deslogado, faça o login novamente')
         return redirect('fazendo_logout')
 
-def meu_acesso(request, user_id, altera='', altera_erro='', form_erro=''):
+def meu_acesso(request, user_id, mensagem='', altera='', altera_erro='', form_erro='', mail=''):
     abre_modal = False
     abre_modal_sign = False
+    abre_modal_mail = False
     form = ''
-    usuario = get_object_or_404(User, pk=user_id)
+    form2 = ''
+    usuario = request.user.classificacao.tipo_de_acesso
+
+    if mensagem == 'success':
+            messages.success(request, 'Alteração efetuada com sucesso!')
+    elif mensagem == 'sent_activation':
+            messages.warning(request, 'Verifique sua caixa de entrada para confirmar o seu e-mail!')
+    elif mensagem == 'activation_success':
+            messages.success(request, 'E-mail ativado com sucesso!')
+    elif mensagem == 'mail_removed':
+            messages.success(request, 'E-mail removido com sucesso!')
+
     if altera == 'alt_name':
         abre_modal = True
         if not altera_erro:
             form = FormAlteraNome()
         else:
             form = form_erro
-            print(form.errors)
+
     elif altera == 'alt_sign':
         abre_modal_sign = True
+
+    elif altera == 'chng_mail':
+        abre_modal_mail = True
+        if not altera_erro:
+            form2 = FormAlteraMail()
+            form2 = FormAlteraMail(prefix='qualquer') 
+            form2.fields['email'].initial = request.user.email
+        else:
+            form2 = form_erro
+        
     else:
         form = ''
     contexto = {
+        'chave_tipo_usuario' : usuario,
         'chave_abre_altera_nome':abre_modal,
         'chave_abre_altera_assinatura':abre_modal_sign,
+        'chave_abre_altera_mail' : abre_modal_mail,
         'chave_form_altera_nome':form,
+        'chave_form_altera_mail':form2,
     }
 
     return render(request, 'profile.html', contexto)
@@ -529,6 +581,71 @@ def altera_nome(request, user_id):
     
     return redirect('dashboard')
 
+def remove_mail(request, user_id):
+    if request.method == 'POST':
+        usuario = get_object_or_404(User, pk=user_id)
+        usuario.email = ''
+        usuario.classificacao.email_ativado = False
+        usuario.save()
+        usuario.classificacao.save()
+
+        return redirect('abre_meu_acesso_mensagem', mensagem='mail_removed', user_id=request.user.id)
+    
+    return redirect('dashboard')
+    
+
+@login_required
+def altera_mail(request, user_id):
+    if request.method == 'POST':
+        form = FormAlteraMail(request.POST, user_id_super=user_id, prefix='qualquer')
+        if form.is_valid():
+            var_email = form.cleaned_data.get('email')
+            envia_email_ativacao(request, request.user, var_email)
+            usuario = get_object_or_404(User, pk=request.user.id)
+            usuario.email = var_email
+            usuario.save()
+            return redirect('abre_meu_acesso_mensagem', mensagem='sent_activation', user_id=request.user.id)
+        else:
+            return meu_acesso(request, user_id, altera='chng_mail', altera_erro='sim', form_erro=form)
+
+def ativacao_email(request, uidb64, token):
+    try:
+        uid_b64 = urlsafe_base64_decode(uidb64) # Converte URLBASE64 para BASE64
+        uid_bytes = base64.b64decode(uid_b64) # Converte BASE64 para BYTES
+        uid = int(force_str(uid_bytes)) # Converte BYTES para STR, e de STR para INT
+        usuario = get_object_or_404(User, pk=uid)
+    except Exception as e:
+        usuario = None
+
+    if usuario and generate_token.check_token(usuario, token):
+        classificacao = get_object_or_404(Classificacao, user=usuario)
+        classificacao.email_ativado = True
+        classificacao.save()
+
+        if request.user.is_authenticated:
+            return redirect('abre_meu_acesso_mensagem', mensagem='activation_success', user_id=uid)
+        else:
+            return render(request, 'authentication/authentication_success.html')
+
+    return render(request, 'authentication/authentication_failed.html')
+
+def envia_email(request):
+    contexto = {
+        'nome' : request.user.first_name
+    }
+    subject = 'Assunto do email'
+    message = render_to_string('teste-email.txt', contexto)
+    remetente = settings.EMAIL_HOST_USER
+    destinatario = request.user.email
+
+    try:
+        send_mail(subject, message, remetente, [destinatario], fail_silently=False)
+
+        # print('enviou email!')
+        return redirect('abre_meu_acesso', user_id=request.user.id)
+        
+    except BadHeaderError:
+	    return HttpResponse('Invalid header found.')
 
 def salva_assinatura(request, user_id):
     usuario = get_object_or_404(User, pk=user_id)
@@ -557,6 +674,8 @@ def remove_assinatura(request, user_id):
         return redirect('abre_meu_acesso', user_id=user_id)
 
     return redirect('dashboard')
+
+
 
 @login_required
 def logout(request):

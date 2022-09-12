@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from usuarios.validation import *
-from django.core import validators
+from django.core.validators import EmailValidator
 from usuarios.models import Turmas
 from codigos.validation import *
 
@@ -323,6 +323,36 @@ class FormAlteraNome(forms.ModelForm):
         nome_contem_numeros(valor_first_name, 'first_name', lista_de_erros)
         campo_em_branco(valor_first_name, 'first_name', lista_de_erros)
         sem_sobrenome(valor_first_name, 'first_name', lista_de_erros)
+        
+        if lista_de_erros is not None:
+            for erro in lista_de_erros:
+                mensagem_erro = lista_de_erros[erro]
+                self.add_error(erro, mensagem_erro)
+        return self.cleaned_data
+
+class FormAlteraMail(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        self.user_id_super = kwargs.pop('user_id_super', None)
+        super().__init__(*args, **kwargs)
+
+    class Meta:
+        model = User
+        fields = ['email']
+        labels = {
+            'email':'Novo e-mail:',
+        }
+        widgets = {
+            'email': forms.EmailInput(attrs={'placeholder': 'exemplo@exemplo.com....','required':''}),
+            }
+
+    def clean(self):
+        
+        user_id = self.user_id_super
+        valor_email = self.cleaned_data.get('email')
+        lista_de_erros = {}
+
+        email_ja_cadastrado(valor_email, user_id, 'email', lista_de_erros)
+        campo_em_branco(valor_email, 'email', lista_de_erros)
         
         if lista_de_erros is not None:
             for erro in lista_de_erros:
