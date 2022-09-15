@@ -25,6 +25,7 @@ from .utils import generate_token
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
+from.decorators import usuario_nao_autenticado
 
 
 
@@ -473,9 +474,9 @@ def deleta_turma(request, turma_id):
 
     return redirect('dashboard')
 
+@usuario_nao_autenticado
 def login(request, mensagem=''):
-    # if not request.user.is_authenticated:
-        
+            
     if mensagem == 'Vazio':
             messages.error(request, 'Preencha os campos vazios')
     if mensagem == 'Falhou':
@@ -511,11 +512,11 @@ def login(request, mensagem=''):
 
 @login_required
 def dashboard(request):
-    if request.user.is_authenticated:
-        return render(request, 'dashboard.html')
-    else:
-        print('Você está deslogado, faça o login novamente')
-        return redirect('fazendo_logout')
+    # if request.user.is_authenticated:
+    return render(request, 'dashboard.html')
+    # else:
+    #     print('Você está deslogado, faça o login novamente')
+    #     return redirect('fazendo_logout')
 
 def meu_acesso(request, user_id, mensagem='', altera='', altera_erro='', form_erro='', mail=''):
     abre_modal = False
@@ -593,7 +594,6 @@ def remove_mail(request, user_id):
     
     return redirect('dashboard')
     
-
 @login_required
 def altera_mail(request, user_id):
     if request.method == 'POST':
@@ -674,8 +674,6 @@ def remove_assinatura(request, user_id):
         return redirect('abre_meu_acesso', user_id=user_id)
 
     return redirect('dashboard')
-
-
 
 @login_required
 def logout(request):

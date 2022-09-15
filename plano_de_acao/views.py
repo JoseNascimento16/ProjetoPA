@@ -28,7 +28,7 @@ import json
 
 # Create your views here.
 
-@login_required
+# @login_required
 def planos_de_acao(request, elemento_id='', atribui='', alt_corretor='', mensagem='', search='', devolve='', edita_plano='', falha_novo_plano=''): # pagina listando todos os planos de ação possíveis de serem vistos
     form_plano = PlanoForm()
     form_fia = FiaForm()

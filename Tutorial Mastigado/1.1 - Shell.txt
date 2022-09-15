@@ -1,0 +1,7 @@
+Para entrar no shell:
+
+	py manage.py shell
+
+Para sair:
+
+	exit()

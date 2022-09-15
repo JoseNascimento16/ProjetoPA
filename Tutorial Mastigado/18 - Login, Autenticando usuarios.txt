@@ -49,7 +49,7 @@ def login(request):
         
     return render(request, 'index.html')
 
-### Note que ao inves de filtrarmos pelo username, podemos filtrar pelo email também:
+### Note que ao invez de filtrarmos pelo username, podemos filtrar pelo email também:
 
 if User.objects.filter(email=Email).exists(): (linha 44)
         Nome = User.objects.filter(email=Email).values_list('username', flat=True).get()

@@ -61,6 +61,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'SetupPrincipal.middlewares.AuthRequiredMiddleware',
 ]
 
 ROOT_URLCONF = 'SetupPrincipal.urls'
@@ -150,7 +151,8 @@ STATICFILES_DIRS = [
             os.path.join(BASE_DIR, 'SetupPrincipal/static')
             ]
 
-LOGIN_URL = '/index/'
+LOGIN_URL = '/'
+
 
 MESSAGE_TAGS = {
     messages.ERROR: 'danger',

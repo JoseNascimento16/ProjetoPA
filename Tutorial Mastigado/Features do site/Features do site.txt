@@ -1,0 +1,20 @@
+Habilidades e funcionalidades
+
+- Modals
+- Tooltips
+- Search bar
+- Pagination
+- Modelforms
+- Override on save() method
+- Signals
+- Simple tags
+- JSONparse script tag
+- messages
+- upload images using media ROOT
+- Drawing using canvas, passing as a b64img and saving as image (signature system)
+- Configure SMTP for email sending
+- Change password using the class based passwordresetview (tutorial and customized)
+- Encoding and Email activation system
+- Event logs system (customized)
+- Print feature (customized print body)
+- 
