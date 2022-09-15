@@ -1,5 +1,6 @@
 from base64 import b64decode, urlsafe_b64decode
 from multiprocessing import context
+from webbrowser import get
 from django.core.files.base import ContentFile
 import base64
 import io
@@ -7,7 +8,7 @@ from PIL import Image
 from tkinter import Image
 from django.dispatch import Signal
 from plano_de_acao.alteracoes import atualiza_assinaturas_escola
-from usuarios.alteracoes import envia_email_ativacao
+from usuarios.alteracoes import envia_email_ativacao, identifica_diretor
 from usuarios.models import Classificacao, Turmas, Usuario
 from usuarios.forms import FuncionariosForm, TurmasForm, EscolasForms, FuncionariosSecretariaForm, AlteraCargoForm, FormAlteraNome, FormAlteraMail
 from django.shortcuts import redirect, render, get_object_or_404
@@ -61,18 +62,21 @@ def cadastros_secretaria(request, user_id, mensagem='', cad_funcionarios='', sea
                         muni_form = form_escolas.cleaned_data.get('municipio')
                         codigo_form = form_escolas.cleaned_data.get('codigo_escola')
                         nte_form = form_escolas.cleaned_data.get('nte')
-                        first_form = form_escolas.cleaned_data.get('first_name')
-                        user_form = form_escolas.cleaned_data.get('username')
-                        pass_form = form_escolas.cleaned_data.get('password')
-                        pass_form2 = form_escolas.cleaned_data.get('password2')
+                        user_form = 'NTE' + str(nte_form)
+                        pass_form = str(codigo_form) + '**'
+                        # first_form = form_escolas.cleaned_data.get('first_name')
+                        # user_form = form_escolas.cleaned_data.get('username')
+                        # pass_form = form_escolas.cleaned_data.get('password')
+                        # pass_form2 = form_escolas.cleaned_data.get('password2')
 
                         user = User.objects.create_user(
                         username=user_form,
-                        first_name=first_form,
+                        first_name=last_form,
                         last_name=last_form,
                         email='',
-                        password=pass_form2)
+                        password=pass_form)
                         user.save()
+
 
                         usuario_cadastrado = User.objects.get(username=user_form)
                         classificacao = Classificacao.objects.create(
@@ -80,11 +84,11 @@ def cadastros_secretaria(request, user_id, mensagem='', cad_funcionarios='', sea
                         tipo_de_acesso='Escola',
                         municipio=muni_form,
                         codigo_escola=codigo_form,
-                        nte=nte_form, quant_funcionarios=1
+                        nte=nte_form,
+                        quant_funcionarios=0
                         )
                         classificacao.save()
 
-                        # PODE-SE FAZER ISSO VIA SIGNALS
 
                         return redirect('cadastrar_escolas_mensagem', user_id=user_id, mensagem='Criou') #id da secretaria
                     else:
@@ -512,13 +516,16 @@ def login(request, mensagem=''):
 
 @login_required
 def dashboard(request):
-    # if request.user.is_authenticated:
-    return render(request, 'dashboard.html')
-    # else:
-    #     print('Você está deslogado, faça o login novamente')
-    #     return redirect('fazendo_logout')
+    escolas_sem_diretor=''
+    tipo_de_acesso = request.user.classificacao.tipo_de_acesso
+    if tipo_de_acesso == 'Secretaria' or tipo_de_acesso == 'Func_sec':
+        escolas_sem_diretor = Classificacao.objects.filter(tipo_de_acesso='Escola').filter(possui_diretor=False).filter(is_active=True)
+    contexto = {
+        'chave_escolas_sem_diretor' : escolas_sem_diretor
+    }
+    return render(request, 'dashboard.html', contexto)
 
-def meu_acesso(request, user_id, mensagem='', altera='', altera_erro='', form_erro='', mail=''):
+def meu_acesso(request, user_id, mensagem='', altera='', altera_erro='', form_erro=''):
     abre_modal = False
     abre_modal_sign = False
     abre_modal_mail = False
@@ -566,6 +573,17 @@ def meu_acesso(request, user_id, mensagem='', altera='', altera_erro='', form_er
     }
 
     return render(request, 'profile.html', contexto)
+
+def profile_escola(request, user_id, mensagem=''):
+    from.alteracoes import identifica_diretor
+    escola = get_object_or_404(User, pk=user_id)
+    diretor = identifica_diretor(user_id)
+    contexto = {
+        'chave_escola' : escola,
+        'chave_diretor' : diretor,
+        'chave_tipo_usuario' : request.user.classificacao.tipo_de_acesso,
+    }
+    return render(request, 'Profile_escola.html', contexto)
 
 def altera_nome(request, user_id):
     if request.method == 'POST':

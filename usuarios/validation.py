@@ -88,3 +88,9 @@ def email_ja_cadastrado(valor, user_id, campo, lista_de_erros):
             pass # Permite (modo alteração)
         elif usuarios:
             lista_de_erros[campo] = 'Indisponível! Cadastre outro endereço de e-mail...'
+        
+def email_ja_cadastrado2(valor, campo, lista_de_erros):
+    if valor:
+        usuarios = User.objects.filter(email=valor) # Só 1 objeto deve obrigatoriamente ser encontrado
+        if usuarios:
+            lista_de_erros[campo] = 'Indisponível! Já existe usuário com este endereço de e-mail...'

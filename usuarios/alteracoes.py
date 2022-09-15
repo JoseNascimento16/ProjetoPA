@@ -4,9 +4,21 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
+from django.contrib.auth.models import User
+from usuarios.models import Classificacao
+from django.shortcuts import get_object_or_404
 from .utils import generate_token
 import base64
 
+
+def identifica_diretor(user_id):
+    diretor=''
+    escola = get_object_or_404(User, pk=user_id)
+    classificacao_diretor = Classificacao.objects.filter(matriz=escola.last_name).filter(diretor_escolar=True).filter(is_active=True)
+    for item in classificacao_diretor:
+        diretor = item.user
+        
+    return diretor
 
 def envia_email_ativacao(request, user, var_email):
     site_atual = get_current_site(request)

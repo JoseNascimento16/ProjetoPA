@@ -3,13 +3,15 @@ TENHO QUE APRENDER A TROCAR DE MODELO DE USUARIO (USAR O ABSTRACT AUTH_USER)
 TENHO QUE APRENDER COMO REFERENCIAR UM FOREIGNKEY NO REVERSO QUANDO ESTA FOREIGNKEY TEM UM RELATED_NAME COMO ATRIBUTO(no momento só sei fazer isso quando não tem related_name configurado)
 
 ----------------------------------------------------------------------------------
+tipo_de_acesso = 'Escola'
+tipo_usuario = 'Escola'
 - Desassociar usuário de diretor de usuário de escola
     - Criar usuário de diretor(escolar) na pagina do cadastro de escola pela SECRETARIA
+    - Alterar no código, toda referencia à escola, considerar também o diretor
+
+- testar de funcionalidade de primeira senha não bugou
 
 - Talvez já cadastrar e-mail(opcional) no cadastro de novo usuário
-- OK Primeiro acesso(senha padrão):
-    - OK Sugerir cadastro de e-mail(se já não houver cadastro)
-    - OK Sugerir troca de senha
 
 - Verificar as chamadas de incluir assinaturas e logs, se estão todas funcionando (teste)
 - Se uma alteração for feita num plano a partir de publicado, gera LOG. (SIGNALS)

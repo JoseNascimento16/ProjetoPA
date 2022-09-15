@@ -9,15 +9,15 @@
 <div class="box-plano1">
     {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
     <div class="box-plano1-1 display-flex">
-        <h5><i class="fas fa-chart-bar margem-icones-menu"></i>MEU ACESSO</h5>
+        <h5><i class="fas fa-chart-bar margem-icones-menu"></i>PERFIL ESCOLAR</h5>
     </div>
     {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
         <div class="box-plano1-1 display-flex">
-            <h5><i class="fas fa-chart-bar margem-icones-menu"></i>MEU ACESSO</h5>
+            <h5><i class="fas fa-chart-bar margem-icones-menu"></i>PERFIL ESCOLAR</h5>
         </div>
     {% else %}
         <div class="box-plano1-1">
-            <h5><i class="fas fa-chart-bar margem-icones-menu"></i>MEU ACESSO</h5>
+            <h5><i class="fas fa-chart-bar margem-icones-menu"></i>PERFIL ESCOLAR</h5>
         </div>
     {% endif %}
 
@@ -32,26 +32,27 @@
     <div class="box-profile1-1" style="margin-left: 10px">
         <div class="box-profile1-1-1" style="margin-left: 10px">
             <div class="classe-icone-perfil">
-            <i class="fa fa-user"></i>
+            <i class="fas fa-graduation-cap"></i>
             </div>
-            {% if user.classificacao.primeira_senha %}
-            <a class="" href="{% url 'reset_password' %}" style="font-size: 12px;">(alterar senha)</a>
-            {% endif %}
         </div>
         <div class="box-profile1-1-2">
             <div class="box-profile1-1-2-1">
                 <h5>Nome: </h5>
-                <p>{{user.first_name}}</p>
-                <a class="" href="{% url 'abre_altera_nome' user.id 'alt_name' %}" style="font-size: 12px;padding-left: 0;"> (alterar)</a>
+                <p>{{chave_escola.last_name}}</p>
             </div>
             <div class="box-profile1-1-2-1">
-                <h5>Cargo: </h5>
+                <h5>Diretor: </h5>
                 {% if user.classificacao.tipo_de_acesso == 'Func_sec' %}
-                <p>{{user.last_name}}</p>
+                    {% if chave_diretor %}
+                    <p>{{chave_diretor.first_name}}</p>
+                    <a class="" href="#" style="font-size: 12px;padding-left: 0;"> (alterar)</a>
+                    {% else %}
+                    <a class="" href="#" style="font-size: 12px;padding-left: 0;"> (cadastrar)</a>
+                    {% endif %}
                 {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
-                <p>Diretor(a)</p>
+                <p>{{chave_diretor.first_name}}</p>
                 {% elif user.classificacao.tipo_de_acesso == 'Funcionario' %}
-                <p>{{user.last_name}}</p>
+                <p>{{chave_diretor.first_name}}</p>
                 {% endif %}
             </div>
             <div class="box-profile1-1-2-1" style="flex: 1;">
@@ -62,57 +63,48 @@
 
     <div class="box-profile1-2 tooltip5" style="margin-left: 10px;display: none;">
         <h5>Nome: </h5>
-        <p style="min-width: 170px">{{user.first_name|truncatechars:27}}</p>
-        <span class="tooltiptext5" style="left: 100px;width: 200px; min-width: 120px">{{user.first_name}}</span>
-        <a class="" href="{% url 'abre_altera_nome' user.id 'alt_name' %}" style="font-size: 12px;padding-left: 2px;"> (alterar)</a>
+        <p style="min-width: 170px">{{chave_escola.last_name|truncatechars:27}}</p>
+        <span class="tooltiptext5" style="left: 100px;width: 200px; min-width: 120px">{{chave_escola.last_name}}</span>
     </div>
     <div class="box-profile1-2" style="margin-left: 10px;display: none;">
-        <h5>Cargo: </h5>
+        <h5>Diretor: </h5>
         {% if user.classificacao.tipo_de_acesso == 'Func_sec' %}
-        <p>{{user.last_name}}</p>
+        <p>{{chave_diretor.first_name}}</p>
+        <a class="" href="#" style="font-size: 12px;padding-left: 0;"> (alterar)</a>
         {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
-        <p>Diretor(a)</p>
+        <p>{{chave_diretor.first_name}}</p>
         {% elif user.classificacao.tipo_de_acesso == 'Funcionario' %}
-        <p>{{user.last_name}}</p>
+        <p>{{chave_diretor.first_name}}</p>
         {% endif %}
     </div>
     <div class="box-profile1-2 tooltip5" style="margin-left: 10px">
         
         {% if user.classificacao.tipo_de_acesso == 'Func_sec' %}
-        <h5>Matriz: </h5>
-        <p>{{user.classificacao.matriz|truncatechars:27}}</p>
-        <span class="tooltiptext5" style="left: 100px;width: 200px; min-width: 120px">{{user.classificacao.matriz}}</span>
+        <h5>Município: </h5>
+        <p>{{chave_escola.classificacao.municipio|truncatechars:27}}</p>
+        <span class="tooltiptext5" style="left: 100px;width: 200px; min-width: 120px">{{chave_escola.classificacao.municipio}}</span>
         {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
-        <h5>Escola: </h5>
-        <p>{{user.classificacao.matriz|truncatechars:27}}</p>
-        <span class="tooltiptext5" style="left: 100px;width: 200px; min-width: 120px">{{user.classificacao.matriz}}</span>
+        <h5>Município: </h5>
+        <p>{{chave_escola.classificacao.municipio|truncatechars:27}}</p>
+        <span class="tooltiptext5" style="left: 100px;width: 200px; min-width: 120px">{{chave_escola.classificacao.municipio}}</span>
         {% elif user.classificacao.tipo_de_acesso == 'Funcionario' %}
-        <h5>Matriz: </h5>
-        <p>{{user.classificacao.matriz|truncatechars:27}}</p>
-        <span class="tooltiptext5" style="left: 100px;width: 200px; min-width: 120px">{{user.classificacao.matriz}}</span>
+        <h5>Município: </h5>
+        <p>{{chave_escola.classificacao.municipio|truncatechars:27}}}</p>
+        <span class="tooltiptext5" style="left: 100px;width: 200px; min-width: 120px">{{chave_escola.classificacao.municipio}}</span>
         {% endif %}
         
     </div>
     <div class="box-profile1-2" style="margin-left: 10px">
-        <h5>E-mail: </h5>
-        {% if user.classificacao.email_ativado %}
-        <p>{{user.email}}</p>
-        {% elif not user.email %}
-        <p>( Cadastrar e-mail )</p>
-        {% else %}
-        <p>( Verifique sua caixa de entrada )</p>
-        {% endif %}
-        <a class="" href="{% url 'abre_altera_mail' user.id 'chng_mail' %}" style="font-size: 12px;padding-left: 2px;"> (alterar/confirmar)</a>
+        <h5>NTE: </h5>
+        <p>{{chave_escola.classificacao.nte}}</p>
+    </div>
+    <div class="box-profile1-2" style="margin-left: 10px">
+        <h5>Código da escola: </h5>
+        <p>{{chave_escola.classificacao.codigo_escola}}</p>
     </div>
     <div class="box-profile1-2" style="margin-left: 10px;border: none;">
-        <h5>Assinatura: </h5>
-        {% if user.classificacao.assinatura %}
-        <img class="" src="{{ user.classificacao.assinatura.url }}" alt="">
-        {% else %}
-        {% tag_first_last_names user.first_name as nome_em_lista %}
-        <h4 class="assinatura-style">{{nome_em_lista|first}} {{nome_em_lista|last}}</h4>
-        {% endif %}
-        <a class="" href="{% url 'abre_altera_assinatura' user.id 'alt_sign' %}" style="font-size: 12px;padding-left: 2px;"> (alterar)</a>
+        <h5>Funcionários cadastrados: </h5>
+        <p>{{chave_escola.classificacao.quant_funcionarios}}</p>
     </div>
         
     

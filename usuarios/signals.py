@@ -55,7 +55,9 @@ def user_updated(sender, **kwargs):
         except User.DoesNotExist:
             old_password = None
         if new_password != old_password:
-            user.classificacao.primeira_senha = False
-            user.classificacao.save()
-            # do what you need here
+            classific_usuario = Classificacao.objects.filter(user=user)
+            if classific_usuario:
+                user.classificacao.primeira_senha = False
+                user.classificacao.save()
+                # do what you need here
                     

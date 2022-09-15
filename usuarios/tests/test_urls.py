@@ -15,6 +15,16 @@ class Testurls(SimpleTestCase):
         # print(resolve(url))
         self.assertEquals(resolve(url).func, cadastros_secretaria)
 
+    def test_abre_altera_cargo_resolve(self):
+        url = reverse('abre_altera_cargo', args=[1])
+        # print(resolve(url))
+        self.assertEquals(resolve(url).func, altera_cargo)
+
+    def test_altera_cargo_resolve(self):
+        url = reverse('altera_cargo', args=[1,'slug'])
+        # print(resolve(url))
+        self.assertEquals(resolve(url).func, altera_cargo)
+    
     def test_cadastrar_funcionarios_resolve(self):
         url = reverse('cadastrar_funcionarios', args=[1])
         # print(resolve(url))
@@ -24,6 +34,11 @@ class Testurls(SimpleTestCase):
         url = reverse('cadastrar_funcionarios_secretaria', args=[1,'slug'])
         # print(resolve(url))
         self.assertEquals(resolve(url).func, cadastros_secretaria)
+
+    def test_cadastrar_funcionarios_mensagem_resolve(self):
+        url = reverse('cadastrar_funcionarios_mensagem', args=[1,'slug'])
+        # print(resolve(url))
+        self.assertEquals(resolve(url).func, cadastros_escola)
 
     def test_cadastrar_funcionarios_secretaria_mensagem_resolve(self):
         url = reverse('cadastrar_funcionarios_secretaria_mensagem', args=[1,'slug','slug'])
@@ -90,6 +105,11 @@ class Testurls(SimpleTestCase):
         # print(resolve(url))
         self.assertEquals(resolve(url).func, meu_acesso)
 
+    def test_altera_nome_resolve(self):
+        url = reverse('altera_nome', args=[1])
+        # print(resolve(url))
+        self.assertEquals(resolve(url).func, altera_nome)
+
     def test_abre_altera_nome_resolve(self):
         url = reverse('abre_altera_nome', args=[1,'slug'])
         # print(resolve(url))
@@ -109,5 +129,40 @@ class Testurls(SimpleTestCase):
         url = reverse('apaga_assinatura', args=[1])
         # print(resolve(url))
         self.assertEquals(resolve(url).func, remove_assinatura)
+
+    def test_altera_mail_resolve(self):
+        url = reverse('altera_mail', args=[1])
+        # print(resolve(url))
+        self.assertEquals(resolve(url).func, altera_mail)
+
+    def test_enviando_email_resolve(self):
+        url = reverse('enviando_email')
+        # print(resolve(url))
+        self.assertEquals(resolve(url).func, envia_email)
+
+    def test_apaga_mail_resolve(self):
+        url = reverse('apaga_mail', args=[1])
+        # print(resolve(url))
+        self.assertEquals(resolve(url).func, remove_mail)
+
+    def test_ativacao_email_resolve(self):
+        url = reverse('ativacao_email', args=['text','text'])
+        # print(resolve(url))
+        self.assertEquals(resolve(url).func, ativacao_email)
+
+    def test_abre_altera_mail_resolve(self):
+        url = reverse('abre_altera_mail', args=[1,'slug'])
+        # print(resolve(url))
+        self.assertEquals(resolve(url).func, meu_acesso)
+    
+    def test_abre_meu_acesso_mensagem_resolve(self):
+        url = reverse('abre_meu_acesso_mensagem', args=[1,'slug'])
+        # print(resolve(url))
+        self.assertEquals(resolve(url).func, meu_acesso)
+
+    def test_profile_escola_resolve(self):
+        url = reverse('profile_escola', args=[1])
+        # print(resolve(url))
+        self.assertEquals(resolve(url).func, profile_escola)
 
     

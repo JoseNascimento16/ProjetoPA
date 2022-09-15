@@ -5,6 +5,7 @@ from fia.models import Modelo_fia
 from plano_de_acao.models import Plano_de_acao
 from usuarios.models import Classificacao
 
+
 register = template.Library()
 
 @register.simple_tag
@@ -120,3 +121,10 @@ def tag_verifica_membro_colegiado(objeto_plano, user):
         return True
     else:
         return False
+
+@register.simple_tag
+def tag_verifica_diretor(objeto_escola):
+    from usuarios.alteracoes import identifica_diretor
+    diretor = identifica_diretor(objeto_escola.id)
+    
+    return diretor
