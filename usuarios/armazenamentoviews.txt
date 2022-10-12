@@ -13,7 +13,7 @@
 
     # user = get_object_or_404(User, pk=request.user.id)
     # u = User.objects.get(username=user)
-    # categoria = u.classificacao.tipo_de_acesso
+    # categoria = u.groups
 
     #pega todas as entradas
     # username_usuario_ativo = get_object_or_404(User, pk=request.user.id)

@@ -8,7 +8,7 @@
 
 
 <div class="box-plano1">
-    {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
+    {% if user.groups.get.name == 'Secretaria' or user.groups.get.name == 'Func_sec' %}
     <div class="box-plano1-1 display-flex">
         <h5><i class="fas fa-chart-bar margem-icones-menu"></i>PLANOS DE AÇÃO</h5>
         <form class="tooltip5" action="{% url 'pagina_planos_de_acao_pesquisa' 'search' %}" method="POST">
@@ -18,7 +18,7 @@
             <button class="botao-pesquisa" type="submit"><i class="fas fa-search margem-icones-menu"></i></button>                                  
         </form>
     </div>
-    {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
+    {% elif user.groups.get.name == 'Diretor_escola' %}
         <div class="box-plano1-1 display-flex">
             <h5><i class="fas fa-chart-bar margem-icones-menu"></i>MEUS PLANOS DE AÇÃO</h5>
             <form class="tooltip5" action="{% url 'pagina_planos_de_acao_pesquisa' 'search' %}" method="POST">
@@ -53,18 +53,18 @@
         <!-- <h5 class="flex-02"></h5> -->
         <h5>Visualizar</h5>
         <h5>Visualizar</h5>
-        {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
+        {% if user.groups.get.name == 'Secretaria' or user.groups.get.name == 'Func_sec' %}
         <h5 class="card-nome-instituicao" style="flex: 2;">Instituição de ensino:</h5>
-        {% if user.classificacao.tipo_de_acesso == 'Func_sec' %}
+        {% if user.groups.get.name == 'Func_sec' %}
         <h5></h5>
         {% endif %}
-        {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
+        {% elif user.groups.get.name == 'Diretor_escola' %}
         <h5 class="h5-situacao" style="min-width: 162px">Situação:</h5>
         <h5>Ação:</h5>
             {% if not chave_pagina_correcoes %}
             <h5></h5>
             {% endif %}
-        {% elif user.classificacao.tipo_de_acesso == 'Funcionario' %}
+        {% elif user.groups.get.name == 'Funcionario' %}
         <h5>Situação:</h5>
         <h5>Ação:</h5>
         {% endif %}
@@ -125,14 +125,14 @@
                     {% endif %}
                 
                 <!-- POS 4 SITUAÇÃO -->
-                {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
+                {% if user.groups.get.name == 'Secretaria' or user.groups.get.name == 'Func_sec' %}
                 <p class="clear-2 itens-cards-planos card-nome-instituicao" style="flex: 2;">
                     <a class="tooltip5" href="#">
-                        <i class="fas fa-school margem-icones-menu"></i>{{elemento.usuario.last_name|truncatechars:27}}
-                        <span class="tooltiptext5" style="left: 100px; width: 300px">{{elemento.usuario.last_name}}</span>
+                        <i class="fas fa-school margem-icones-menu"></i>{{elemento.escola.nome|truncatechars:27}}
+                        <span class="tooltiptext5" style="left: 100px; width: 300px">{{elemento.escola.nome}}</span>
                     </a>
                 </p>
-                {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
+                {% elif user.groups.get.name == 'Diretor_escola' %}
                     {% if elemento.situacao == 'Publicado' and elemento.devolvido == True and elemento.correcoes_a_fazer == 0 and elemento.pre_assinatura == True %}
                     <p class="clear-2 itens-cards-planos p-situacao">
                         <a href="#">
@@ -146,7 +146,7 @@
                         </a>
                     </p>
                     {% endif %}
-                {% elif user.classificacao.tipo_de_acesso == 'Funcionario' %}
+                {% elif user.groups.get.name == 'Funcionario' %}
                 <p class="clear-2 itens-cards-planos p-situacao">
                     <a class="a-clear-href" href="#">
                         {{ elemento.situacao }}
@@ -155,7 +155,7 @@
                 {% endif %}
 
                 <!-- POS 4.1 VAZIO OU ACAO -->
-                {% if user.classificacao.tipo_de_acesso == 'Func_sec' %}
+                {% if user.groups.get.name == 'Func_sec' %}
                     {% if elemento.situacao == 'Em desenvolvimento' or elemento.situacao == 'Necessita correção' or elemento.situacao == 'Pronto' or elemento.situacao == 'Publicado' or elemento.situacao == 'Aprovado' or elemento.situacao == 'Finalizado' %}
                         <p class="itens-cards-planos">
                             -----
@@ -166,7 +166,7 @@
                             -----
                         </p>
                     {% endif %}
-                {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
+                {% elif user.groups.get.name == 'Diretor_escola' %}
                     {% if not chave_pagina_correcoes %}
                         {% if elemento.situacao == 'Assinado' or elemento.situacao == 'Inteiramente assinado' or elemento.situacao == 'Necessita correção' or elemento.situacao == 'Corrigido pela escola' or elemento.situacao == 'Pendente' or elemento.situacao == 'Finalizado' %}
                             <p class="itens-cards-planos">
@@ -178,7 +178,7 @@
 
                 
                 <!-- POS 5 BOTAO DE AÇÕES FUNC_SEC -->
-                {% if user.classificacao.tipo_de_acesso == 'Func_sec' %}
+                {% if user.groups.get.name == 'Func_sec' %}
                 
                     {% if elemento.situacao == 'Assinado' %}
                             
@@ -294,7 +294,7 @@
                 {% endif %}
                 
                 <!-- POS 5 BOTÃO DE AÇÕES ESCOLA-->
-                {% if user.classificacao.tipo_de_acesso == 'Escola' %}
+                {% if user.groups.get.name == 'Diretor_escola' %}
 
                     {% if elemento.situacao == 'Em desenvolvimento' %}
                     <div class="box-botao-cadastro1 itens-cards-planos">
@@ -409,7 +409,7 @@
                 {% endif %}
 
                 <!-- POS 5 BOTÃO DE AÇÕES FUNCIONÁRIOS -->
-                {% if user.classificacao.tipo_de_acesso == 'Funcionario' %}
+                {% if user.groups.get.name == 'Funcionario' %}
 
                     {% if not elemento.tipo_fia %}
 
@@ -514,8 +514,8 @@
             
                 <div class="box-plano-accordion accordion-planos" style="margin-left: 0;">
                     <div class="div-info-accordion">
-                        <div class="div-corretor-flex tooltip5" style="display: flex"> <h5  style="min-width: 148px">Instituição de ensino:</h5><p style="font-style: italic;margin-left: 0;">{{elemento.usuario.last_name|truncatechars:27}}</p>
-                            <span class="tooltiptext5" style="left: 100px; width: 300px">{{elemento.usuario.last_name}}</span>
+                        <div class="div-corretor-flex tooltip5" style="display: flex"> <h5  style="min-width: 148px">Instituição de ensino:</h5><p style="font-style: italic;margin-left: 0;">{{elemento.escola.nome|truncatechars:27}}</p>
+                            <span class="tooltiptext5" style="left: 100px; width: 300px">{{elemento.escola.nome}}</span>
                         </div>
                         {% if elemento.situacao == 'Publicado' and elemento.devolvido == True and elemento.correcoes_a_fazer == 0 and elemento.pre_assinatura == True %}
                         <div class="div-corretor-flex"> <h5>Situação:</h5><p style="font-style: italic;">Pré-aprovado (ver legenda)</p> </div>
@@ -535,14 +535,14 @@
                     </div>
 
                     <!-- MOSTRA QUAIS AS ASSINATURAS DA ESCOLA -->
-                    {% tag_len_funcionarios chave_classificacoes elemento.usuario.last_name elemento as len_funcionarios %}
+                    {% tag_len_funcionarios chave_classificacoes elemento.escola.nome elemento as len_funcionarios %}
                     {% tag_len_assinaturas elemento.classificacao_set.all elemento as len_assinaturas %}
                     <!-- aprovado -->
                     {% if elemento.situacao == 'Aprovado' or elemento.situacao == 'Pronto' or elemento.situacao == 'Assinado' or elemento.situacao == 'Inteiramente assinado' or elemento.situacao == 'Finalizado' %}
                     <div class="div-assinaturas-escolas">
                         <h5 style="margin-left: 0">Assinaturas Escola ({{len_assinaturas}}/{{len_funcionarios}}):</h5>
                         {% for item in elemento.classificacao_set.all %}
-                            {% if item.tipo_de_acesso == 'Escola' or item.tipo_de_acesso == 'Funcionario' %}
+                            {% if item.user.groups.get.name == 'Diretor_escola' or item.user.groups.get.name == 'Funcionario' %}
                             <p>- {{item}}</p>
                             {% endif %}
                         {% endfor %}
@@ -557,7 +557,7 @@
                     <div class="div-assinaturas-escolas">
                         <h5 style="margin-left: 0">Assinaturas Escola ({{len_assinaturas}}/{{len_funcionarios}}):</h5>
                         {% for item in elemento.classificacao_set.all %}
-                            {% if item.tipo_de_acesso == 'Escola' or item.tipo_de_acesso == 'Funcionario' %}
+                            {% if item.user.groups.get.name == 'Diretor_escola' or item.user.groups.get.name == 'Funcionario' %}
                             <p>- {{item}}</p>
                             {% endif %}
                         {% endfor %}
@@ -575,7 +575,7 @@
                     <div class="div-assinaturas-suprot">
                         <h5 style="margin-left: 0">Assinaturas SUPROT ({{len_suprof}}/3):</h5>
                         {% for item in elemento.classificacao_set.all %}
-                            {% if item.tipo_de_acesso == 'Func_sec' %}
+                            {% if item.user.groups.get.name == 'Func_sec' %}
                             <p>- {{item}}</p>
                             {% endif %}
                         {% endfor %}
@@ -601,7 +601,7 @@
             {% endif %}
         </div>
         {% endif %}
-        {% if user.classificacao.tipo_de_acesso == 'Escola' %}
+        {% if user.groups.get.name == 'Diretor_escola' %}
         <div class="div-botoes-criar">
             <div class="box-botao-cadastro1 div-botoes-criar2">
                 <a id="chama-form-plano" class="myButton a-cadastros a-criar-planos">Criar Plano</a>

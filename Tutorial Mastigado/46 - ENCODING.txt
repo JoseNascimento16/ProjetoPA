@@ -7,5 +7,7 @@ bytes_to_b64 = base64.b64encode(forcebytes_uid) # Converte BYTES para BASE64
 b64_to_b64urlsafe = urlsafe_base64_encode(base64EncodedStr) # Converte BASE64 para URLSAFE_BASE64
 
 b64urlsafe_to_b64 = urlsafe_base64_decode(uidb64_urlsafe) # Converte URLBASE64 para BASE64
-b64_to_bytes = base64.b64decode(uid_bytes) # Converte BASE64 para BYTES
-bytes_to_str = force_str(uid_b64) # Converte BYTES para STR
+b64_to_bytes = base64.b64decode(b64urlsafe_to_b64) # Converte BASE64 para BYTES
+bytes_to_str = force_str(b64_to_bytes) # Converte BYTES para STR
+ou
+bytes_to_int = int(force_str(b64_to_bytes)) # Converte BYTES para INT

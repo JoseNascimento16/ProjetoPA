@@ -2,22 +2,22 @@
 
 <!-- MENU -->
 <div class="classe-div-menu-lateral-edicao menu-edicao">
-    {% if user.classificacao.tipo_de_acesso == 'Escola' %}
+    {% if user.groups.get.name == 'Diretor_escola' %}
     <div class="classe-menu-lateral1-edicao borda2"><span class="span-menu-edicao">Menu de edição</span><a><i class="fa-solid fa-arrow-right-arrow-left margem-left-10 icone-alternancia"></i></a></div>
     {% else %}
     <div class="classe-menu-lateral1-edicao borda2"><span class="span-menu-edicao">Menu de edição</span></div>
     {% endif %}
     <div class="classe-menu-lateral1-edicao borda1"><span class="span-menu">Plano: {{ chave_planos.ano_referencia }}</span></div>
 
-        {% if user.classificacao.tipo_de_acesso == 'Escola' %}
+        {% if user.groups.get.name == 'Diretor_escola' %}
         <ul class="classe-menu-lateral1-edicao itens clear-edicao"><a class="item-principal-menu-edicao ordens-menu" href="#"><i class="fa fa fa-tasks margem-icones-menu"></i>Ordens</a>
             <a class="item-principal-menu-edicao sinal-ordens-js desabilita-js" href="{% url 'chamando_1_plano' chave_planos.id %}"><i class="fas fa-plus pull-right "></i></a>
             <span id="id-tooltip5-menu" class="tooltiptext5-tabela">Criar ordens!</span>
 
             <ul class="sub-menu-edicao sub-menu-edicao-ordens">
                 <!-- MODIFICA TODAS -->
-                {% if chave_todas_ordens.comando_todas %}
-                    {% if not chave_todas_ordens.todas_inseridas %}
+                {% if chave_planos.comando_todas %}
+                    {% if not chave_planos.todas_inseridas %}
                         <li class="sub-menu-item-edicao"><a href="{% url 'chamando_acao_plano_modifica_todas' chave_planos.id %}" class="desabilita-js" method="POST">Adicionar todas      <i class="fas fa-plus"></i></a>
                         </li>
                         {% for elemento in chave_ordens2 %}
@@ -35,8 +35,8 @@
                 {% endif %}
 
                 <!-- MODIFICA INDIVIDUAL -->
-                {% if chave_todas_ordens.comando_individual %}
-                    {% if not chave_todas_ordens.todas_inseridas %}
+                {% if chave_planos.comando_individual %}
+                    {% if not chave_planos.todas_inseridas %}
                         <li class="sub-menu-item-edicao"><a href="{% url 'chamando_acao_plano_modifica_todas' chave_planos.id %}" class="desabilita-js" method="POST">Adicionar todas      <i class="fas fa-plus"></i></a>
                         </li>
                     {% else %}
@@ -60,7 +60,7 @@
         </ul>
         {% endif %} 
 
-        {% if user.classificacao.tipo_de_acesso == 'Escola' %}
+        {% if user.groups.get.name == 'Diretor_escola' %}
 
             <ul class="classe-menu-lateral1-edicao itens clear-edicao"><a class="item-principal-menu-edicao codigos-menu" href="#"><i class="fa fa-table margem-icones-menu"></i>Códigos <i class="arrow fa fa-angle-right pull-right setinha"></i></a>
 
@@ -105,7 +105,7 @@
 
         {% endif %}
 
-        {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
+        {% if user.groups.get.name == 'Secretaria' or user.groups.get.name == 'Func_sec' %}
         <ul class="classe-menu-lateral1-edicao itens clear-edicao"><a class="item-principal-menu-edicao" href="#"><i class="fa fa fa-tasks margem-icones-menu"></i>Sugestões em:<i class="arrow fa fa-angle-right pull-right setinha"></i></a>
             <ul class="sub-menu-edicao">
                 {% for elemento in chave2_lista_ordens %}

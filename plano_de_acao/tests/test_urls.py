@@ -235,11 +235,6 @@ class Testurls(SimpleTestCase):
         # print(resolve(url))
         self.assertEquals(resolve(url).func, altera_corretor)
 
-    def test_pesquisa_plano_resolve(self):
-        url = reverse('pesquisar_plano')
-        # print(resolve(url))
-        self.assertEquals(resolve(url).func, pesquisa_plano)
-
     def test_pagina_plano_pesquisa_resolve(self):
         url = reverse('pagina_planos_de_acao_pesquisa', args=['slug'])
         # print(resolve(url))

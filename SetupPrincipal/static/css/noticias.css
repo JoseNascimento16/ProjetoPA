@@ -61,7 +61,7 @@
 }
 
 .sub2-card-noticia{
-    width: 300px;
+    width: 500px;
 }
     .sub2-card-noticia h2{
         color: #292874;
@@ -69,5 +69,5 @@
     }
 
     .sub2-card-noticia p{
-        text-align: justify ;
+        text-align: left ;
     }

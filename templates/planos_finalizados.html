@@ -18,12 +18,12 @@
         <h5 class="flex-02"></h5>
         <h5>Visualizar</h5>
         <h5>Visualizar</h5>
-        {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
+        {% if user.groups.get.name == 'Secretaria' or user.groups.get.name == 'Func_sec' %}
         <h5>Criado por:</h5>
         <h5>Situação:</h5>
-        {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
+        {% elif user.groups.get.name == 'Diretor_escola' %}
         <h5>Situação:</h5>
-        {% elif user.classificacao.tipo_de_acesso == 'Funcionario' %}
+        {% elif user.groups.get.name == 'Funcionario' %}
         <h5>Situação:</h5>
         {% endif %}
     </div>
@@ -52,11 +52,11 @@
                         <i class="fas fa-eye margem-icones-menu"></i>Despesas
                     </a>
                 </p>
-                {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
+                {% if user.groups.get.name == 'Secretaria' or user.groups.get.name == 'Func_sec' %}
                 <p class="clear-2 itens-cards-planos">
                     <a href="#" class="tooltip5">
-                        <i class="fa fa-user margem-icones-menu"></i>{{ elemento.usuario.last_name|truncatechars:25 }}
-                        <span class="tooltiptext5" style="left: 100px; width: 300px">{{elemento.usuario.last_name}}</span>
+                        <i class="fa fa-user margem-icones-menu"></i>{{ elemento.escola.nome|truncatechars:25 }}
+                        <span class="tooltiptext5" style="left: 100px; width: 300px">{{elemento.escola.nome}}</span>
                     </a>
                 </p>
                 {% endif %}
@@ -73,8 +73,8 @@
             
             <div class="box-plano-accordion accordion-planos" style="margin-left: 0;">
                 <div class="div-info-accordion">
-                    <div class="div-corretor-flex tooltip5" style="display: flex"> <h5  style="min-width: 148px">Instituição de ensino:</h5><p style="font-style: italic;margin-left: 0;">{{elemento.usuario.last_name|truncatechars:27}}</p>
-                        <span class="tooltiptext5" style="left: 100px; width: 300px">{{elemento.usuario.last_name}}</span>
+                    <div class="div-corretor-flex tooltip5" style="display: flex"> <h5  style="min-width: 148px">Instituição de ensino:</h5><p style="font-style: italic;margin-left: 0;">{{elemento.escola.nome|truncatechars:27}}</p>
+                        <span class="tooltiptext5" style="left: 100px; width: 300px">{{elemento.escola.nome}}</span>
                     </div>
                     <div class="div-corretor-flex"> <h5>Situação:</h5><p style="font-style: italic;">{{elemento.situacao}} (ver legenda)</p> </div>
                     {% if elemento.corretor_plano != None %}
@@ -89,13 +89,13 @@
                         <div class="div-corretor-flex"> <h5>Corretor:</h5><p style="font-style: italic;">-------</p> </div>
                     {% endif %}
                 </div>
-                {% tag_len_funcionarios chave_classificacoes elemento.usuario.last_name as len_funcionarios %}
+                {% tag_len_funcionarios chave_classificacoes elemento.escola.nome as len_funcionarios %}
                 {% tag_len_assinaturas elemento.classificacao_set.all as len_assinaturas %}
                 {% if elemento.situacao == 'Aprovado' or elemento.situacao == 'Pronto' or elemento.situacao == 'Assinado' or elemento.situacao == 'Inteiramente assinado' or elemento.situacao == 'Finalizado' %}
                 <div class="div-assinaturas-escolas">
                     <h5 style="margin-left: 0">Assinaturas Escola ({{len_assinaturas}}/{{len_funcionarios}}):</h5>
                     {% for item in elemento.classificacao_set.all %}
-                        {% if item.tipo_de_acesso == 'Escola' or item.tipo_de_acesso == 'Funcionario' %}
+                        {% if item.user.groups.get.name == 'Diretor_escola' or item.user.groups.get.name == 'Funcionario' %}
                         <p>- {{item}}</p>
                         {% endif %}
                     {% endfor %}
@@ -107,7 +107,7 @@
                 <div class="div-assinaturas-suprot">
                     <h5 style="margin-left: 0">Assinaturas SUPROT ({{len_suprof}}/{{len_alto_cargo}}):</h5>
                     {% for item in elemento.classificacao_set.all %}
-                        {% if item.tipo_de_acesso == 'Func_sec' %}
+                        {% if item.user.groups.get.name == 'Func_sec' %}
                         <p>- {{item}}</p>
                         {% endif %}
                     {% endfor %}

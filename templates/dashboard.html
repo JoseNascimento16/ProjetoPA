@@ -17,6 +17,24 @@
     </div>
     
     <div class="div-cards-noticias">
+        {% if chave_escolas_sem_diretor %}
+            {% for escola in chave_escolas_sem_diretor %}
+            <div class="card-noticia">
+                <div class="sub-card-noticia1">
+                    <div class="sub-card-noticia1-img">
+                        <i class="fas fa-graduation-cap fa-9x"></i>
+                    </div>
+                </div>
+                <div class="sub-card-noticia2">
+                    <div class="sub2-card-noticia">
+                        <h2>{{escola.nome}}</h2>
+                        <p>Não possui um(a) diretor(a) cadastrado(a)</p>
+                        <a class="" href="#" style="font-size: 12px;padding-left: 0;"> (cadastrar)</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% endif %}
         <div class="card-noticia">
             <div class="sub-card-noticia1">
                 <div class="sub-card-noticia1-img">

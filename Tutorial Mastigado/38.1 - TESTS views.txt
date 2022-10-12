@@ -1,0 +1,63 @@
+https://docs.djangoproject.com/en/dev/topics/testing/tools/
+https://docs.djangoproject.com/en/4.0/topics/testing/tools/#assertions
+
+# Usa o path da URL. Note que colocamos '/' no inicio do path, mesmo não tendo essa '/' na URLs.py
+- response = self.client.get('/envia_mail/') 
+
+# Usa o nome da URL
+- response = self.client.get(reverse('enviando_email')) 
+
+# Usa o nome da URL com KWARGS
+- response = self.client.get(reverse('enviando_email', kwargs={'key':'value', 'key2':'value2'})) 
+self.assertEqual(302, response.status_code)
+
+response = funcao_qualquer(self.client.get('envia_mail/')) # Simula um request numa função especifica da views
+
+# Verifica se valor da variável de contexto = True (Exatamente este valor)
+   self.assertEquals(response.context['chave_abre_modal_edicao'], True)
+
+# Verifica se variavel de contexto EXISTE (objetos ou querysets preenchidos com ao menos 1 item)
+   self.assertTrue(response.context['dicionario_planos'])
+
+# Verifica se variavel de contexto NÃO EXISTE (isso inclui querysets vazios(queryset[]), var='', var=False)
+   self.assertFalse(response.context['dicionario_planos'])
+
+# usamos o path da URL, e uma '/' no inicio. Aqui também vão os parametros, caso a URL precise
+self.assertRedirects(response, '/planos_de_acao/'+str(self.plano.id)+'/msg')
+
+# Ao testar se um queryset está vazio ou preenchido com objetos. Verificamos assim:
+   self.assertTrue(response.context['dicionario_planos'])
+   # Se tiver algum objeto: passa no teste
+   # Se for um queryset 'vazio' falha no teste
+
+
+
+# Para testar campos com imagens:
+   from django.core.files.uploadedfile import SimpleUploadedFile
+   self.modelo.imagem = SimpleUploadedFile(name='test_image.jpg', content=open('image_path', 'rb').read(), content_type='image/jpeg')
+   self.modelo.save()
+   - Desta forma temos uma imagem salva num campo de imagem de um modelo para testarmos
+
+# Para simular o ToDataURL na criação de imagens em formato de URLdata em codigo python para serem utilizadas nos testes:
+   - Precisamos do seguinte formato: 'data:image/jpeg;base64,yRGygkVJ4o/4JDf...' e conseguimos da seguinte forma:
+	imagem = SimpleUploadedFile(name='test_image.jpg', content=open('image_path.jpg', 'rb').read(), content_type='image/jpeg')
+        imgTo_base64_str = base64.b64encode(imagem.read()).decode('utf-8')
+        prefixo = 'data:image/jpeg;base64,'
+        DataUrl = prefixo + imgTo_base64_str
+    - E desta forma conseguimos enviar o DataUrl num POST dos testes para ser tratada na views
+
+ERROS
+#########################################################
+# BadHeaderError ao chamar uma função_B somente para receber o seu contexto de volta na função_A e renderizar o form com os erros
+- Acontece que ao chamar a função_B passavamos alguns parametros que culminavam num RENDER ou num REDIRECT prematuro antes mesmo de o contexto ser retornado para a função_A que por sua vez, tentava adicionar uns paramentros no contexto que JÀ HAVIA sido renderizado. Daí gerava esse erro
+- A solução, foi verificar ONDE na função_B que caia no render/redirect prematuro, e impedir isso, para que assim o código pudesse chegar no return do contexto para a função_A.
+
+#########################################################
+ERRO - NoReverseMatch: Reverse for 'editando_ordem' with arguments '(1, '')' not found
+- Este erro aparentava ser problema na chamada do response = self.client.get(reverse('url_name', kwargs...)..., como se eu não estivesse passando o segundo argumento necessário pelo kwargs. Porém estava sendo passado sim.
+- O erro estava dando quando no final do teste de erro num formulario eu renderizava a pagina para mostrar os erros do form a partir de um contexto puxado de uma outra função. E nesta situação a página esperava 2 objetos como contexto, porém o contexto puxado da outra função não trazia o segundo objeto no contexto, e eu também não me atentei de inseri-lo.
+- A solução foi simples: inserir o objeto no contexto para renderizar a página.
+- Dica: usar o print como debug para seguir o caminho do erro
+
+
+

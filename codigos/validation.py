@@ -5,13 +5,13 @@ from .models import Ordens
 def campo_tem_algum_numero(valor_identificacao, identificacao, lista_de_erros):
     if valor_identificacao:
         if any(char.isdigit() for char in valor_identificacao):
-            print('Campo tem numero')
+            # print('Campo tem numero')
             lista_de_erros[identificacao] = 'Identificação inválida: não inclua números'
 
 def campo_possui_mais_de_1_caractere(valor_identificacao, identificacao, lista_de_erros):
     if valor_identificacao:
         if len(valor_identificacao) > 1 :
-            print('Campo possui mais de um caractere')
+            # print('Campo possui mais de um caractere')
             lista_de_erros[identificacao] = 'Identificação inválida: Use somente 1 letra'
 
 def campos_sao_iguais(valor_especificacao, valor_justificativa, justificativa, lista_de_erros):

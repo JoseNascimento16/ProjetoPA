@@ -15,13 +15,13 @@
         <h5 class="flex-02"></h5>
         <h5>Visualizar</h5>
         <h5>Visualizar</h5>
-        {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
+        {% if user.groups.get.name == 'Secretaria' or user.groups.get.name == 'Func_sec' %}
         <h5>Criado por:</h5>
         <h5>Situação:</h5>
-        {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
+        {% elif user.groups.get.name == 'Diretor_escola' %}
         <h5>Situação:</h5>
         <h5>Ação:</h5>
-        {% elif user.classificacao.tipo_de_acesso == 'Funcionario' %}
+        {% elif user.groups.get.name == 'Funcionario' %}
         <h5>Situação:</h5>
         {% endif %}
     </div>
@@ -49,11 +49,11 @@
                         <i class="fas fa-eye margem-icones-menu"></i>Despesas
                     </a>
                 </p>
-                {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
+                {% if user.groups.get.name == 'Secretaria' or user.groups.get.name == 'Func_sec' %}
                 <p class="clear-2 itens-cards-planos">
                     <a class="tooltip5">
-                        <i class="fa fa-user margem-icones-menu"></i>{{ elemento.usuario.last_name|truncatechars:25 }}
-                        <span class="tooltiptext5" style="left: 100px; width: 300px">{{elemento.usuario.last_name}}</span>
+                        <i class="fa fa-user margem-icones-menu"></i>{{ elemento.escola.nome|truncatechars:25 }}
+                        <span class="tooltiptext5" style="left: 100px; width: 300px">{{elemento.escola.nome}}</span>
                     </a>
                 </p>
                 {% endif %}
@@ -64,7 +64,7 @@
                         <span class="tooltiptext5" style="left: 0px; width: 250px">Este plano possui correções a serem efetuadas pela escola.</span>
                     </a>
                 </p>
-                {% if user.classificacao.tipo_de_acesso == 'Escola' %}
+                {% if user.groups.get.name == 'Diretor_escola' %}
                 <div class="clear-2 itens-cards-planos display-flex-media">
                     <a class="myButton a-cadastros flex-grow-media" href="{% url 'pagina_correcoes' elemento.id %}" style="text-decoration: none;">Corrigir</a>
                 </div>
@@ -75,7 +75,7 @@
         {% endfor %}
         {% else %}
         <div class="cards-planos">
-            {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
+            {% if user.groups.get.name == 'Secretaria' or user.groups.get.name == 'Func_sec' %}
             <p class="clear-2 itens-cards-planos">
                 Não há planos de ação com sugestões para serem corrigidos pelas escolas...
             </p>

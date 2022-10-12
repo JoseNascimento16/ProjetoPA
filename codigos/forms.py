@@ -13,12 +13,11 @@ class CodigosForm(forms.ModelForm):
         self.correcao_super = kwargs.pop('correcao_super', None)
         super().__init__(*args, **kwargs)
         
-    
     class Meta:
 
         model = ModeloCodigos
         # fields = '__all__'
-        exclude = ['ordem','data_de_criação','inserido','preco_total_capital','preco_total_custeio','possui_sugestao_correcao']
+        exclude = ['ordem','data_de_criação','inserido','preco_total_capital','preco_total_custeio','possui_sugestao_correcao','quebra_de_linha']
 
         labels = {
             'identificacao':'Identificação:',
@@ -107,7 +106,8 @@ class Mini_form_Codigos(forms.ModelForm):
     class Meta:
 
         model = ModeloCodigos
-        exclude = ['ordem','justificativa','embalagem','quantidade','preco_unitario','tipo_produto','data_de_criação','inserido','preco_total_capital','preco_total_custeio','possui_sugestao_correcao']
+        fields = ['identificacao','especificacao']
+        # exclude = ['ordem','justificativa','embalagem','quantidade','preco_unitario','tipo_produto','data_de_criação','inserido','preco_total_capital','preco_total_custeio','possui_sugestao_correcao']
 
         labels = {
             'identificacao':'Código: ',

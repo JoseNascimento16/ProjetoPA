@@ -6,13 +6,13 @@ from .models import Plano_de_acao, Correcoes
 
 class ListandoPlanos(admin.ModelAdmin):
     
-    list_display = ('ano_referencia', 'get_username',  'situacao', 'assinaturas', 'id')
+    list_display = ('ano_referencia', 'escola',  'situacao', 'assinaturas', 'id')
 
     def get_username(self, obj):
-        return obj.usuario.last_name
+        return obj.escola
     
     get_username.short_description = 'Escola'  #Renames column head
-    get_username.admin_order_field  = 'username'  #Allows column order sorting
+    # get_username.admin_order_field  = 'username'  #Allows column order sorting
     
 class ListandoCorrecoes(admin.ModelAdmin):
     

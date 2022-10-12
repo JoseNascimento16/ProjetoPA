@@ -12,7 +12,7 @@ class Modelo_fia(models.Model):
     valor_numerico = models.IntegerField(default=1, blank=True)
     discriminacao = models.CharField(max_length=900, blank=True)
     quantidade = models.IntegerField(default=0, blank=True)
-    preco_unitario_item = models.DecimalField(max_digits=14, decimal_places=2, max_length=50, null=True)
+    preco_unitario_item = models.DecimalField(default=0.00, max_digits=14, decimal_places=2, max_length=50, null=True)
     valor_total_anterior = models.DecimalField(max_digits=14, decimal_places=2, max_length=50, null=True)
     valor_total_atual = models.DecimalField(max_digits=14, decimal_places=2, max_length=50, null=True, blank=True)
     valor_total_item = models.DecimalField(max_digits=14, decimal_places=2, max_length=50, null=True)

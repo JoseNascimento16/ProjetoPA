@@ -7,11 +7,11 @@
 
 <div class="classe-div-container-corpo classe-div-container-corpo-profile">
 <div class="box-plano1">
-    {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
+    {% if user.groups.get.name == 'Secretaria' or user.groups.get.name == 'Func_sec' %}
     <div class="box-plano1-1 display-flex">
         <h5><i class="fas fa-chart-bar margem-icones-menu"></i>MEU ACESSO</h5>
     </div>
-    {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
+    {% elif user.groups.get.name == 'Diretor_escola' %}
         <div class="box-plano1-1 display-flex">
             <h5><i class="fas fa-chart-bar margem-icones-menu"></i>MEU ACESSO</h5>
         </div>
@@ -36,6 +36,7 @@
             </div>
             {% if user.classificacao.primeira_senha %}
             <a class="" href="{% url 'reset_password' %}" style="font-size: 12px;">(alterar senha)</a>
+            <!-- <a class="" href="{% url 'enviando_email' %}" style="font-size: 12px;">(teste email)</a> -->
             {% endif %}
         </div>
         <div class="box-profile1-1-2">
@@ -46,11 +47,11 @@
             </div>
             <div class="box-profile1-1-2-1">
                 <h5>Cargo: </h5>
-                {% if user.classificacao.tipo_de_acesso == 'Func_sec' %}
+                {% if user.groups.get.name == 'Func_sec' %}
                 <p>{{user.last_name}}</p>
-                {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
+                {% elif user.groups.get.name == 'Diretor_escola' %}
                 <p>Diretor(a)</p>
-                {% elif user.classificacao.tipo_de_acesso == 'Funcionario' %}
+                {% elif user.groups.get.name == 'Funcionario' %}
                 <p>{{user.last_name}}</p>
                 {% endif %}
             </div>
@@ -68,27 +69,27 @@
     </div>
     <div class="box-profile1-2" style="margin-left: 10px;display: none;">
         <h5>Cargo: </h5>
-        {% if user.classificacao.tipo_de_acesso == 'Func_sec' %}
+        {% if user.groups.get.name == 'Func_sec' %}
         <p>{{user.last_name}}</p>
-        {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
+        {% elif user.groups.get.name == 'Diretor_escola' %}
         <p>Diretor(a)</p>
-        {% elif user.classificacao.tipo_de_acesso == 'Funcionario' %}
+        {% elif user.groups.get.name == 'Funcionario' %}
         <p>{{user.last_name}}</p>
         {% endif %}
     </div>
     <div class="box-profile1-2 tooltip5" style="margin-left: 10px">
         
-        {% if user.classificacao.tipo_de_acesso == 'Func_sec' %}
+        {% if user.groups.get.name == 'Func_sec' %}
         <h5>Matriz: </h5>
-        <p>{{user.classificacao.matriz|truncatechars:27}}</p>
+        <p>{{user.classificacao.matriz}}</p>
         <span class="tooltiptext5" style="left: 100px;width: 200px; min-width: 120px">{{user.classificacao.matriz}}</span>
-        {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
+        {% elif user.groups.get.name == 'Diretor_escola' %}
         <h5>Escola: </h5>
-        <p>{{user.last_name|truncatechars:27}}</p>
-        <span class="tooltiptext5" style="left: 100px;width: 200px; min-width: 120px">{{user.last_name}}</span>
-        {% elif user.classificacao.tipo_de_acesso == 'Funcionario' %}
+        <p>{{user.classificacao.matriz}}</p>
+        <span class="tooltiptext5" style="left: 100px;width: 200px; min-width: 120px">{{user.classificacao.matriz}}</span>
+        {% elif user.groups.get.name == 'Funcionario' %}
         <h5>Matriz: </h5>
-        <p>{{user.classificacao.matriz|truncatechars:27}}</p>
+        <p>{{user.classificacao.matriz}}</p>
         <span class="tooltiptext5" style="left: 100px;width: 200px; min-width: 120px">{{user.classificacao.matriz}}</span>
         {% endif %}
         

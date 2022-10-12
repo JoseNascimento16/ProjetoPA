@@ -20,7 +20,7 @@ class FuncionariosForm(forms.ModelForm):
 
 ## AGORA MODELO COM O CAMPO CHOICEFIELD ##
 
-TIPO={('-------','-------'),('Membro do colegiado','Membro do colegiado'),('Tesoureiro','Tesoureiro')}
+TIPO=[('-------','-------'),('Membro do colegiado','Membro do colegiado'),('Tesoureiro','Tesoureiro')]
 
 * funcao = forms.ChoiceField(choices=TIPO, label='Função:', widget=forms.Select(attrs={'class': 'fonte-italic'})) <<<<<<
 
@@ -48,4 +48,4 @@ form_funcionarios = FuncionariosForm(initial={'funcao': '-------'})
 
 ## Este problema ocorre porque estamos usando o modelo padrão de "User" e ele não tem um choicesfield, são todos textfields
 ## Uma forma de contornar isso é criar um modelo separado só para o cargo e criar o field usando o models.choicesfield. Depois teríamos que criar uma foreingkey neste modelo associando ao User, ou seja, muito trabalho só para resolver este problema de ordenação de um choicefield.
-## Um ultimo detalhe, perceba que na variável TIPO, usamos um dicionário {}, mas um dicionário é uma coleção do tipo SET, e um set é um tipo "não-ordenado". Para termos um set "ordenado" podemos usar listas [] ou tuplas (). No projeto final usei listas[].
+## Um ultimo detalhe, perceba que na variável TIPO, usamos um dicionário {}, mas um dicionário é uma coleção do tipo SET, e um set é um tipo "não-ordenado". Para termos um set "ordenado" podemos usar listas [] ou tuplas (). No projeto final usei listas[]. PS: no exemplo acima ja troquei para []

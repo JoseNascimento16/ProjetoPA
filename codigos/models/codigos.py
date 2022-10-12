@@ -21,7 +21,7 @@ class ModeloCodigos(models.Model):
     data_de_criação = models.DateTimeField(default=timezone.now, blank=True)
     inserido = models.BooleanField(default=False)
     possui_sugestao_correcao = models.BooleanField(default=False)
-    quebra_de_linha = models.IntegerField(default=0)
+    quebra_de_linha = models.IntegerField(default=0, blank=True)
 
     def __str__(self):
         return self.identificacao

@@ -6,10 +6,10 @@
       <div class="sub-div-navbar1">
         {% tag_first_last_names user.first_name as nome_em_lista %}
         <li class=""><a href="{% url 'abre_meu_acesso' user.id %}"><i class="fa fa-user margem-icones-menu"></i>{{nome_em_lista|first}} {{nome_em_lista|last}}</a></li>
-        {% if user.classificacao.tipo_de_acesso == 'Funcionario'  %}
+        {% if user.groups.get.name == 'Funcionario'  %}
         <li><a id="clear">{{user.classificacao.matriz}}</a></li>
         {% else %}
-        <li><a id="clear">{{user.last_name}}</a></li>
+        <li><a id="clear">{{user.escola.nome}}</a></li>
         {% endif %}
       </div>
       <div class="sub-div-navbar2">

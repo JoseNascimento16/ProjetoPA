@@ -9,7 +9,7 @@ $(document).ready(function(){
             $('.li-mensagens').slideUp(500);
             $('.ul-mensagens').slideUp(500);
             }, 4000);
-    }else if (tipo_de_usuario == 'Escola'){
+    }else if (tipo_de_usuario == 'Diretor_escola'){
         setTimeout(function(){
         // $('.li-mensagens').css("display","none");    
         $('.li-mensagens').slideUp(500);

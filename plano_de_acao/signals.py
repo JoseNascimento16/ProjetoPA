@@ -10,7 +10,7 @@ def atualiza_alterabilidade(sender, instance, created, *args, **kwargs):
     if kwargs['update_fields']: # SE HOUVER ALTERAÇÃO EM ALGUM CAMPO
         campos = list(kwargs.get('update_fields'))
         if any(item == 'situacao' for item in campos):
-            print('Alterou situação, gerou signals!')
+            # print('Alterou situação, gerou signals!')
             if instance.situacao == 'Pendente' or instance.situacao == 'Corrigido pela escola':
                 instance.alterabilidade = 'Secretaria'
                 instance.save()
@@ -21,6 +21,7 @@ def atualiza_alterabilidade(sender, instance, created, *args, **kwargs):
                 instance.alterabilidade = 'Desativada'
                 instance.save()
 
+# Cria um modelo_fia para um plano, caso não exista por qualquer motivo que seja
 @receiver(post_save, sender=Plano_de_acao)
 def cria_modelo_fia(sender, instance, created, *args, **kwargs):
     if created and instance.tipo_fia or instance.forca_criacao_modelo_fia == True:
@@ -32,7 +33,7 @@ def cria_modelo_fia(sender, instance, created, *args, **kwargs):
             valor_total_fia = 0.00,
         )
         modelo_fia.save()
-        print('gerou modelo_fia por SIGNAL')
+        # print('Plano não possuia modelo_fia, gerou modelo_fia por SIGNAL')
 
         instance.forca_criacao_modelo_fia = False
         instance.save()

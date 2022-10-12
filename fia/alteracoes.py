@@ -1,6 +1,9 @@
 from plano_de_acao.models import Correcoes, Plano_de_acao
 from .models import Extra_fia, Modelo_fia
 from django.shortcuts import get_object_or_404
+from fia.forms import ModeloFiaForm
+from usuarios.models import Classificacao
+from django import forms
 
 def atualiza_valor_total_fia(var_total_item, pk_fia):
     valor_final_fia = 0
@@ -74,3 +77,41 @@ def checa_grupo_de_autorizacao(modelo_fia):
         return True
     else:
         return False
+
+def renderiza_form_fia(plano_objeto, modelo_fia_objeto):
+    membro1=''
+    membro2=''
+    ModeloFiaForm.base_fields['membro1'] = forms.ModelChoiceField(
+        queryset=Classificacao.objects.order_by('-user').filter(escola=plano_objeto.escola).filter(tipo_de_acesso='Funcionario').filter(cargo_herdado='Membro do colegiado'),
+        empty_label="------------",
+        label='Colegiado escolar 1:',
+        required=False,
+        widget=forms.Select)
+    ModeloFiaForm.base_fields['membro2'] = forms.ModelChoiceField(
+        queryset=Classificacao.objects.order_by('-user').filter(escola=plano_objeto.escola).filter(tipo_de_acesso='Funcionario').filter(cargo_herdado='Membro do colegiado'),
+        empty_label="------------",
+        label='Colegiado escolar 2:',
+        required=False,
+        widget=forms.Select)
+
+    # form_fia = ModeloFiaForm()
+    
+    if modelo_fia_objeto.membro_colegiado_1:
+        membro1 = modelo_fia_objeto.membro_colegiado_1.id
+    if modelo_fia_objeto.membro_colegiado_2:
+        membro2 = modelo_fia_objeto.membro_colegiado_2.id
+
+    form_fia = ModeloFiaForm(initial={
+        'nome_caixa_escolar': modelo_fia_objeto.nome_caixa_escolar,
+        'ano_exercicio': modelo_fia_objeto.ano_exercicio,
+        'discriminacao': modelo_fia_objeto.discriminacao,
+        'preco_unitario_item': modelo_fia_objeto.preco_unitario_item,
+        'justificativa': modelo_fia_objeto.justificativa,
+        'membro1': membro1,
+        'membro2': membro2,
+        'tecnico_responsavel': modelo_fia_objeto.tecnico_responsavel,
+        })
+    form_fia.fields['membro1'].required = False
+    form_fia.fields['membro2'].required = False
+
+    return form_fia

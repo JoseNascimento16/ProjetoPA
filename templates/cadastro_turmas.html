@@ -8,7 +8,7 @@
 
     <div class="box-cadastro1">
         <div class="box-plano1-1">
-            {% if user.classificacao.tipo_de_acesso == 'Escola' %}
+            {% if user.groups.get.name == 'Diretor_escola' %}
             <h5><i class="fas fa-graduation-cap margem-icones-menu"></i>TURMAS CADASTRADAS</h5>
             {% endif %}
         </div>
@@ -22,13 +22,13 @@
         {% endif %}
 
         <div class="box-plano1-2">
-            {% if user.classificacao.tipo_de_acesso == 'Escola' %}
+            {% if user.groups.get.name == 'Diretor_escola' %}
             <h5>Nome da turma:</h5>
             <h5>Quantidade de alunos:</h5>
             <h5></h5>
             {% endif %}
         </div>
-        {% if user.classificacao.tipo_de_acesso == 'Escola' %}
+        {% if user.groups.get.name == 'Diretor_escola' %}
         {% if chave_turmas_cadastradas %}
         {% for elemento in chave_turmas_cadastradas %}  
         <div class="div-cards-planos">
@@ -62,7 +62,7 @@
         {% endif %}
     </div>
     
-    {% if user.classificacao.tipo_de_acesso == 'Escola' %}
+    {% if user.groups.get.name == 'Diretor_escola' %}
     <div class="box-botao-cadastro1">
         <!-- <a id="chama-form-cadastro-turmas" class="myButton a-cadastros">Cadastrar turma</a> -->
         <a class="myButton a-cadastros" href="{% url 'cadastrando_turmas_abre_form' chave_user_id.id 'abriu' %}">Cadastrar turma</a>

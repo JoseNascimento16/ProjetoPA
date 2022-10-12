@@ -25,7 +25,8 @@ class ModeloFiaForm(forms.ModelForm):
         super(ModeloFiaForm, self).__init__(*args, **kwargs)
 
         if self.modelo_fia_super:
-            self.fields['membro1'].queryset = Classificacao.objects.order_by('-user').filter(matriz=self.modelo_fia_super.plano.usuario.last_name).filter(tipo_de_acesso='Funcionario').filter(cargo_herdado='Membro do colegiado')   
+            self.fields['membro1'].queryset = Classificacao.objects.order_by('-user').filter(escola=self.modelo_fia_super.plano.escola).filter(tipo_de_acesso='Funcionario').filter(cargo_herdado='Membro do colegiado')   
+            self.fields['membro2'].queryset = Classificacao.objects.order_by('-user').filter(escola=self.modelo_fia_super.plano.escola).filter(tipo_de_acesso='Funcionario').filter(cargo_herdado='Membro do colegiado')   
 
     class Meta:
 

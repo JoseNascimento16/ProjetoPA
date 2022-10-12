@@ -2,7 +2,7 @@
 {% load definir_acoes %}
 <!-- MENU -->
 <div class="classe-div-menu-lateral-edicao menu-edicao">
-    {% if user.classificacao.tipo_de_acesso == 'Escola' %}
+    {% if user.groups.get.name == 'Diretor_escola' %}
     <div class="classe-menu-lateral1-edicao borda1"><span class="span-menu-edicao">Menu de edição</span><a><i class="fa-solid fa-arrow-right-arrow-left margem-left-10 icone-alternancia"></i></a></div>
     {% else %}
     <div class="classe-menu-lateral1-edicao borda1"><span class="span-menu-edicao">Menu de edição</span></div>
@@ -10,7 +10,7 @@
     <div class="classe-menu-lateral1-edicao borda1"><span class="span-menu">Plano: {{ chave_planos.ano_referencia }}</span></div>
 
         
-        {% if user.classificacao.tipo_de_acesso == 'Escola' %}
+        {% if user.groups.get.name == 'Diretor_escola' %}
         <ul class="classe-menu-lateral1-edicao itens clear-edicao turmas-menu"><a class="item-principal-menu-edicao" href="#"><i class="fa fa fa-tasks margem-icones-menu"></i>Turmas<i class="arrow fa fa-angle-right pull-right setinha"></i></a>
             <ul class="sub-menu-edicao sub-menu-turmas-edicao">
 
@@ -52,7 +52,7 @@
 
 
 
-        {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
+        {% if user.groups.get.name == 'Secretaria' or user.groups.get.name == 'Func_sec' %}
         <ul class="classe-menu-lateral1-edicao itens clear-edicao"><a class="item-principal-menu-edicao" href="#"><i class="fa fa fa-tasks margem-icones-menu"></i>Sugestões em:<i class="arrow fa fa-angle-right pull-right setinha"></i></a>
             <ul class="sub-menu-edicao sub-menu-edicao-ordens">
                 {% for elemento in chave_lista2_codigos %}

@@ -57,9 +57,9 @@
 
     <table class="tabela-unidade table3-fia">
         <tr>
-            <td> 1 - CÓDIGO DA ESCOLA - {{ chave_planos.usuario.classificacao.codigo_escola }}</td>
-            <td> 2 - NOME DA ESCOLA - {{ chave_planos.usuario.last_name }}</td>
-            <td> 3 - MUNICÍPIO - {{ chave_planos.usuario.classificacao.municipio }}</td>
+            <td> 1 - CÓDIGO DA ESCOLA - {{ chave_planos.escola.codigo_escola }}</td>
+            <td> 2 - NOME DA ESCOLA - {{ chave_planos.escola.nome }}</td>
+            <td> 3 - MUNICÍPIO - {{ chave_planos.escola.municipio }}</td>
         </tr>
     </table>
     <table class="tabela-unidade table4-fia">
@@ -69,7 +69,7 @@
             {% else %}
             <td style="background-color: rgba(255, 0, 0, 0.404);"> 4 - NOME CAIXA ESCOLAR: </td>
             {% endif %}
-            <td style="width: 215px;"> 5 - {{ chave_planos.usuario.classificacao.nte }}</td>
+            <td style="width: 215px;"> 5 - {{ chave_planos.escola.nte }}</td>
             {% if chave_modelo_fia.ano_exercicio %}
             <td style="width: 215px;"> 6 - EXERCÍCIO - {{ chave_modelo_fia.ano_exercicio }}</td>
             {% else %}
@@ -150,13 +150,13 @@
         </tr>
         <!-- RENDERIZA ORDEM 1 -->
         <tr class="tr-dinamico-fia-{{chave_modelo_fia.valor_numerico}} background-hover" id="id-background-hover">
-                {% if user.classificacao.tipo_de_acesso == 'Escola' %}
+                {% if user.groups.get.name == 'Diretor_escola' %}
                     {% if chave_modelo_fia.possui_sugestao_correcao %}
-                    <td><a class="a-clear-acao desabilita-js text-center" href="{% url 'abrindo_correcao_fia' chave_planos.id chave_modelo_fia.valor_numerico 'Sim' %}"><div style="height:100%;width:100%">{{chave_modelo_fia.valor_numerico}} <span class="tooltiptext3-tabela" style="font-size: 11px"> <i class="fa-solid fa-arrow-left"></i> corrigir!</span> </div> </a> </td>
+                    <td><a class="a-clear-acao desabilita-js text-center" href="{% url 'abrindo_correcao_fia' chave_planos.id chave_modelo_fia.valor_numerico %}"><div style="height:100%;width:100%">{{chave_modelo_fia.valor_numerico}} <span class="tooltiptext3-tabela" style="font-size: 11px"> <i class="fa-solid fa-arrow-left"></i> corrigir!</span> </div> </a> </td>
                     {% else %}
                     <td class="text-center">{{chave_modelo_fia.valor_numerico}}</td>
                     {% endif %}
-                {% elif user.classificacao.tipo_de_acesso == 'Func_sec' %}
+                {% elif user.groups.get.name == 'Func_sec' %}
                     {% if chave_modelo_fia.possui_sugestao_correcao %}
                     <td><a class="a-clear-acao desabilita-js text-center" href="{% url 'chamando_correcao_modelo_fia' chave_planos.id chave_modelo_fia.id %}"><div style="height:100%;width:100%">{{chave_modelo_fia.valor_numerico}} <span class="tooltiptext3-tabela" style="font-size: 11px"> <i class="fa-solid fa-arrow-left"></i> Alterar correção!</span> </div> </a> </td>
                     {% else %}
@@ -196,13 +196,13 @@
         {% if chave_ordens_extra %}
             {% for item in chave_ordens_extra %}
             <tr class="tr-dinamico-fia-{{item.valor_numerico}} background-hover" id="id-background-hover">
-                    {% if user.classificacao.tipo_de_acesso == 'Escola' %}
+                    {% if user.groups.get.name == 'Diretor_escola' %}
                         {% if item.possui_sugestao_correcao %}
-                        <td><a class="a-clear-acao desabilita-js text-center" href="{% url 'abrindo_correcao_fia' chave_planos.id item.valor_numerico 'Sim' %}"><div style="height:100%;width:100%">{{item.valor_numerico}} <span class="tooltiptext3-tabela" style="font-size: 11px"> <i class="fa-solid fa-arrow-left"></i> corrigir!</span> </div> </a> </td>
+                        <td><a class="a-clear-acao desabilita-js text-center" href="{% url 'abrindo_correcao_fia' chave_planos.id item.valor_numerico %}"><div style="height:100%;width:100%">{{item.valor_numerico}} <span class="tooltiptext3-tabela" style="font-size: 11px"> <i class="fa-solid fa-arrow-left"></i> corrigir!</span> </div> </a> </td>
                         {% else %}
                         <td class="text-center">{{item.valor_numerico}}</td>
                         {% endif %}
-                    {% elif user.classificacao.tipo_de_acesso == 'Func_sec' %}
+                    {% elif user.groups.get.name == 'Func_sec' %}
                         {% if item.possui_sugestao_correcao %}
                         <td><a class="a-clear-acao desabilita-js text-center" href="{% url 'chamando_correcao_extra_fia' chave_planos.id item.id %}"><div style="height:100%;width:100%">{{item.valor_numerico}} <span class="tooltiptext3-tabela" style="font-size: 11px"> <i class="fa-solid fa-arrow-left"></i> Alterar correção!</span> </div> </a> </td>
                         {% else %}
@@ -262,15 +262,15 @@
             {% endif %}
         </tr>
         <tr>
-            <td style="text-align: left;width: 600px"> 18.1 - DIRETOR - {{chave_planos.usuario.first_name}}</td>
+            <td style="text-align: left;width: 600px"> 18.1 - DIRETOR - {{chave_planos.escola.diretor.first_name}}</td>
             <td style="text-align: left;width: 130px; "> 18.2 - ASSINATURA: </td>
             <!-- ASSINATURA DIRETOR -->
-            {% tag_first_last_names chave_planos.usuario.first_name as nome_em_lista_diretor %}
-            {% tag_any chave_planos.usuario chave_planos.classificacao_set.all as var3 %}
+            {% tag_first_last_names chave_planos.escola.diretor.first_name as nome_em_lista_diretor %}
+            {% tag_any chave_planos.escola.diretor chave_planos.classificacao_set.all as var3 %}
             {% if chave_planos.classificacao_set.all %}
                 {% if var3 and plano_aprovado or var3 and chave_planos.alterabilidade == 'Desativada' %}
-                    {% if chave_planos.usuario.classificacao.assinatura %}
-                        <td colspan="2" style="width: 200px"> <img class="assinaturas-foto-fia" style="width: 200px" src="{{ chave_planos.usuario.classificacao.assinatura.url }}" alt=""> </td>
+                    {% if chave_planos.escola.diretor.classificacao.assinatura %}
+                        <td colspan="2" style="width: 200px"> <img class="assinaturas-foto-fia" style="width: 200px" src="{{ chave_planos.escola.diretor.classificacao.assinatura.url }}" alt=""> </td>
                     {% else %}
                         <td colspan="2" class="assinaturas-fia", style="text-align: left;width: 140px;font-style: italic;font-family: Vladimir Script;"> {{nome_em_lista_diretor|first}} {{nome_em_lista_diretor|last}} </td>
                     {% endif %}
@@ -339,7 +339,7 @@
                 <td style="text-align: left; background-color: rgba(255, 102, 0, 0.404)"> 18.5 - TÉCNICO RESP. P/ACOMPANHAMENTO - </td>
             {% endif %}
 
-            {% if user.classificacao.tipo_de_acesso == 'Escola' %}
+            {% if user.groups.get.name == 'Diretor_escola' %}
             <td style="text-align: left;width: 130px"> 18.6 - ASSINATURA: <a id="abre-modal-assinatura-tecnico" class="icone-tecnico item-principal-menu-edicao sinal-ordens-js desabilita-js" href="#"><i class="fas fa-edit pull-right"></i></a> </td>
             {% else %}
             <td style="text-align: left;width: 130px"> 18.6 - ASSINATURA: </td>

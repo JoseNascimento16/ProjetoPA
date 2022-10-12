@@ -8,6 +8,9 @@ class AuthRequiredMiddleware(MiddlewareMixin):
         if request.user.is_authenticated == False:
             while not (request.path == reverse('fazendo_login')):
                 return redirect(reverse('fazendo_login'))
+    # pass
+
+
 
     # def __init__(self, get_response):
     #     self.get_response = get_response   

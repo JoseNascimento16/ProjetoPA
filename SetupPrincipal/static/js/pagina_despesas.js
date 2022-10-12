@@ -77,7 +77,7 @@ $(document).ready(function(){
 
                 }
             }
-            else if (tipo_de_usuario == 'Escola') {
+            else if (tipo_de_usuario == 'Diretor_escola') {
                 // SE A ORDEM/CODIGO POSSUIR CORREÇÕES
                 if ( lista_codigos_correcao.includes(element) )  { 
                     $('.tr-dinamicos' + element).addClass('background-possui-correcao');
@@ -120,7 +120,7 @@ $(document).ready(function(){
             $('.mensagem-menu-js').addClass("display-none"); // Esconde mensagem
         }
         
-    }else if (tipo_de_usuario == 'Escola'){
+    }else if (tipo_de_usuario == 'Diretor_escola'){
 
         if (situacao_do_plano == 'Pendente' || situacao_do_plano == 'Corrigido pela escola' || situacao_do_plano == 'Pronto' || situacao_do_plano == 'Aprovado' || situacao_do_plano == 'Assinado' || situacao_do_plano == 'Finalizado'){
             $(".desabilita-js").removeAttr('href');

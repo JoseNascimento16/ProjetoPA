@@ -1,7 +1,7 @@
 {% load static %}
 
 <!-- MENU -->
-{% if user.classificacao.tipo_de_acesso == 'Escola' %}
+{% if user.groups.get.name == 'Diretor_escola' %}
 <div class="classe-div-menu-lateral-edicao menu-impressao-js display_none">
     <div class="classe-menu-lateral1-edicao borda2"><span class="span-menu-edicao">Menu de impressão</span><a><i class="fa-solid fa-arrow-right-arrow-left margem-left-10 icone-alternancia"></i></a></div>
     <div class="classe-menu-lateral1-edicao borda1"><span class="span-menu-edicao">Plano: {{ chave_planos.ano_referencia }}</span></div>

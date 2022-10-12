@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_tags %}
+{% block content %}
+
+{{ chave_tipo_usuario|json_script:"id-tipo-usuario" }}
+
+<div class="classe-div-container-corpo classe-div-container-corpo-profile">
+<div class="box-plano1">
+    {% if user.groups.get.name == 'Secretaria' or user.groups.get.name == 'Func_sec' %}
+    <div class="box-plano1-1 display-flex">
+        <h5><i class="fas fa-chart-bar margem-icones-menu"></i>PERFIL ESCOLAR</h5>
+    </div>
+    {% elif user.groups.get.name == 'Diretor_escola' %}
+        <div class="box-plano1-1 display-flex">
+            <h5><i class="fas fa-chart-bar margem-icones-menu"></i>PERFIL ESCOLAR</h5>
+        </div>
+    {% else %}
+        <div class="box-plano1-1">
+            <h5><i class="fas fa-chart-bar margem-icones-menu"></i>PERFIL ESCOLAR</h5>
+        </div>
+    {% endif %}
+
+    {% if messages %}
+        <ul class="ul-mensagens">
+            {% for message in messages %}
+            <li{% if message.tags %} class="alert alert-{{ message.tags }} li-mensagens"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <div class="box-profile1-1" style="margin-left: 10px">
+        <div class="box-profile1-1-1" style="margin-left: 10px">
+            <div class="classe-icone-perfil">
+            <i class="fas fa-graduation-cap"></i>
+            </div>
+        </div>
+        <div class="box-profile1-1-2">
+            <div class="box-profile1-1-2-1">
+                <h5>Nome: </h5>
+                <p>{{chave_escola.nome}}</p>
+            </div>
+            <div class="box-profile1-1-2-1">
+                <h5>Diretor: </h5>
+                {% if user.groups.get.name == 'Func_sec' %}
+                    {% if chave_diretor %}
+                    <p>{{chave_diretor.first_name}}</p>
+                    <a class="" href="#" style="font-size: 12px;padding-left: 0;"> (alterar)</a>
+                    {% else %}
+                    <a class="" href="#" style="font-size: 12px;padding-left: 0;"> (cadastrar)</a>
+                    {% endif %}
+                {% elif user.groups.get.name == 'Diretor_escola' %}
+                <p>{{chave_diretor.first_name}}</p>
+                {% elif user.groups.get.name == 'Funcionario' %}
+                <p>{{chave_diretor.first_name}}</p>
+                {% endif %}
+            </div>
+            <div class="box-profile1-1-2-1" style="flex: 1;">
+                
+            </div>
+        </div>
+    </div>
+
+    <div class="box-profile1-2 tooltip5" style="margin-left: 10px;display: none;">
+        <h5>Nome: </h5>
+        <p style="min-width: 170px">{{chave_escola.nome|truncatechars:27}}</p>
+        <span class="tooltiptext5" style="left: 100px;width: 200px; min-width: 120px">{{chave_escola.nome}}</span>
+    </div>
+    <div class="box-profile1-2" style="margin-left: 10px;display: none;">
+        <h5>Diretor: </h5>
+        {% if user.groups.get.name == 'Func_sec' %}
+        <p>{{chave_diretor.first_name}}</p>
+        <a class="" href="#" style="font-size: 12px;padding-left: 0;"> (alterar)</a>
+        {% elif user.groups.get.name == 'Diretor_escola' %}
+        <p>{{chave_diretor.first_name}}</p>
+        {% elif user.groups.get.name == 'Funcionario' %}
+        <p>{{chave_diretor.first_name}}</p>
+        {% endif %}
+    </div>
+    <div class="box-profile1-2 tooltip5" style="margin-left: 10px">
+        
+        {% if user.groups.get.name == 'Func_sec' %}
+        <h5>Município: </h5>
+        <p>{{chave_escola.municipio|truncatechars:27}}</p>
+        <span class="tooltiptext5" style="left: 100px;width: 200px; min-width: 120px">{{chave_escola.municipio}}</span>
+        {% elif user.groups.get.name == 'Diretor_escola' %}
+        <h5>Município: </h5>
+        <p>{{chave_escola.municipio|truncatechars:27}}</p>
+        <span class="tooltiptext5" style="left: 100px;width: 200px; min-width: 120px">{{chave_escola.municipio}}</span>
+        {% elif user.groups.get.name == 'Funcionario' %}
+        <h5>Município: </h5>
+        <p>{{chave_escola.municipio|truncatechars:27}}}</p>
+        <span class="tooltiptext5" style="left: 100px;width: 200px; min-width: 120px">{{chave_escola.municipio}}</span>
+        {% endif %}
+        
+    </div>
+    <div class="box-profile1-2" style="margin-left: 10px">
+        <h5>NTE: </h5>
+        <p>{{chave_escola.nte}}</p>
+    </div>
+    <div class="box-profile1-2" style="margin-left: 10px">
+        <h5>Código da escola: </h5>
+        <p>{{chave_escola.codigo_escola}}</p>
+    </div>
+    <div class="box-profile1-2" style="margin-left: 10px;border: none;">
+        <h5>Funcionários cadastrados: </h5>
+        <p>{{chave_escola.quant_funcionarios}}</p>
+    </div>
+        
+    
+
+    <div class="div-cards-planos">
+        
+        <div class="cards-planos-box">
+
+            <div class="cards-planos border-0">
+                    
+
+            </div>
+
+        </div>
+            
+
+    </div>
+
+
+</div>
+
+<!-- <canvas id="canvas" width="500" height="500" style="border: 1px solid black; position: relative;"></canvas>
+<div id="coord"></div> -->
+
+</div>
+
+{% include 'partials/modal-confirma.html' %}
+{% include 'partials/modal-partial-edicao.html' %}
+
+
+
+
+
+
+{% endblock %}
+
+
+        

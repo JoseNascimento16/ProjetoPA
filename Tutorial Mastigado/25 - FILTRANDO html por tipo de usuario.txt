@@ -1,4 +1,4 @@
-### no tutorial anterior aprendemos uma simples linha de código (tipo = user.classificacao.tipo_de_acesso) que inutiliza todo este processo feito a seguir. Mas vale a leitura para compreensão do funcionamento de dicionarios de contexto. ###
+### no tutorial anterior aprendemos uma simples linha de código (tipo = user.groups) que inutiliza todo este processo feito a seguir. Mas vale a leitura para compreensão do funcionamento de dicionarios de contexto. ###
 
 No tutorial anterior conseguimos integrar um usuario a um modelo de classificação(tipo de usuario).
 
