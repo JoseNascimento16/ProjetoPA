@@ -6,7 +6,10 @@ from tempus_dominus.widgets import DatePicker
 from usuarios.models import Classificacao
 
 class PlanoForm(forms.ModelForm):
-
+    def __init__(self, *args, **kwargs):
+        self.escola_super = kwargs.pop('escola_super', None)
+        super().__init__(*args, **kwargs)
+        
     class Meta:
 
         model = Plano_de_acao
@@ -20,11 +23,11 @@ class PlanoForm(forms.ModelForm):
         }
 
     def clean(self):
-        
+        escola = self.escola_super
         valor_ano = self.cleaned_data.get('ano_referencia')
         lista_de_erros = {}
 
-        plano_ja_existe(valor_ano, 'ano_referencia', lista_de_erros)
+        plano_ja_existe(valor_ano, 'ano_referencia', escola, lista_de_erros)
         inicia_com_FIA(valor_ano, 'ano_referencia', lista_de_erros)
 
 
@@ -35,6 +38,9 @@ class PlanoForm(forms.ModelForm):
         return self.cleaned_data
 
 class FiaForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        self.escola_super = kwargs.pop('escola_super', None)
+        super().__init__(*args, **kwargs)
 
     class Meta:
 
@@ -50,10 +56,11 @@ class FiaForm(forms.ModelForm):
 
     def clean(self):
         
+        var_escola = self.escola_super
         valor_ano = self.cleaned_data.get('ano_referencia')
         lista_de_erros = {}
 
-        plano_ja_existe(valor_ano, 'ano_referencia', lista_de_erros)
+        plano_ja_existe(valor_ano, 'ano_referencia', var_escola, lista_de_erros)
 
 
         if lista_de_erros is not None:
@@ -63,6 +70,9 @@ class FiaForm(forms.ModelForm):
         return self.cleaned_data
 
 class Edita_planoForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        self.escola_super = kwargs.pop('escola_super', None)
+        super().__init__(*args, **kwargs)
 
     class Meta:
 
@@ -77,11 +87,11 @@ class Edita_planoForm(forms.ModelForm):
         }
 
     def clean(self):
-        
+        escola = self.escola_super
         valor_ano = self.cleaned_data.get('ano_referencia')
         lista_de_erros = {}
 
-        plano_ja_existe2(valor_ano, 'ano_referencia', lista_de_erros)
+        plano_ja_existe2(valor_ano, 'ano_referencia', escola, lista_de_erros)
 
 
         if lista_de_erros is not None:

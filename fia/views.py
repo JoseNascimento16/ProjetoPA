@@ -15,32 +15,28 @@ from usuarios.models import Classificacao, Turmas # Turmas_plano
 
 # Create your views here.
 
+### VIEWS TESTADAS ###
+
 def cria_fia(request): #CRIA UM PLANO TIPO FIA
-    tipo_usuario = request.user.classificacao.tipo_de_acesso
-    if tipo_usuario == 'Escola':
+    tipo_usuario = request.user.groups.get().name
+    if tipo_usuario == 'Diretor_escola':
         controle_form_fia = False
         form_fia = FiaForm()
-        usuario_ativo = get_object_or_404(User, pk=request.user.id)
         if request.method == 'POST':
-            form_fia = FiaForm(request.POST)
+            form_fia = FiaForm(request.POST, escola_super=request.user.classificacao.escola)
             if form_fia.is_valid():
-                print('SALVOU FIA!!!!')
                 ano_form = form_fia.cleaned_data.get('ano_referencia')
                 plano = Plano_de_acao.objects.create(
                     ano_referencia = ano_form,
-                    usuario = usuario_ativo,
+                    escola = request.user.classificacao.escola,
                     tipo_fia = True
                 )
                 plano.save() # GERA SIGNAL DE CRIAÇÃO DE MODELO_FIA
-
                 return redirect('pagina_planos_de_acao_mensagem', mensagem='Criou')
+
             else:
                 controle_form_fia = True
-                print('FORM PLANO INVALIDO')
-                id = request.user.id
-
-                planos = Plano_de_acao.objects.order_by('-data_de_criação').filter(usuario=id).filter(~Q(situacao='Concluido'))
-
+                planos = Plano_de_acao.objects.order_by('-data_de_criação').filter(escola=request.user.classificacao.escola).filter(~Q(situacao='Concluido'))
                 dados = {
                 'chave_planos' : planos,
                 'chave_form_fia' : form_fia,
@@ -51,9 +47,9 @@ def cria_fia(request): #CRIA UM PLANO TIPO FIA
 
     return redirect('pagina_planos_de_acao')
 
-def documento_fia(request, elemento_id, mensagem='', reabreform_modelo_fia='', abreform_extra_criacao='', abreform_extra_edicao='', reabreform_extra='', ordem_extra_id='', abre_correcao='', q_linha=''):
-    plano_objeto = get_object_or_404(Plano_de_acao, pk=elemento_id)
-    # modelo_fia_objeto = get_object_or_404(Modelo_fia, plano=plano_objeto)
+def documento_fia(request, **kwargs):
+    from .alteracoes import renderiza_form_fia
+    plano_objeto = get_object_or_404(Plano_de_acao, pk=kwargs['elemento_id'])
     modelo_fia_query = Modelo_fia.objects.filter(plano=plano_objeto)
     if modelo_fia_query.exists():
         for item in modelo_fia_query:
@@ -70,77 +66,54 @@ def documento_fia(request, elemento_id, mensagem='', reabreform_modelo_fia='', a
     var_reset = False
     quebra_linha = False
     apos_print = False
+    abreform_extra_criacao = False
+    abreform_extra_edicao = False
     ordem_extra_objeto = ''
     lista_ordens_fia = []
     lista_ordens_com_correcao = []
     form_extra_fia = OrdemExtraForm()
-    tipo_usuario = request.user.classificacao.tipo_de_acesso
+    tipo_usuario = request.user.groups.get().name
     
-    ModeloFiaForm.base_fields['membro1'] = forms.ModelChoiceField(
-        queryset=Classificacao.objects.order_by('-user').filter(matriz=plano_objeto.usuario.last_name).filter(tipo_de_acesso='Funcionario').filter(cargo_herdado='Membro do colegiado'),
-        empty_label="------------",
-        label='Colegiado escolar 1:',
-        required=False,
-        widget=forms.Select)
-    ModeloFiaForm.base_fields['membro2'] = forms.ModelChoiceField(
-        queryset=Classificacao.objects.order_by('-user').filter(matriz=plano_objeto.usuario.last_name).filter(tipo_de_acesso='Funcionario').filter(cargo_herdado='Membro do colegiado'),
-        empty_label="------------",
-        label='Colegiado escolar 2:',
-        required=False,
-        widget=forms.Select)
-
-    form_fia = ModeloFiaForm()
-    
-    form_fia.fields['nome_caixa_escolar'].initial = modelo_fia_objeto.nome_caixa_escolar
-    form_fia.fields['ano_exercicio'].initial = modelo_fia_objeto.ano_exercicio
-    form_fia.fields['discriminacao'].initial = modelo_fia_objeto.discriminacao
-    # form_fia.fields['quantidade'].initial = modelo_fia_objeto.quantidade
-    if modelo_fia_objeto.preco_unitario_item == 0:
-        form_fia.fields['preco_unitario_item'].initial = ''
-    else:
-        form_fia.fields['preco_unitario_item'].initial = modelo_fia_objeto.preco_unitario_item
-    form_fia.fields['justificativa'].initial = modelo_fia_objeto.justificativa
-    form_fia.fields['membro1'].required = False
-    form_fia.fields['membro2'].required = False
+    form_fia = renderiza_form_fia(plano_objeto, modelo_fia_objeto)
 
     form_extra_fia.fields['valor_numerico'].initial = ''
     form_extra_fia.fields['quantidade'].initial = ''
 
-    if ordem_extra_id:
+    if kwargs.get('ordem_extra_id'):
         modo_edicao = True
-        ordem_extra_objeto = get_object_or_404(Extra_fia, pk=ordem_extra_id)
+        ordem_extra_objeto = get_object_or_404(Extra_fia, pk=kwargs['ordem_extra_id'])
         form_extra_fia.fields['valor_numerico'].initial = ordem_extra_objeto.valor_numerico
         form_extra_fia.fields['discriminacao'].initial = ordem_extra_objeto.discriminacao
         form_extra_fia.fields['quantidade'].initial = ordem_extra_objeto.quantidade
         form_extra_fia.fields['preco_unitario_item'].initial = ordem_extra_objeto.preco_unitario_item
         form_extra_fia.fields['justificativa'].initial = ordem_extra_objeto.justificativa
 
-    if mensagem == 'Sucesso':
+    if kwargs.get('mensagem') == 'Sucesso':
         messages.success(request, 'Sucesso!')
-    elif mensagem == 'sucesso2':
+    elif kwargs.get('mensagem') == 'sucesso2':
         messages.success(request, 'Alteração efetuada com sucesso!')
-    elif mensagem == 'Sucesso3':
+    elif kwargs.get('mensagem') == 'Sucesso3':
         if request.method == 'GET' and 'postprint' not in request.GET:
             messages.success(request, 'Alteração efetuada com sucesso!')
-    elif mensagem == 'criou':
+    elif kwargs.get('mensagem') == 'criou':
         messages.success(request, 'Sugestão de correção criada com sucesso!')
-    elif mensagem == 'criou_extra':
+    elif kwargs.get('mensagem') == 'criou_extra':
         messages.success(request, 'Ordem extra criada com sucesso!')
-    elif mensagem == 'editou':
+    elif kwargs.get('mensagem') == 'editou':
         messages.success(request, 'Sugestão de correção alterada com sucesso!')
-    elif mensagem == 'excluiu_extra':
+    elif kwargs.get('mensagem') == 'excluiu_extra':
         messages.success(request, 'Ordem excluída com sucesso!')
-    elif mensagem == 'excluiu_sugestao':
+    elif kwargs.get('mensagem') == 'excluiu_sugestao':
         messages.success(request, 'Sugestão de correção excluída com sucesso!')
-    elif mensagem == 'not_allowed':
+    elif kwargs.get('mensagem') == 'not_allowed':
         messages.error(request, 'Acesso negado, esta alteração não pode ser efetuada no momento!')
-    elif mensagem == 'nao_corretor':
+    elif kwargs.get('mensagem') == 'nao_corretor':
         messages.error(request, 'Você não é o corretor responsável por este plano!!')
-    elif mensagem == 'grupo_incompleto':
+    elif kwargs.get('mensagem') == 'grupo_incompleto':
         messages.error(request, 'Os membros para autorização do documento ainda não foram completamente definidos...')
         
-    turmas_iteravel = Turmas.objects.order_by('nome').filter(user=plano_objeto.usuario)
-    turmas_associadas_iteravel = Turmas.objects.order_by('nome').filter(user=plano_objeto.usuario).filter(plano_associado=plano_objeto)
+    turmas_iteravel = Turmas.objects.order_by('nome').filter(escola=plano_objeto.escola)
+    turmas_associadas_iteravel = Turmas.objects.order_by('nome').filter(escola=plano_objeto.escola).filter(plano_associado=plano_objeto)
     
     if modelo_fia_objeto.possui_sugestao_correcao:
         lista_ordens_com_correcao.append(modelo_fia_objeto.valor_numerico)
@@ -166,9 +139,13 @@ def documento_fia(request, elemento_id, mensagem='', reabreform_modelo_fia='', a
     if request.method == 'GET' and 'postprint' in request.GET:
         apos_print = request.GET.get('postprint','')
 
-    if q_linha:
+    if kwargs.get('q_linha'):
         quebra_linha = True
 
+    if kwargs.get('abreform_extra_criacao'):
+        abreform_extra_criacao = True
+    if kwargs.get('abreform_extra_edicao'):
+        abreform_extra_edicao = True
     dados = {
         'chave_planos':plano_objeto,
         'chave_turmas' : turmas_iteravel,
@@ -193,18 +170,19 @@ def documento_fia(request, elemento_id, mensagem='', reabreform_modelo_fia='', a
         'pagina_fia' : True,
     }
 
-    if reabreform_modelo_fia or reabreform_extra or abre_correcao:
+    if kwargs.get('reabreform_modelo_fia') or kwargs.get('reabreform_extra') or kwargs.get('abre_correcao'):
         return dados
     else:
         return render(request, 'fia-visualizacao.html', dados)
 
-def altera_fia(request, elemento_id):
+def altera_fia(request, **kwargs):
     from fia.alteracoes import atualiza_valor_total_fia, remove_assinatura_membro
     from plano_de_acao.alteracoes import atualiza_assinaturas_escola
-    modelo_fia = get_object_or_404(Modelo_fia, pk=elemento_id)
+    modelo_fia = get_object_or_404(Modelo_fia, pk=kwargs['elemento_id'])
     form_fia = ModeloFiaForm()
-    tipo_usuario = request.user.classificacao.tipo_de_acesso
-    if tipo_usuario == 'Escola' and modelo_fia.plano.alterabilidade == 'Escola':
+    tipo_usuario = request.user.groups.get().name
+
+    if tipo_usuario == 'Diretor_escola' and modelo_fia.plano.alterabilidade == 'Escola':
         if request.method == 'POST':
             form_fia = ModeloFiaForm(request.POST, modelo_fia_super=modelo_fia)
             if form_fia.is_valid():
@@ -248,7 +226,7 @@ def altera_fia(request, elemento_id):
                     modelo_fia.tecnico_responsavel = var_tecnico_responsavel
                     if modelo_fia.assinatura_tecnico:
                         modelo_fia.assinatura_tecnico.delete()
-                        atualiza_assinaturas_escola(elemento_id)
+                        atualiza_assinaturas_escola(kwargs['elemento_id'])
                 else:
                     modelo_fia.tecnico_responsavel = var_tecnico_responsavel
 
@@ -257,11 +235,10 @@ def altera_fia(request, elemento_id):
 
                 modelo_fia.save()
 
-                atualiza_valor_total_fia(var_total_item, elemento_id)
+                atualiza_valor_total_fia(var_total_item, kwargs['elemento_id'])
                 
                 return redirect('chamando_documento_fia_mensagem', elemento_id=modelo_fia.plano.id, mensagem='sucesso2')
             else:
-                print('invalido')
                 id_plano_fia = modelo_fia.plano.id #id do plano_fia
                 contexto = documento_fia(request, elemento_id=id_plano_fia, reabreform_modelo_fia='sim')
                 contexto['chave_form_modelo_fia'] = form_fia
@@ -271,11 +248,12 @@ def altera_fia(request, elemento_id):
 
     return redirect('chamando_documento_fia_mensagem', elemento_id=modelo_fia.plano.id, mensagem='not_allowed')
 
-def cria_ordem_extra_fia(request, modelo_fia_id):
+def cria_ordem_extra_fia(request, **kwargs):
     from fia.alteracoes import atualiza_valor_total_fia
-    modelo_fia = get_object_or_404(Modelo_fia, pk=modelo_fia_id)
-    tipo_usuario = request.user.classificacao.tipo_de_acesso
-    if tipo_usuario == 'Escola' and modelo_fia.plano.alterabilidade == 'Escola':
+    modelo_fia = get_object_or_404(Modelo_fia, pk=kwargs['modelo_fia_id'])
+    tipo_usuario = request.user.groups.get().name
+
+    if tipo_usuario == 'Diretor_escola' and modelo_fia.plano.alterabilidade == 'Escola':
         if request.method == 'POST':
             form_extra_fia = OrdemExtraForm(request.POST, modelo_fia_id=modelo_fia.id)
             if form_extra_fia.is_valid():
@@ -309,12 +287,13 @@ def cria_ordem_extra_fia(request, modelo_fia_id):
 
     return redirect('chamando_documento_fia_mensagem', elemento_id=modelo_fia.plano.id, mensagem='not_allowed')
 
-def altera_ordem_extra_fia(request, modelo_fia_id, ordem_extra_id):
+def altera_ordem_extra_fia(request, **kwargs):
     from fia.alteracoes import atualiza_valor_total_fia
-    modelo_fia = get_object_or_404(Modelo_fia, pk=modelo_fia_id)
-    ordem_extra_objeto = get_object_or_404(Extra_fia, pk=ordem_extra_id)
-    tipo_usuario = request.user.classificacao.tipo_de_acesso
-    if tipo_usuario == 'Escola' and modelo_fia.plano.alterabilidade == 'Escola':
+    modelo_fia = get_object_or_404(Modelo_fia, pk=kwargs['modelo_fia_id'])
+    ordem_extra_objeto = get_object_or_404(Extra_fia, pk=kwargs['ordem_extra_id'])
+    tipo_usuario = request.user.groups.get().name
+
+    if tipo_usuario == 'Diretor_escola' and modelo_fia.plano.alterabilidade == 'Escola':
         if request.method == 'POST':
             form_extra_fia = OrdemExtraForm(request.POST, modelo_fia_id=modelo_fia.id, id_ordem_extra=ordem_extra_objeto.id, altera_ordem=True)
             if form_extra_fia.is_valid():
@@ -347,12 +326,13 @@ def altera_ordem_extra_fia(request, modelo_fia_id, ordem_extra_id):
     
     return redirect('chamando_documento_fia_mensagem', elemento_id=modelo_fia.plano.id, mensagem='not_allowed')
 
-def exclui_ordem_extra_fia(request, ordem_extra_id):
+def exclui_ordem_extra_fia(request, **kwargs):
     from fia.alteracoes import atualiza_valor_total_fia
-    ordem_extra = get_object_or_404(Extra_fia, pk=ordem_extra_id)
-    tipo_usuario = request.user.classificacao.tipo_de_acesso
+    ordem_extra = get_object_or_404(Extra_fia, pk=kwargs['ordem_extra_id'])
+    tipo_usuario = request.user.groups.get().name
     plano_objeto = get_object_or_404(Plano_de_acao, pk=ordem_extra.fia_matriz.plano.id)
-    if tipo_usuario == 'Escola' and plano_objeto.alterabilidade == 'Escola':
+
+    if tipo_usuario == 'Diretor_escola' and plano_objeto.alterabilidade == 'Escola':
         if request.method == 'POST':
             ordem_extra.delete()
 
@@ -362,14 +342,15 @@ def exclui_ordem_extra_fia(request, ordem_extra_id):
 
     return redirect('chamando_documento_fia_mensagem', elemento_id=ordem_extra.fia_matriz.plano.id, mensagem='not_allowed')
 
-def correcao_plano_fia(request, elemento_id, modelo_fia_id='', ordem_extra_id=''):
-    plano_objeto = get_object_or_404(Plano_de_acao, pk=elemento_id)
+def correcao_plano_fia(request, **kwargs):
+    plano_objeto = get_object_or_404(Plano_de_acao, pk=kwargs['elemento_id'])
     form_correcao_fia = Correcao_FiaForm()
-    tipo_usuario = request.user.classificacao.tipo_de_acesso
+    tipo_usuario = request.user.groups.get().name
+
     if tipo_usuario == 'Func_sec' and plano_objeto.alterabilidade == 'Secretaria':
         if plano_objeto.corretor_plano == request.user: # se usuario atual for o corretor
-            if modelo_fia_id:
-                modelo_fia_corrigir = get_object_or_404(Modelo_fia, pk=modelo_fia_id)
+            if kwargs.get('modelo_fia_id'):
+                modelo_fia_corrigir = get_object_or_404(Modelo_fia, pk=kwargs['modelo_fia_id'])
                 ordem_a_corrigir = modelo_fia_corrigir
                 form_correcao_fia.fields['ordem_associada'].initial = str(modelo_fia_corrigir.valor_numerico)
                 form_correcao_fia.fields['ordem_associada'].disabled = True
@@ -377,8 +358,8 @@ def correcao_plano_fia(request, elemento_id, modelo_fia_id='', ordem_extra_id=''
                     correcao_fia_iteravel = Correcoes.objects.filter(plano_associado=plano_objeto).filter(ordem_associada=modelo_fia_corrigir.valor_numerico)
                     for item in correcao_fia_iteravel:
                         form_correcao_fia.fields['sugestao'].initial = item.sugestao
-            elif ordem_extra_id:
-                extra_fia_corrigir = get_object_or_404(Extra_fia, pk=ordem_extra_id)
+            elif kwargs.get('ordem_extra_id'):
+                extra_fia_corrigir = get_object_or_404(Extra_fia, pk=kwargs['ordem_extra_id'])
                 ordem_a_corrigir = extra_fia_corrigir
                 form_correcao_fia.fields['ordem_associada'].initial = str(extra_fia_corrigir.valor_numerico)
                 form_correcao_fia.fields['ordem_associada'].disabled = True
@@ -394,39 +375,43 @@ def correcao_plano_fia(request, elemento_id, modelo_fia_id='', ordem_extra_id=''
 
             contexto_extra_corrigir = True
             
-            contexto = documento_fia(request, elemento_id=elemento_id, abre_correcao=True)
+            contexto = documento_fia(request, elemento_id=kwargs['elemento_id'], abre_correcao=True)
             contexto['chave_ordem_fia_a_corrigir'] = ordem_a_corrigir
             contexto['chave_contexto_corrigir_fia'] = contexto_extra_corrigir
             contexto['chave_form_correcao_fia'] = form_correcao_fia
             return render(request, 'fia-visualizacao.html', contexto)
 
         else:
-            return redirect('chamando_documento_fia_mensagem', elemento_id=elemento_id, mensagem='nao_corretor')
+            return redirect('chamando_documento_fia_mensagem', elemento_id=kwargs['elemento_id'], mensagem='nao_corretor')
     
     return redirect('dashboard')
 
-def cria_altera_correcao_fia(request, plano_id, ordem_id):
+def cria_altera_correcao_fia(request, **kwargs):
     from fia.alteracoes import atualiza_total_correcoes
-    plano_objeto = get_object_or_404(Plano_de_acao, pk=plano_id)
-    tipo_usuario = request.user.classificacao.tipo_de_acesso
+    plano_objeto = get_object_or_404(Plano_de_acao, pk=kwargs['plano_id'])
+    tipo_usuario = request.user.groups.get().name
+
     if tipo_usuario == 'Func_sec' and plano_objeto.alterabilidade == 'Secretaria' and plano_objeto.corretor_plano == request.user:
         if request.method == 'POST':
             form_correcao_fia_preenchido = Correcao_FiaForm(request.POST)
             if form_correcao_fia_preenchido.is_valid():
                 campo_numero = form_correcao_fia_preenchido.cleaned_data.get('ordem_associada')
+                # Os objetos (modelo_fia/extra_fia) aqui já existem
+                # O que estamos criando/alterando são as CORREÇÕES (objetos)
                 if campo_numero == 1: # É MODELO_FIA
-                    objeto_a_corrigir = get_object_or_404(Modelo_fia, pk=ordem_id)
+                    objeto_a_corrigir = get_object_or_404(Modelo_fia, pk=kwargs['ordem_fia_id'])
                 else: # É EXTRA_FIA
-                    objeto_a_corrigir = get_object_or_404(Extra_fia, pk=ordem_id)
+                    objeto_a_corrigir = get_object_or_404(Extra_fia, pk=kwargs['ordem_fia_id'])
                 
                 # CRIA NOVA CORREÇÃO
                 if not objeto_a_corrigir.possui_sugestao_correcao:  
                     instancia = form_correcao_fia_preenchido.save(commit=False)
                     instancia.plano_associado = plano_objeto
                     instancia.ordem_associada = objeto_a_corrigir.valor_numerico
+                    instancia.documento_associado = 'FIA - Formulário de Inclusão de Ações'
                     instancia.save()
 
-                    atualiza_total_correcoes(plano_id)
+                    atualiza_total_correcoes(kwargs['plano_id'])
 
                     objeto_a_corrigir.possui_sugestao_correcao = True
                     objeto_a_corrigir.save()
@@ -435,165 +420,172 @@ def cria_altera_correcao_fia(request, plano_id, ordem_id):
 
                 # ALTERA CORREÇÃO EXISTENTE
                 else:
-                    correcao_fia_iteravel = Correcoes.objects.filter(plano_associado=plano_objeto).filter(ordem_associada=objeto_a_corrigir.valor_numerico)
+                    correcao_fia_iteravel = Correcoes.objects.filter(plano_associado=plano_objeto).filter(ordem_associada=objeto_a_corrigir.valor_numerico).filter(documento_associado = 'FIA - Formulário de Inclusão de Ações')
                     for item in correcao_fia_iteravel:
                         item.sugestao = form_correcao_fia_preenchido.cleaned_data.get('sugestao')
                         item.save()
 
                     mensagem_var = 'editou'
 
-                return redirect('chamando_documento_fia_mensagem', elemento_id=plano_id, mensagem=mensagem_var)
-    else:
-        return redirect('dashboard')
+                return redirect('chamando_documento_fia_mensagem', elemento_id=kwargs['plano_id'], mensagem=mensagem_var)
 
-def deleta_correcao_fia(request, plano_id, ordem_id, tipo_ordem=''):
+    return redirect('dashboard')
+
+def deleta_correcao_fia(request, **kwargs):
     from fia.alteracoes import atualiza_total_correcoes
-    plano_objeto = get_object_or_404(Plano_de_acao, pk=plano_id)
-    if tipo_ordem == 'modelo_fia':
-        objeto_a_exlcuir = get_object_or_404(Modelo_fia, pk=ordem_id)
-    elif tipo_ordem == 'extra_fia':
-        objeto_a_exlcuir = get_object_or_404(Extra_fia, pk=ordem_id)
+    plano_objeto = get_object_or_404(Plano_de_acao, pk=kwargs['plano_id'])
+    if kwargs.get('tipo_ordem') == 'modelo_fia':
+        objeto_a_exlcuir = get_object_or_404(Modelo_fia, pk=kwargs['ordem_fia_id'])
+    elif kwargs.get('tipo_ordem') == 'extra_fia':
+        objeto_a_exlcuir = get_object_or_404(Extra_fia, pk=kwargs['ordem_fia_id'])
 
-    tipo_usuario = request.user.classificacao.tipo_de_acesso
+    tipo_usuario = request.user.groups.get().name
     if tipo_usuario == 'Func_sec' and plano_objeto.alterabilidade == 'Secretaria' and plano_objeto.corretor_plano == request.user:
         if request.method == 'POST':
-            correcao_fia_iteravel = Correcoes.objects.filter(plano_associado=plano_objeto).filter(ordem_associada=objeto_a_exlcuir.valor_numerico)
+            correcao_fia_iteravel = Correcoes.objects.filter(plano_associado=plano_objeto).filter(ordem_associada=objeto_a_exlcuir.valor_numerico).filter(documento_associado = 'FIA - Formulário de Inclusão de Ações')
             for item in correcao_fia_iteravel:
                 item.delete()
 
-            atualiza_total_correcoes(plano_id)
+            atualiza_total_correcoes(kwargs['plano_id'])
 
             objeto_a_exlcuir.possui_sugestao_correcao = False
             objeto_a_exlcuir.save()
 
-            return redirect('chamando_documento_fia_mensagem', elemento_id=plano_id, mensagem='excluiu_sugestao')
+            return redirect('chamando_documento_fia_mensagem', elemento_id=kwargs['plano_id'], mensagem='excluiu_sugestao')
         
-    else:
-        return redirect('dashboard')
-
-def abre_correcao_fia(request, elemento_id, ident_numerica='', abreFormFia=''):
-    plano_objeto = get_object_or_404(Plano_de_acao, pk=elemento_id)
-    modelo_fia = get_object_or_404(Modelo_fia, plano=plano_objeto)
-
-    if abreFormFia:
-        correcao_de_fia_objeto = get_object_or_404(Correcoes, plano_associado=plano_objeto, ordem_associada=ident_numerica)
-        correcao_de_ordem_especifica = Correcoes.objects.order_by('ordem_associada').filter(plano_associado=plano_objeto).filter(documento_associado = 'FIA - Formulário de Inclusão de Ações').filter(ordem_associada=ident_numerica)
-
-        if ident_numerica == 1:
-            objeto_corrigindo = get_object_or_404(Modelo_fia, plano=plano_objeto)
-            corrigindo_modelo_fia = True
-            form_fia = ModeloFiaForm()
-            form_fia.fields['nome_caixa_escolar'].initial = objeto_corrigindo.nome_caixa_escolar
-            form_fia.fields['ano_exercicio'].initial = objeto_corrigindo.ano_exercicio
-            form_fia.fields['discriminacao'].initial = objeto_corrigindo.discriminacao
-            if objeto_corrigindo.preco_unitario_item == 0:
-                form_fia.fields['preco_unitario_item'].initial = ''
-            else:
-                form_fia.fields['preco_unitario_item'].initial = objeto_corrigindo.preco_unitario_item
-            form_fia.fields['justificativa'].initial = objeto_corrigindo.justificativa
-
-            contexto = pagina_correcoes(request, elemento_id, retorna_contexto_fia='sim')
-            contexto['chave_corrigindo_modelo_fia'] = corrigindo_modelo_fia
-            contexto['chave_especifica_objeto'] = correcao_de_fia_objeto
-            contexto['chave_correcao_ordem_especifica'] = correcao_de_ordem_especifica
-            contexto['chave_do_form'] = form_fia
-            return render(request, 'correcoes.html', contexto)
-
-        else:
-            objeto_corrigindo = get_object_or_404(Extra_fia, fia_matriz=modelo_fia, valor_numerico=ident_numerica)
-            corrigindo_extra_fia = True
-            form_extra_fia = OrdemExtraForm()
-            form_extra_fia.fields['valor_numerico'].initial = objeto_corrigindo.valor_numerico
-            form_extra_fia.fields['valor_numerico'].disabled = True
-            form_extra_fia.fields['discriminacao'].initial = objeto_corrigindo.discriminacao
-            form_extra_fia.fields['quantidade'].initial = objeto_corrigindo.quantidade
-            form_extra_fia.fields['preco_unitario_item'].initial = objeto_corrigindo.preco_unitario_item
-            form_extra_fia.fields['justificativa'].initial = objeto_corrigindo.justificativa
-
-            contexto = pagina_correcoes(request, elemento_id, retorna_contexto_fia='sim')
-            contexto['chave_corrigindo_extra_fia'] = corrigindo_extra_fia
-            contexto['chave_especifica_objeto'] = correcao_de_fia_objeto
-            contexto['chave_correcao_ordem_especifica'] = correcao_de_ordem_especifica
-            contexto['chave_do_form'] = form_extra_fia
-            return render(request, 'correcoes.html', contexto)
-    
     return redirect('dashboard')
-        
-def corrige_fia(request, elemento_id, ident_numerica):
-    from fia.alteracoes import salva_form_modelo_fia, salva_form_extra_fia, atualiza_valor_total_fia, atualiza_total_correcoes
-    plano_objeto = get_object_or_404(Plano_de_acao, pk=elemento_id)
+
+def abre_correcao_fia(request, **kwargs):
+    plano_objeto = get_object_or_404(Plano_de_acao, pk=kwargs['elemento_id'])
     modelo_fia = get_object_or_404(Modelo_fia, plano=plano_objeto)
 
-    if ident_numerica == 1:
-        form_modelo_fia = ModeloFiaForm(request.POST)
-        if form_modelo_fia.is_valid():
-            var_total_item = salva_form_modelo_fia(form_modelo_fia, modelo_fia)
-            atualiza_valor_total_fia(var_total_item, modelo_fia.id)
-                
-            # Tira o indicativo de que a ordem possui sugestão de correção
-            modelo_fia.possui_sugestao_correcao = False
-            modelo_fia.save()
+    # if abreFormFia:
+    correcao_de_fia_objeto = get_object_or_404(Correcoes, plano_associado=plano_objeto, ordem_associada=kwargs['ident_numerica'])
+    correcao_de_ordem_especifica = Correcoes.objects.order_by('ordem_associada').filter(plano_associado=plano_objeto).filter(documento_associado = 'FIA - Formulário de Inclusão de Ações').filter(ordem_associada=kwargs['ident_numerica'])
 
-            # Remove o objeto 'correcao' uma vez que ele acabou de ser corrigido.
-            correcao_de_ordem_especifica = get_object_or_404(Correcoes, plano_associado=plano_objeto, ordem_associada=ident_numerica)
-            correcao_de_ordem_especifica.delete()
+    contexto = pagina_correcoes(request, elemento_id=kwargs['elemento_id'], retorna_contexto_fia='sim')
 
-            # Atualiza a quantidade de correções neste plano
-            atualiza_total_correcoes(elemento_id)
+    # RETORNA O CONTEXTO CASO SEJA CHAMADO PELA FUNÇÃO 'corrige_fia'
+    if kwargs.get('abreFormFia'):
+        return contexto
+    ################################################################
 
-            return redirect('pagina_correcoes_mensagem', elemento_id=elemento_id, mensagem='Sucesso')
+    if kwargs.get('ident_numerica') == 1:
+        objeto_corrigindo = get_object_or_404(Modelo_fia, plano=plano_objeto)
+        corrigindo_modelo_fia = True
+        form_fia = ModeloFiaForm()
+        form_fia.fields['nome_caixa_escolar'].initial = objeto_corrigindo.nome_caixa_escolar
+        form_fia.fields['ano_exercicio'].initial = objeto_corrigindo.ano_exercicio
+        form_fia.fields['discriminacao'].initial = objeto_corrigindo.discriminacao
+        if objeto_corrigindo.preco_unitario_item == 0:
+            form_fia.fields['preco_unitario_item'].initial = ''
         else:
-            contexto = abre_correcao_fia(request, elemento_id, ident_numerica, abreFormFia='sim')
-            contexto['chave_do_form'] = form_modelo_fia
-            return render(request, 'correcoes.html', contexto)
+            form_fia.fields['preco_unitario_item'].initial = objeto_corrigindo.preco_unitario_item
+        form_fia.fields['justificativa'].initial = objeto_corrigindo.justificativa
+
+        contexto['chave_corrigindo_modelo_fia'] = corrigindo_modelo_fia
+        contexto['chave_especifica_objeto'] = correcao_de_fia_objeto
+        contexto['chave_correcao_ordem_especifica'] = correcao_de_ordem_especifica
+        contexto['chave_do_form'] = form_fia
+        return render(request, 'correcoes.html', contexto)
 
     else:
-        extra_fia = get_object_or_404(Extra_fia, fia_matriz=modelo_fia, valor_numerico=ident_numerica)
-        form_extra_fia = OrdemExtraForm(request.POST, modelo_fia_id=modelo_fia.id, id_ordem_extra=extra_fia.id, altera_ordem=True)
-        if form_extra_fia.is_valid():
-            print('oi teste')
-            var_total_item = salva_form_extra_fia(form_extra_fia, extra_fia)
-            
-            atualiza_valor_total_fia(modelo_fia.valor_total_item, modelo_fia.id)
+        objeto_corrigindo = get_object_or_404(Extra_fia, fia_matriz=modelo_fia, valor_numerico=kwargs['ident_numerica'])
+        corrigindo_extra_fia = True
+        form_extra_fia = OrdemExtraForm()
+        form_extra_fia.fields['valor_numerico'].initial = objeto_corrigindo.valor_numerico
+        form_extra_fia.fields['valor_numerico'].disabled = True
+        form_extra_fia.fields['discriminacao'].initial = objeto_corrigindo.discriminacao
+        form_extra_fia.fields['quantidade'].initial = objeto_corrigindo.quantidade
+        form_extra_fia.fields['preco_unitario_item'].initial = objeto_corrigindo.preco_unitario_item
+        form_extra_fia.fields['justificativa'].initial = objeto_corrigindo.justificativa
 
-            # Tira o indicativo de que a ordem possui sugestão de correção
-            extra_fia.possui_sugestao_correcao = False
-            extra_fia.save()
+        contexto['chave_corrigindo_extra_fia'] = corrigindo_extra_fia
+        contexto['chave_especifica_objeto'] = correcao_de_fia_objeto
+        contexto['chave_correcao_ordem_especifica'] = correcao_de_ordem_especifica
+        contexto['chave_do_form'] = form_extra_fia
+        return render(request, 'correcoes.html', contexto)
+    
+def corrige_fia(request, **kwargs):
+    from fia.alteracoes import salva_form_modelo_fia, salva_form_extra_fia, atualiza_valor_total_fia, atualiza_total_correcoes
+    plano_objeto = get_object_or_404(Plano_de_acao, pk=kwargs['elemento_id'])
+    modelo_fia = get_object_or_404(Modelo_fia, plano=plano_objeto)
 
-            # Remove o objeto 'correcao' uma vez que ele acabou de ser corrigido.
-            correcao_de_ordem_especifica = get_object_or_404(Correcoes, plano_associado=plano_objeto, ordem_associada=ident_numerica)
-            correcao_de_ordem_especifica.delete()
+    if request.method == 'POST':
+        if kwargs.get('ident_numerica') == 1:
+            form_modelo_fia = ModeloFiaForm(request.POST, modelo_fia_super=modelo_fia)
+            if form_modelo_fia.is_valid():
+                var_total_item = salva_form_modelo_fia(form_modelo_fia, modelo_fia)
+                atualiza_valor_total_fia(var_total_item, modelo_fia.id)
+                    
+                # Tira o indicativo de que a ordem possui sugestão de correção
+                modelo_fia.possui_sugestao_correcao = False
+                modelo_fia.save()
 
-            # Atualiza a quantidade de correções neste plano
-            atualiza_total_correcoes(elemento_id)
+                # Remove o objeto 'correcao' uma vez que ele acabou de ser corrigido.
+                correcao_de_ordem_especifica = get_object_or_404(Correcoes, plano_associado=plano_objeto, ordem_associada=kwargs['ident_numerica'])
+                correcao_de_ordem_especifica.delete()
 
-            return redirect('pagina_correcoes_mensagem', elemento_id=elemento_id, mensagem='Sucesso')
+                # Atualiza a quantidade de correções neste plano
+                atualiza_total_correcoes(kwargs['elemento_id'])
+                # print('1 redirecionou correto sucesso form')
+                return redirect('pagina_correcoes_mensagem', elemento_id=kwargs['elemento_id'], mensagem='Sucesso')
+            else:
+                contexto = abre_correcao_fia(request, elemento_id=kwargs['elemento_id'], ident_numerica=kwargs['ident_numerica'], abreFormFia='sim')
+                contexto['chave_do_form'] = form_modelo_fia
+                # print('1 renderizou correto erro form')
+                return render(request, 'correcoes.html', contexto)
 
         else:
-            print('invalido')
-            contexto = abre_correcao_fia(request, elemento_id, ident_numerica, abreFormFia='sim')
-            contexto['chave_do_form'] = form_extra_fia
-            return render(request, 'correcoes.html', contexto)
+            extra_fia = get_object_or_404(Extra_fia, fia_matriz=modelo_fia, valor_numerico=kwargs['ident_numerica'])
+            form_extra_fia = OrdemExtraForm(request.POST, modelo_fia_id=modelo_fia.id, id_ordem_extra=extra_fia.id, altera_ordem=True)
+            if form_extra_fia.is_valid():
+                
+                var_total_item = salva_form_extra_fia(form_extra_fia, extra_fia)
+                
+                atualiza_valor_total_fia(modelo_fia.valor_total_item, modelo_fia.id)
 
-def salva_assinatura_tecnico_fia(request, modelo_fia_id):
+                # Tira o indicativo de que a ordem possui sugestão de correção
+                extra_fia.possui_sugestao_correcao = False
+                extra_fia.save()
+
+                # Remove o objeto 'correcao' uma vez que ele acabou de ser corrigido.
+                correcao_de_ordem_especifica = get_object_or_404(Correcoes, plano_associado=plano_objeto, ordem_associada=kwargs['ident_numerica'])
+                correcao_de_ordem_especifica.delete()
+
+                # Atualiza a quantidade de correções neste plano
+                atualiza_total_correcoes(kwargs['elemento_id'])
+                # print('2 redirecionou correto sucesso form')
+                return redirect('pagina_correcoes_mensagem', elemento_id=kwargs['elemento_id'], mensagem='Sucesso')
+
+            else:
+                contexto = abre_correcao_fia(request, elemento_id=kwargs['elemento_id'], ident_numerica=kwargs['ident_numerica'], abreFormFia='sim')
+                contexto['chave_do_form'] = form_extra_fia
+                # print('2 renderizou correto erro form')
+                return render(request, 'correcoes.html', contexto)
+
+    return redirect('dashboard')
+
+def salva_assinatura_tecnico_fia(request, **kwargs):
     from plano_de_acao.alteracoes import atualiza_assinaturas_escola, fia_confere_assinaturas_muda_para_pronto
     from .alteracoes import checa_grupo_de_autorizacao
-    modelo_fia = get_object_or_404(Modelo_fia, pk=modelo_fia_id)
+    modelo_fia = get_object_or_404(Modelo_fia, pk=kwargs['modelo_fia_id'])
     permitido = checa_grupo_de_autorizacao(modelo_fia)
     if permitido:
         if request.method == 'POST':
             imagem = request.POST['canvasData']
             format, imgstr = imagem.split(';base64,') 
             ext = format.split('/')[-1] 
-            data = ContentFile(base64.b64decode(imgstr)) 
             file_name = "'mysign." + ext
+            data = ContentFile(base64.b64decode(imgstr)) 
             modelo_fia.assinatura_tecnico.save(file_name, data, save=True) 
             modelo_fia.plano.alterabilidade = 'Desativada'
             modelo_fia.plano.save()
             
             atualiza_assinaturas_escola(modelo_fia.plano.id)
 
-            modelo_fia = get_object_or_404(Modelo_fia, pk=modelo_fia_id)# Instancio novamente, para atualizar as informações alteradas na função acima que ainda não estão na instancia anterior.
+            # Instancio novamente, para atualizar as informações alteradas salvas na função acima que ainda não estão na instancia desta função atual.
+            modelo_fia = get_object_or_404(Modelo_fia, pk=kwargs['modelo_fia_id'])
 
             fia_confere_assinaturas_muda_para_pronto(modelo_fia.plano)
 
@@ -603,16 +595,16 @@ def salva_assinatura_tecnico_fia(request, modelo_fia_id):
 
     return redirect('dashboard')
 
-def remove_assinatura_tecnico(request, modelo_fia_id):
+def remove_assinatura_tecnico(request, **kwargs):
     from plano_de_acao.alteracoes import atualiza_assinaturas_escola
-    modelo_fia = get_object_or_404(Modelo_fia, pk=modelo_fia_id)
+    modelo_fia = get_object_or_404(Modelo_fia, pk=kwargs['modelo_fia_id'])
+    plano = modelo_fia.plano
     if request.method == 'POST':
         modelo_fia.assinatura_tecnico.delete()
         modelo_fia.save()
-        
+        # print(plano.assinaturas)
         atualiza_assinaturas_escola(modelo_fia.plano.id)
 
         return redirect('chamando_documento_fia', elemento_id=modelo_fia.plano.id)
 
     return redirect('dashboard')
-

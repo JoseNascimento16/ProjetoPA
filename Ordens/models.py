@@ -9,7 +9,7 @@ from datetime import datetime
 
 class Ordens(models.Model):
     plano = models.ForeignKey(Plano_de_acao, on_delete=models.CASCADE)
-    identificacao_numerica = models.IntegerField()
+    identificacao_numerica = models.IntegerField(null=True, blank=True)
     descricao_do_problema = models.TextField(max_length=500)
     prazo_execucao_inicial = models.DateField(null=True, blank=True)
     prazo_execucao_final = models.DateField(null=True, blank=True)

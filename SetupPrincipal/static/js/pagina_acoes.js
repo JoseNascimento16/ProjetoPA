@@ -93,7 +93,7 @@ $(document).ready(function(){
                     
                 }
             }
-            else if (tipo_de_usuario == 'Escola') {
+            else if (tipo_de_usuario == 'Diretor_escola') {
                 // SE A ORDEM/CODIGO POSSUIR CORREÇÕES
                 if ( lista2_de_ordens.includes(element) )  { 
                     $('.tr-dinamicos' + element).addClass('background-possui-correcao');
@@ -141,7 +141,7 @@ $(document).ready(function(){
                 $('.botao-voltar-menu-edicao-js').addClass("display-none"); // Esconde botao
             }
             
-        }else if (tipo_de_usuario == 'Escola'){
+        }else if (tipo_de_usuario == 'Diretor_escola'){
 
             if (situacao_do_plano == 'Pendente' || situacao_do_plano == 'Corrigido pela escola' || situacao_do_plano == 'Aprovado' || situacao_do_plano == 'Assinado' || situacao_do_plano == 'Finalizado'){
                 $(".desabilita-js").removeAttr('href'); // Desabilita alguns links
@@ -156,7 +156,7 @@ $(document).ready(function(){
 
     if (tipo_de_usuario == 'Secretaria' || tipo_de_usuario == 'Func_sec'){
             
-    }else if (tipo_de_usuario == 'Escola'){
+    }else if (tipo_de_usuario == 'Diretor_escola'){
 
         if (situacao_do_plano == 'Em desenvolvimento' || situacao_do_plano == 'Publicado' || situacao_do_plano == 'Necessita correção'){
             // TOOLTIP MENU CRIAR ORDENS.

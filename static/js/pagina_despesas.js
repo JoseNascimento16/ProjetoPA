@@ -77,7 +77,7 @@ $(document).ready(function(){
 
                 }
             }
-            else if (tipo_de_usuario == 'Escola') {
+            else if (tipo_de_usuario == 'Diretor_escola') {
                 // SE A ORDEM/CODIGO POSSUIR CORREÇÕES
                 if ( lista_codigos_correcao.includes(element) )  { 
                     $('.tr-dinamicos' + element).addClass('background-possui-correcao');
@@ -123,7 +123,7 @@ $(document).ready(function(){
                 $('.mensagem-menu-js').addClass("display-none"); // Esconde mensagem
             }
             
-        }else if (tipo_de_usuario == 'Escola'){
+        }else if (tipo_de_usuario == 'Diretor_escola'){
             $(".desabilita-js").removeAttr('href');
         }else if (tipo_de_usuario == 'Funcionario'){
             

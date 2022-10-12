@@ -8,9 +8,9 @@
 
     <div class="box-cadastro1">
         <div class="box-plano1-1">
-            {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
+            {% if user.groups.get.name == 'Secretaria' or user.groups.get.name == 'Func_sec' %}
             <h5><i class="fas fa-chart-bar margem-icones-menu"></i>ESCOLAS CADASTRADAS</h5>
-            {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
+            {% elif user.groups.get.name == 'Diretor_escola' %}
             <h5><i class="fa fa-user margem-icones-menu"></i>FUNCIONÁRIOS CADASTRADOS</h5>
             {% endif %}
         </div>
@@ -24,18 +24,18 @@
         {% endif %}
 
         <div class="box-plano1-2">
-            {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
+            {% if user.groups.get.name == 'Secretaria' or user.groups.get.name == 'Func_sec' %}
             <h5>Nome da escola:</h5>
             <h5>Município:</h5>
             <h5>Diretor(a) atual:</h5>
             <h5></h5>
-            {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
+            {% elif user.groups.get.name == 'Diretor_escola' %}
             <h5>Nome do funcionário</h5>
             <h5>Cargo</h5>
             <h5></h5>
             {% endif %}
         </div>
-        {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
+        {% if user.groups.get.name == 'Secretaria' or user.groups.get.name == 'Func_sec' %}
         {% for elemento in escolas_a_exibir %}
         <div class="div-cards-planos">
             <div class="cards-planos">
@@ -60,7 +60,7 @@
             </div>
         </div>
         {% endfor %}
-        {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
+        {% elif user.groups.get.name == 'Diretor_escola' %}
             {% for elemento in funcionarios_a_exibir %}
             <div class="div-cards-planos">
                 <div class="cards-planos">
@@ -95,11 +95,11 @@
 
 
     
-    {% if user.classificacao.tipo_de_acesso == 'Secretaria' %}
+    {% if user.groups.get.name == 'Secretaria' %}
     <div class="box-botao-cadastro1">
         <a id="chama-form-cadastro-escolas" class="myButton a-cadastros">Novo cadastro</a>
     </div>
-    {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
+    {% elif user.groups.get.name == 'Diretor_escola' %}
     <div class="box-botao-cadastro1">
         <a id="chama-form-cadastro-funcionario" class="myButton a-cadastros">Novo cadastro</a>
     </div>

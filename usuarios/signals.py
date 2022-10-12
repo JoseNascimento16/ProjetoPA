@@ -16,12 +16,10 @@ def retorna_situacao(sender, instance, created, *args, **kwargs):
                 plano.situacao = 'Assinado'
                 print(plano.situacao)
                 plano.save()
-            print('CRIOU alto cargo, retorna situação dos planos')
     else:
         # O valor do update_fields não vem no frozenset, somente a KEY, que no nosso caso é o nome da variavel "assina_plano", o valor da variável não vem!
         if kwargs['update_fields']: # SE HOUVER ALTERAÇÃO EM ALGUM CAMPO
             campos = list(kwargs.get('update_fields'))
-            print(campos)
             if any(item == 'assina_plano' for item in campos):
                 if instance.assina_plano: 
                     print('SIGNAL retorna situacao')
@@ -34,7 +32,6 @@ def retorna_situacao(sender, instance, created, *args, **kwargs):
                 
                 else: # SE MUDOU CARGO PARA 'PADRAO'
                     assinaturas = instance.plano_associado.all()
-                    print(assinaturas)
                     if assinaturas:
                         for item in assinaturas:
                             if not item.situacao == 'Finalizado':

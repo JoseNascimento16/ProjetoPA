@@ -142,6 +142,9 @@ class DiretorEscolaForm(forms.ModelForm):
         return self.cleaned_data
 
 class FuncionariosForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        self.escola_super = kwargs.pop('escola_super', None)
+        super().__init__(*args, **kwargs)
 
     password2 = forms.CharField(label='Confirme a senha:', widget=forms.PasswordInput(attrs={
 
@@ -180,7 +183,8 @@ class FuncionariosForm(forms.ModelForm):
         # ]
 
     def clean(self):
-        
+        escola = self.escola_super
+
         valor_first_name = self.cleaned_data.get('first_name')
         valor_cargo = self.cleaned_data.get('cargo')
         valor_username = self.cleaned_data.get('username')
@@ -199,6 +203,7 @@ class FuncionariosForm(forms.ModelForm):
         valida_minimo_caracter_senha(valor_password2, 'password2', lista_de_erros)
         campo_contem_espacos(valor_password1, 'password', lista_de_erros)
         campo_contem_espacos(valor_password2, 'password2', lista_de_erros)
+        chega_disponibilidade_do_cargo(valor_cargo, 'cargo', escola, lista_de_erros)
         
 
         if lista_de_erros is not None:

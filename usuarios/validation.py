@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 import re
+from Escolas.models import Escola
 
 from usuarios.models import Classificacao
 # from django.core import validators
@@ -63,9 +64,16 @@ def valida_minimo_caracter_senha(valor, campo, lista_de_erros):
 # VALIDACAO DE ESCOLAS (algumas validacoes acima também foram reaproveitadas)
 
 def escola_ja_cadastrada(valor, campo, lista_de_erros):
-    instancia_user = User.objects.filter(last_name=valor).exists()
-    if instancia_user:
+    instancia_escola = Escola.objects.filter(nome=valor).exists()
+    if instancia_escola:
         lista_de_erros[campo] = 'Já existe cadastro para esta escola...'
+
+def chega_disponibilidade_do_cargo(valor_cargo, campo, escola, lista_de_erros):
+    if valor_cargo:
+        if valor_cargo == 'Tesoureiro(a)' and escola.possui_tesoureiro:
+            lista_de_erros[campo] = 'Só pode existir 1 tesoureiro(a) cadastrado(a)...'
+        if valor_cargo == 'Membro do colegiado' and escola.quant_membro_colegiado == 3:
+            lista_de_erros[campo] = 'Limite máximo. Já existem 3 "membros do colegiado" cadastrados...'
 
 def nome_contem_numeros(valor, campo, lista_de_erros):
     if valor:

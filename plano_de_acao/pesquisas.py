@@ -1,6 +1,7 @@
 from string import whitespace
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
+from Escolas.models import Escola
 from plano_de_acao.models import Plano_de_acao
 
 # Funções que definem quais planos serão mostrados em caso de uma pesquisa.
@@ -16,7 +17,7 @@ def pesquisa_func_sec(request):
     if valor_pesquisa == '' or valor_pesquisa.startswith(' '):
         pass
     else:
-        escolas = User.objects.filter(last_name__icontains=valor_pesquisa)
+        escolas = Escola.objects.filter(nome__icontains=valor_pesquisa)
         nome_planos = Plano_de_acao.objects.filter(ano_referencia__icontains=valor_pesquisa).exclude(situacao='Em desenvolvimento')
         diretores_ou_corretores = User.objects.filter(first_name__icontains=valor_pesquisa)
         situacoes = Plano_de_acao.objects.filter(situacao__icontains=valor_pesquisa).exclude(situacao='Em desenvolvimento')
@@ -27,19 +28,17 @@ def pesquisa_func_sec(request):
 
         elif escolas.exists():
             for elemento in escolas:
-                if elemento.classificacao.tipo_de_acesso == 'Escola':
-                    planos_pesquisa = Plano_de_acao.objects.filter(usuario=elemento).exclude(situacao='Em desenvolvimento')
-                    # planos_pesquisa = Plano_de_acao.objects.all()
-                    for plano in planos_pesquisa:
-                        lista_planos_pesquisa.append(plano)
+                planos_pesquisa = Plano_de_acao.objects.filter(escola=elemento).exclude(situacao='Em desenvolvimento')
+                for plano in planos_pesquisa:
+                    lista_planos_pesquisa.append(plano)
 
         elif diretores_ou_corretores.exists():
             for elemento in diretores_ou_corretores:
-                if elemento.classificacao.tipo_de_acesso == 'Escola':
-                    planos_pesquisa = Plano_de_acao.objects.filter(usuario=elemento).exclude(situacao='Em desenvolvimento')
+                if elemento.groups.get().name == 'Diretor_escola':
+                    planos_pesquisa = Plano_de_acao.objects.filter(escola=elemento.escola).exclude(situacao='Em desenvolvimento')
                     for plano in planos_pesquisa:
                         lista_planos_pesquisa.append(plano)
-                elif elemento.classificacao.tipo_de_acesso == 'Func_sec':
+                elif elemento.groups.get().name == 'Func_sec':
                     planos_pesquisa = Plano_de_acao.objects.filter(corretor_plano=elemento).exclude(situacao='Em desenvolvimento')
                     for plano in planos_pesquisa:
                         lista_planos_pesquisa.append(plano)
@@ -55,7 +54,8 @@ def pesquisa_func_sec(request):
 
 def pesquisa_escola(request):
     lista_planos_pesquisa = []
-    
+    objeto_escola = request.user.classificacao.escola
+
     if request.method == 'POST':
         valor_pesquisa = request.POST['campo']
     else:
@@ -64,9 +64,9 @@ def pesquisa_escola(request):
     if valor_pesquisa == '' or valor_pesquisa.startswith(' '):
         pass
     else:
-        nome_planos = Plano_de_acao.objects.filter(usuario=request.user).filter(ano_referencia__icontains=valor_pesquisa)
-        situacoes = Plano_de_acao.objects.filter(usuario=request.user).filter(situacao__icontains=valor_pesquisa)
-        escola = User.objects.filter(last_name__icontains=valor_pesquisa)
+        nome_planos = Plano_de_acao.objects.filter(escola=objeto_escola).filter(ano_referencia__icontains=valor_pesquisa)
+        situacoes = Plano_de_acao.objects.filter(escola=objeto_escola).filter(situacao__icontains=valor_pesquisa)
+        escola = Escola.objects.filter(nome__icontains=valor_pesquisa)
         corretores = User.objects.filter(first_name__icontains=valor_pesquisa)
         
         if nome_planos.exists():
@@ -79,15 +79,14 @@ def pesquisa_escola(request):
 
         elif escola.exists():
             for elemento in escola:
-                if elemento.last_name == request.user.last_name:
-                    planos_pesquisa = Plano_de_acao.objects.filter(usuario=elemento)
-                    for plano in planos_pesquisa:
-                        lista_planos_pesquisa.append(plano)
+                planos_pesquisa = Plano_de_acao.objects.filter(escola=objeto_escola)
+                for plano in planos_pesquisa:
+                    lista_planos_pesquisa.append(plano)
                     
         elif corretores.exists():
             for elemento in corretores:
-                if elemento.classificacao.tipo_de_acesso == 'Func_sec':
-                    planos_pesquisa = Plano_de_acao.objects.filter(usuario=request.user).filter(corretor_plano=elemento)
+                if elemento.groups.get().name == 'Func_sec':
+                    planos_pesquisa = Plano_de_acao.objects.filter(escola=objeto_escola).filter(corretor_plano=elemento)
                     for plano in planos_pesquisa:
                         lista_planos_pesquisa.append(plano)
             

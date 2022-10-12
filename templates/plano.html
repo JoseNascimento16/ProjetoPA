@@ -88,7 +88,7 @@
                 </p>
             </div>
             {% endif %}
-            {% if user.classificacao.tipo_de_acesso == 'Escola' %}
+            {% if user.groups.get.name == 'Diretor_escola' %}
             <div class="box-botao-cadastro1">
                 {% for plano in chave_planos2 %}
                 <a id="id_a_href" class="myButton" href="{% url 'nova_ordem' plano.id 'gera' %}" >Nova ordem</a>

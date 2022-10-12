@@ -1,7 +1,8 @@
+from Escolas.models import Escola
 from logs.pesquisas import pesquisa_log_plano_escola, pesquisa_log_plano_func_sec
 from usuarios.models import Classificacao, Turmas # Turmas_plano
 from codigos.models.codigos import ModeloCodigos
-from Ordens.models import Ordens, ControleOrdens
+from Ordens.models import Ordens
 from Ordens.forms import OrdemForm
 from plano_de_acao.forms import PlanoForm
 from django.core.paginator import Paginator
@@ -17,42 +18,44 @@ from logs.logs import *
 
 # Create your views here.
 
-@login_required
-def log_planos(request, search=''): # pagina listando todos os planos de ação possíveis de serem vistos
-    valor_pesquisa = ''
-    id = request.user.id
-    checa_usuario = request.user
-    escola_matriz = checa_usuario.classificacao.matriz
-    # entidade_escola = get_object_or_404(User, last_name=escola_matriz)
+### VIEWS TESTADAS ###
 
-    if checa_usuario.classificacao.tipo_de_acesso == 'Secretaria' or checa_usuario.classificacao.tipo_de_acesso == 'Func_sec' :
+def log_planos(request, **kwargs): # pagina listando todos os planos de ação possíveis de serem vistos
+    valor_pesquisa = ''
+    planos=''
+    search=''
+    checa_usuario = request.user
+    tipo_usuario_logado = request.user.groups.get().name
+    escola_matriz = request.user.classificacao.escola
+
+    if tipo_usuario_logado == 'Secretaria' or tipo_usuario_logado == 'Func_sec' :
         
         planos = Plano_de_acao.objects.order_by('-data_de_criação').filter(~Q(situacao='Em desenvolvimento'))
-
-        if search:
+        
+        if kwargs.get('search'):
             planos = pesquisa_log_plano_func_sec(request)
             if request.method == 'POST':
                 valor_pesquisa = request.POST['campo']
             else:
                 valor_pesquisa = request.GET.get('q','')
 
-    elif checa_usuario.classificacao.tipo_de_acesso == 'Escola':
+    elif tipo_usuario_logado == 'Diretor_escola':
         
-        planos = Plano_de_acao.objects.order_by('-data_de_criação').filter(usuario=id).filter(~Q(situacao='Em desenvolvimento'))
+        planos = Plano_de_acao.objects.order_by('-data_de_criação').filter(escola=escola_matriz).filter(~Q(situacao='Em desenvolvimento'))
 
-        if search:
+        if kwargs.get('search'):
             planos = pesquisa_log_plano_escola(request)
             if request.method == 'POST':
                 valor_pesquisa = request.POST['campo']
             else:
                 valor_pesquisa = request.GET.get('q','')
 
-    elif checa_usuario.classificacao.tipo_de_acesso == 'Funcionario':
+    elif tipo_usuario_logado == 'Funcionario':
         
-        entidade_escola = get_object_or_404(User, last_name=escola_matriz)
-        planos = Plano_de_acao.objects.order_by('-data_de_criação').filter(usuario=entidade_escola).filter(~Q(situacao='Em desenvolvimento'))
+        
+        planos = Plano_de_acao.objects.order_by('-data_de_criação').filter(escola=escola_matriz).filter(~Q(situacao='Em desenvolvimento'))
 
-        if search:
+        if kwargs.get('search'):
             planos = pesquisa_log_plano_escola(request)
             if request.method == 'POST':
                 valor_pesquisa = request.POST['campo']
@@ -63,17 +66,20 @@ def log_planos(request, search=''): # pagina listando todos os planos de ação 
     page_number = request.GET.get('page')
     page = paginator_planos.get_page(page_number)
 
+    if kwargs.get('search'):
+        search = kwargs['search']
+
     dados = {
         'chave_log_planos' : page,
         'chave_var_pesquisa' : search,
         'chave_valor_pesquisa' : valor_pesquisa,
+        'chave_achou_plano' : planos,
     }
 
     return render(request, 'log_planos_de_acao.html', dados)
 
-@login_required
-def chama_log_plano(request, elemento_id):
-    plano = get_object_or_404(Plano_de_acao, pk=elemento_id)
+def chama_log_plano(request, **kwargs):
+    plano = get_object_or_404(Plano_de_acao, pk=kwargs['elemento_id'])
 
     log_do_plano = Event.objects.order_by('-timestamp').filter(plano_base=plano.id) # A variavel plano_base é tipo integer, portanto tenho que filtrar pelo id do plano.
 
@@ -83,7 +89,8 @@ def chama_log_plano(request, elemento_id):
 
     dados = {
         'instancia_plano' : plano,
-        'log_plano' : page
+        'log_plano' : page,
+        'chave_existe_log' : log_do_plano,
     }
 
     return render(request, 'log_plano.html', dados)

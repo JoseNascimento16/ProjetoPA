@@ -8,7 +8,6 @@ def numero_ja_esta_sendo_usado(valor, campo, lista_De_erros, valor_plano_id):
         instancia_plano = get_object_or_404(Plano_de_acao, pk=valor_plano_id)
         if Ordens.objects.filter(plano=instancia_plano.id).filter(identificacao_numerica=valor).exists():
             lista_De_erros[campo] = 'A ordem ' + str(valor) + ' já existe, defina outro número...'
-            print('Numero ja esta sendo usado')
 
 def permite_manter_mesmo_numero_de_ordem(valor, campo, lista_De_erros, valor_plano_id, valor_ordem_id):
     if valor:
@@ -17,10 +16,8 @@ def permite_manter_mesmo_numero_de_ordem(valor, campo, lista_De_erros, valor_pla
         if valor != instancia_ordem.identificacao_numerica:
             if Ordens.objects.filter(plano=instancia_plano.id).filter(identificacao_numerica=valor).exists():
                 lista_De_erros[campo] = 'A ordem ' + str(valor) + ' já existe, defina outro número...'
-                print('Numero ja esta sendo usado')
 
 def numero_menor_que_1(valor, campo, lista_de_erros):
-    print('Na validacao: valor = ' + str(valor))
     if valor or valor == 0:
         if valor < 1:
             lista_de_erros[campo] = 'Somente números acima de 1...'

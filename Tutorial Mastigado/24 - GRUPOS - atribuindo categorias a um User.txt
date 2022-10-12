@@ -1,3 +1,31 @@
+- Pegando o grupo do usuário ATUAL LOGADO:
+
+    group = request.user.groups.all()[0].name
+    group = request.user.groups.all() pega todos
+    group = request.user.groups.filter() pega todos
+    group = request.user.groups.get() só funciona se tiver 1 somente (pega o objeto)
+
+    Se o usuário pertencer a mais de um grupo, não posso usar o get, tenho que usar um dos outros e varrer num FOR.
+
+- Pegando o grupo de OUTRO USUÁRIO. (o request aqui não serve para nós)
+    queryset_grupo = usuario_objeto.groups.filter(name='Funcionario').exists() ,retorna um queryset
+    ou
+    queryset_grupo = classificacao.user.groups.filter(name='Funcionario').exists() ,retorna um queryset
+    for grupo in queryset_grupo:
+	print(grupo)
+
+    >>> Funcionario (valor printado na tela. Funcionário é o nome do grupo!)
+
+grupo = Group.objects.get(name='Func_sec') , pega a instancia de um grupo
+request.user.groups.add(grupo) (add, remove) , adiciona/remove usuario atual ao grupo
+
+lista todos usuarios de um grupo pela queryset de User:
+users = User.objects.filter(groups__name='Func_sec') , 
+print(len(users))
+
+request.user.has_perm('App_name.view_modelname')
+
+###############
 Há algumas formas de implementar sistemas de classificação de tipos de usuários (Grupos, roles, permissions...).
 Como não estou familiarizado com essas funcionalidades ainda, faremos isso através de uma EXTENDING do modelo de User.
 
@@ -42,6 +70,6 @@ OU SEJA, quando, no formulário de criação de novos usuários fizermos a solic
 
 Depois disso podemos puxar as informações com um simples codigo:
 
-**** tipo = user.classificacao.tipo_de_acesso ****
+**** tipo = user.groups ****
 
 # Perceba que "classificacao" no trecho acima, refere-se à classe "Classificacao", porém é escrito com "c" minusculo por estar no meio do codigo.

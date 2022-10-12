@@ -8,12 +8,12 @@ class Testurls(SimpleTestCase):
     def test_cadastrar_escolas_resolve(self):
         url = reverse('cadastrar_escolas', args=[1])
         # print(resolve(url))
-        self.assertEquals(resolve(url).func, cadastros_secretaria)
+        self.assertEquals(resolve(url).func, cadastro_de_escolas)
 
     def test_cadastrar_escolas_mensagem_resolve(self):
         url = reverse('cadastrar_escolas_mensagem', args=[1,'slug'])
         # print(resolve(url))
-        self.assertEquals(resolve(url).func, cadastros_secretaria)
+        self.assertEquals(resolve(url).func, cadastro_de_escolas)
 
     def test_abre_altera_cargo_resolve(self):
         url = reverse('abre_altera_cargo', args=[1])
@@ -33,7 +33,7 @@ class Testurls(SimpleTestCase):
     def test_cadastrar_funcionarios_secretaria_resolve(self):
         url = reverse('cadastrar_funcionarios_secretaria', args=[1,'slug'])
         # print(resolve(url))
-        self.assertEquals(resolve(url).func, cadastros_secretaria)
+        self.assertEquals(resolve(url).func, cadastro_de_funcionarios_secretaria)
 
     def test_cadastrar_funcionarios_mensagem_resolve(self):
         url = reverse('cadastrar_funcionarios_mensagem', args=[1,'slug'])
@@ -43,7 +43,7 @@ class Testurls(SimpleTestCase):
     def test_cadastrar_funcionarios_secretaria_mensagem_resolve(self):
         url = reverse('cadastrar_funcionarios_secretaria_mensagem', args=[1,'slug','slug'])
         # print(resolve(url))
-        self.assertEquals(resolve(url).func, cadastros_secretaria)
+        self.assertEquals(resolve(url).func, cadastro_de_funcionarios_secretaria)
 
     def test_deletando_funcionario_resolve(self):
         url = reverse('deletando_funcionario', args=[1])
@@ -93,12 +93,12 @@ class Testurls(SimpleTestCase):
     def test_pesquisa_cadastro_escolas_resolve(self):
         url = reverse('pesquisa_cadastro_escolas', args=[1,'slug'])
         # print(resolve(url))
-        self.assertEquals(resolve(url).func, cadastros_secretaria)
+        self.assertEquals(resolve(url).func, cadastro_de_escolas)
 
     def test_pesquisa_cadastro_funcionarios_resolve(self):
         url = reverse('pesquisa_cadastro_funcionarios', args=[1,'slug','slug'])
         # print(resolve(url))
-        self.assertEquals(resolve(url).func, cadastros_secretaria)
+        self.assertEquals(resolve(url).func, cadastro_de_funcionarios_secretaria)
 
     def test_meu_acesso_resolve(self):
         url = reverse('abre_meu_acesso', args=[1])
@@ -122,6 +122,11 @@ class Testurls(SimpleTestCase):
 
     def test_cadastra_assinatura_resolve(self):
         url = reverse('cadastra_assinatura', args=[1])
+        # print(resolve(url))
+        self.assertEquals(resolve(url).func, salva_assinatura)
+
+    def test_cadastra_assinatura_teste_resolve(self):
+        url = reverse('cadastra_assinatura_teste', args=[1,'slug'])
         # print(resolve(url))
         self.assertEquals(resolve(url).func, salva_assinatura)
 

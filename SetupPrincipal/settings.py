@@ -34,6 +34,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'Escolas',
     'plano_de_acao',
     'usuarios',
     'fia',

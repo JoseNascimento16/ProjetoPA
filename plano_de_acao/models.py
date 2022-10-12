@@ -2,6 +2,7 @@ from django.db import models
 from datetime import date, datetime
 # from usuarios.models import Usuario
 from django.contrib.auth.models import User
+from Escolas.models import Escola
 
 # from fia.models import Modelo_fia
 
@@ -9,8 +10,8 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 class Plano_de_acao(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='Criador')
-    corretor_plano = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='corretor')
+    escola = models.ForeignKey(Escola, on_delete=models.CASCADE, null=True, related_name='Criador')
+    corretor_plano = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='corretor')
     ano_referencia = models.CharField(max_length=50)
     situacao = models.CharField(default='Em desenvolvimento', max_length=50)
     data_de_criação = models.DateField(default=date.today, blank=True)
@@ -31,6 +32,9 @@ class Plano_de_acao(models.Model):
     forca_criacao_modelo_fia = models.BooleanField(default=False)
     data_assinaturas_escola = models.DateField(null=True, blank=True)
     data_assinaturas_suprof = models.DateField(null=True, blank=True)
+    comando_todas = models.BooleanField(default=True)
+    todas_inseridas = models.BooleanField(default=False)
+    comando_individual = models.BooleanField(default=False)
 
     def __str__(self):
         return self.ano_referencia

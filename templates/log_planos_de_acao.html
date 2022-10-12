@@ -20,7 +20,7 @@
     
     <div class="box-plano1-2">
         <h5>Plano de ação</h5>
-        {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
+        {% if user.groups.get.name == 'Secretaria' or user.groups.get.name == 'Func_sec' %}
         <h5>Escola:</h5>
         {% endif %}
         <h5>Situação:</h5>
@@ -34,11 +34,11 @@
                         {{ elemento.ano_referencia }}
                     </a>
                 </p>
-                {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
+                {% if user.groups.get.name == 'Secretaria' or user.groups.get.name == 'Func_sec' %}
                 <p class="clear-2 itens-cards-planos">
                     <a href="#" class="tooltip5 cursor-default">
-                        <i class="fa fa-user margem-icones-menu"></i>{{ elemento.usuario.last_name|truncatechars:30 }}
-                        <span class="tooltiptext5" style="left: 100px; width: 300px">{{elemento.usuario.last_name}}</span>
+                        <i class="fa fa-user margem-icones-menu"></i>{{ elemento.escola.nome|truncatechars:30 }}
+                        <span class="tooltiptext5" style="left: 100px; width: 300px">{{elemento.escola.nome}}</span>
                     </a>
                 </p>
                 <p class="clear-2 itens-cards-planos">
@@ -46,13 +46,13 @@
                         <i class="fa fa-user margem-icones-menu"></i>{{ elemento.situacao }}
                     </a>
                 </p>
-                {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
+                {% elif user.groups.get.name == 'Diretor_escola' %}
                 <p class="clear-2 itens-cards-planos">
                     <a href="#" class="cursor-default">
                         {{ elemento.situacao }}
                     </a>
                 </p>
-                {% elif user.classificacao.tipo_de_acesso == 'Funcionario' %}
+                {% elif user.groups.get.name == 'Funcionario' %}
                 <p class="clear-2 itens-cards-planos">
                     <a href="#" class="">
                         {{ elemento.situacao }}

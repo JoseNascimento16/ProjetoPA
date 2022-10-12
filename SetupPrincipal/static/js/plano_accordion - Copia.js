@@ -10,7 +10,7 @@ $(document).ready(function(){
         
         
 
-    }else if (tipo_de_usuario == 'Escola'){
+    }else if (tipo_de_usuario == 'Diretor_escola'){
         
     }else if (tipo_de_usuario == 'Funcionario'){
         

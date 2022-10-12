@@ -83,11 +83,11 @@
     {% if chave_planos2 %}
     {% for plano in chave_planos2 %}
         <tr>
-            <td colspan="2"> UNIDADE: {{ plano.usuario.last_name }}</td>
+            <td colspan="2"> UNIDADE: {{ plano.escola.nome }}</td>
         </tr>
         <tr class="linha-municipio">
-            <td>MUNICÍPIO: {{ plano.usuario.classificacao.municipio }}</td>
-            <td>DIREC: {{ plano.usuario.username }}</td>
+            <td>MUNICÍPIO: {{ plano.escola.municipio }}</td>
+            <td>DIREC: {{ plano.escola.nte }}</td>
         </tr>
         
     </table>
@@ -123,19 +123,19 @@
             <!--  SE ORDEM INSERIDA, MAS CODIGOS NÃO INSERIDOS -->
             {% if ordem.codigos_inseridos == 0 %}
             <tr class="cards-ordens-visualizacao tr-dinamicos{{ordem.identificacao_numerica}}">
-                {% if user.classificacao.tipo_de_acesso == 'Secretaria' %}
+                {% if user.groups.get.name == 'Secretaria' %}
                     {% if ordem.possui_sugestao_correcao %}
                     <td class="tds-trs-{{ordem.identificacao_numerica}}" style="text-align: center;"> <a class="a-clear-acao desabilita-js" href="{% url 'chamando_correcao_acao_plano' plano.id ordem.id %}"><div style="height:100%;width:100%">{{ordem.identificacao_numerica}} <span class="tooltiptext2-tabela"> <i class="fas fa-edit"></i> Alterar correção!</span> </div> </a> </td>
                     {% else %}
                     <td class="tds-trs-{{ordem.identificacao_numerica}}" style="text-align: center;"> <a class="a-clear-acao desabilita-js" href="{% url 'chamando_correcao_acao_plano' plano.id ordem.id %}"><div style="height:100%;width:100%">{{ordem.identificacao_numerica}} <span class="tooltiptext1-tabela"> <i class="fa-solid fa-arrow-left"></i> Sugerir correção!</span> </div> </a> </td>
                     {% endif %}
-                {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
+                {% elif user.groups.get.name == 'Diretor_escola' %}
                     {% if ordem.possui_sugestao_correcao %}
                     <td class="tds-trs-{{ordem.identificacao_numerica}}" style="text-align: center;"> <a class="a-clear-acao" href="{% url 'abrindo_correcao_acao' plano.id ordem.identificacao_numerica 'Sim' %}"><div style="height:100%;width:100%">{{ordem.identificacao_numerica}} <span class="tooltiptext2-tabela"> <i class="fas fa-edit"></i> Corrigir!</span> </div> </a> </td>
                     {% else %}
                     <td class="tds-trs-{{ordem.identificacao_numerica}}" style="text-align: center;"> <a class="a-clear-acao" ><div style="height:100%;width:100%">{{ordem.identificacao_numerica}} </div> </a> </td>
                     {% endif %}
-                {% elif user.classificacao.tipo_de_acesso == 'Funcionario' %}
+                {% elif user.groups.get.name == 'Funcionario' %}
                     <td class="tds-trs-{{ordem.identificacao_numerica}}" style="text-align: center;"> <a class="a-clear-acao" ><div style="height:100%;width:100%">{{ordem.identificacao_numerica}} </div> </a> </td>
                 {% endif %}
 
@@ -160,19 +160,19 @@
                     <tr class=" cards-ordens-visualizacao tr-dinamicos{{item.ordem.identificacao_numerica}}" >
                         {% if not var1 %}
 
-                        {% if user.classificacao.tipo_de_acesso == 'Secretaria' %}
+                        {% if user.groups.get.name == 'Secretaria' %}
                             {% if ordem.possui_sugestao_correcao %}
                             <td class="tds-trs-{{ordem.identificacao_numerica}}" rowspan="{{ordem.ordem_rowspan}}" style="text-align: center;"> <a class="a-clear-acao desabilita-js" href="{% url 'chamando_correcao_acao_plano' plano.id ordem.id %}"><div style="height:100%;width:100%">{{ordem.identificacao_numerica}} <span class="tooltiptext2-tabela"> <i class="fas fa-edit"></i> Alterar correção!</span> </div> </a> </td>
                             {% else %}
                             <td class="tds-trs-{{ordem.identificacao_numerica}}" rowspan="{{ordem.ordem_rowspan}}" style="text-align: center;"> <a class="a-clear-acao desabilita-js" href="{% url 'chamando_correcao_acao_plano' plano.id ordem.id %}"><div style="height:100%;width:100%">{{ordem.identificacao_numerica}} <span class="tooltiptext1-tabela"> <i class="fa-solid fa-arrow-left"></i> Sugerir correção!</span> </div> </a> </td>
                             {% endif %}
-                        {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
+                        {% elif user.groups.get.name == 'Diretor_escola' %}
                             {% if ordem.possui_sugestao_correcao %}
                             <td class="tds-trs-{{ordem.identificacao_numerica}}" rowspan="{{ordem.ordem_rowspan}}" style="text-align: center;"> <a class="a-clear-acao" href="{% url 'abrindo_correcao_acao' plano.id ordem.identificacao_numerica 'Sim' %}"><div style="height:100%;width:100%">{{ordem.identificacao_numerica}} <span class="tooltiptext2-tabela"> <i class="fas fa-edit"></i> Corrigir!</span> </div> </a> </td>
                             {% else %}
                             <td class="tds-trs-{{ordem.identificacao_numerica}}" rowspan="{{ordem.ordem_rowspan}}" style="text-align: center;"> <a class="a-clear-acao"><div style="height:100%;width:100%">{{ordem.identificacao_numerica}} </div> </a> </td>
                             {% endif %}
-                        {% elif user.classificacao.tipo_de_acesso == 'Funcionario' %}
+                        {% elif user.groups.get.name == 'Funcionario' %}
                             <td class="tds-trs-{{ordem.identificacao_numerica}}" rowspan="{{ordem.ordem_rowspan}}" style="text-align: center;"> <a class="a-clear-acao"><div style="height:100%;width:100%">{{ordem.identificacao_numerica}} </div> </a> </td>
                         {% endif %}
 
@@ -244,7 +244,7 @@
 
         <tr>
             <td style="text-align: center;"> Presidente Cx Escolar </td>
-            <td style="text-align: center;width: 200px;font-weight: bold;"> {{plano.usuario.first_name}} </td>
+            <td style="text-align: center;width: 200px;font-weight: bold;"> {{plano.escola.diretor.first_name}} </td>
             <td colspan="2", style="text-align: center;">  </td>
             <td> VISTO SUPROF: </td>
         </tr>

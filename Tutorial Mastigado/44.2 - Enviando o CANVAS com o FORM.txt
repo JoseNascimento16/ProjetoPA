@@ -19,3 +19,5 @@ Depois iremos adicionar esta imagem ao <input> invisível, assim, quando o <form
 	    document.getElementById('input_hidden_canvas').value = canvas.toDataURL('assinatura/png');
 	    document.forms["form-canvas"].submit();
 	}
+
+# Nos nossos testes, precisamos ter a capacidade de simular a funcionalidade do metodo 'toDataURL' porém em código python. Conseguimos isso, e temos explicado na seção de testes das views!!

@@ -10,7 +10,7 @@ $(document).ready(function(){
     var assinatura_tecnico = JSON.parse(document.getElementById('id-assinatura-tecnico').textContent);
     
 
-    if (alterabilidade_plano == 'Escola' && tipo_de_usuario == 'Escola' ){
+    if (alterabilidade_plano == 'Escola' && tipo_de_usuario == 'Diretor_escola' ){
 
         
     }else if(alterabilidade_plano == 'Secretaria' && tipo_de_usuario == 'Func_sec' ){

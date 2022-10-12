@@ -1,8 +1,10 @@
 from plano_de_acao.views import *
-from .models import Plano_de_acao
+from .models import Correcoes, Plano_de_acao
 from django.shortcuts import get_object_or_404
 from usuarios.models import Classificacao
+from fia.models import Modelo_fia
 from datetime import date
+from Escolas.models import Escola
 
 def zera_assinaturas(id_plano):
     plano = get_object_or_404(Plano_de_acao, pk=id_plano)
@@ -22,7 +24,7 @@ def atualiza_assinaturas_escola(elemento_id):
     assinaturas = plano.classificacao_set.all()
     if assinaturas:
         for item in assinaturas:
-            if item.tipo_de_acesso == 'Funcionario' or item.tipo_de_acesso == 'Escola':
+            if item.user.groups.filter(name='Funcionario').exists() or item.user.groups.filter(name='Diretor_escola').exists():
                 lista.append(item)
         plano.assinaturas = len(lista)
     else:
@@ -35,6 +37,7 @@ def atualiza_assinaturas_escola(elemento_id):
         if modelo_fia.assinatura_tecnico:
             plano.assinaturas += 1
         plano.save()
+    # print(plano.assinaturas)
 
 def atualiza_assinaturas_sec(elemento_id):
     lista = []
@@ -43,7 +46,7 @@ def atualiza_assinaturas_sec(elemento_id):
     assinaturas = plano.classificacao_set.all()
     if assinaturas:
         for item in assinaturas:
-            if item.tipo_de_acesso == 'Func_sec':
+            if item.user.groups.filter(name='Func_sec').exists():
                 lista.append(item)
         plano.assinaturas_sec = len(lista)
     plano.save()
@@ -63,7 +66,7 @@ def ocorreu_alteracao(elemento_id):
 
 def plano_inteiramente_assinado(captura_plano):
     # func_que_assinam = Classificacao.objects.filter(assina_plano=True)
-    if captura_plano.situacao == 'Assinado' and captura_plano.assinaturas_sec > 0 and captura_plano.assinaturas_sec == 3:
+    if captura_plano.situacao == 'Assinado' and captura_plano.assinatura_corretor and captura_plano.assinatura_coordenador and captura_plano.assinatura_diretor:
         captura_plano.situacao = 'Inteiramente assinado'
         captura_plano.data_assinaturas_suprof = date.today()
         captura_plano.save()
@@ -128,3 +131,75 @@ def cria_associacao(request, captura_plano, captura_funcionario, elemento_id):
     checa_usuario = request.user.first_name
     nome_plano = captura_plano.ano_referencia
     log_plano_assinado(nome_plano, checa_usuario, captura_plano.id)
+
+def define_matriz(request):
+    entidade_escola = request.user.classificacao.escola
+    return entidade_escola
+
+def mostra_alerta_laranja(objeto_matriz):
+    ######################
+    # checa se a escola possui planos com correções
+    #  mostra alerta laranja
+    planos_com_correcao = Plano_de_acao.objects.order_by('-data_de_criação').filter(escola=objeto_matriz)
+    if any(plano.correcoes_a_fazer > 0 and plano.situacao == 'Necessita correção' for plano in planos_com_correcao):
+        return True
+    else:
+        return False
+
+def gera_lista_planos_assinados(planos, checa_usuario):
+    ######################
+    # Gera lista de planos que o usuário logado atual já assinou
+    lista_planos_assinados=[]
+    for plano in planos:
+            funcionario_associado = Classificacao.objects.filter(plano_associado=plano)#DE TODOS OS FUNCIONARIOS ASSOCIADOS A ESTE PLANO
+            for funcionario in funcionario_associado:
+                if funcionario.user_id == checa_usuario.id: #SE QUALQUER FUNCIONARIO ASSOCIADO A ESTE PLANO, TIVER O MESMO ID DO USUARIO ATUAL
+                    # Adiciono à lista para que o HTML possa decidir qual botão mostrar
+                    lista_planos_assinados.append(plano.ano_referencia)
+
+    return lista_planos_assinados
+
+def atualiza_quant_correcoes_plano(plano):
+    ######################
+    # Atualiza a quantidade de correções em um plano
+    correcoes_no_plano = Correcoes.objects.filter(plano_associado=plano)
+    plano.correcoes_a_fazer = len(correcoes_no_plano)
+    plano.save()
+    # print(plano.correcoes_a_fazer)
+
+def calcula_soma_capital(codigos_iteravel):
+    # SOMA OS VALORES DE TODOS PRODUTOS DO TIPO CAPITAL
+    soma_capital = 0
+    for elemento in codigos_iteravel:
+        if elemento.preco_total_capital:
+            soma_capital = soma_capital + elemento.preco_total_capital
+    return soma_capital
+
+def calcula_soma_custeio(codigos_iteravel):
+    # SOMA OS VALORES DE TODOS PRODUTOS DO TIPO CUSTEIO
+    soma_custeio = 0
+    for elemento in codigos_iteravel:
+        if elemento.preco_total_custeio:
+            soma_custeio = soma_custeio + elemento.preco_total_custeio
+    return soma_custeio
+
+def normaliza_rowspan(ordens_iteravel):
+    # Redundância para garantir que os valores de rowspan, codigos_inseridos (ordem) e inserido(codigo) não saiam do padrão por qualquer motivo que seja
+    # Recebe todas as ordens de um plano especifico
+    for ordem_OBJ in ordens_iteravel:
+        if ordem_OBJ.codigos_inseridos < 0 or ordem_OBJ.ordem_rowspan < 0 or ordem_OBJ.codigos_inseridos != ordem_OBJ.ordem_rowspan:
+            ordem_OBJ.codigos_inseridos = 0
+            ordem_OBJ.ordem_rowspan = 0
+            ordem_OBJ.save()
+            codigos_dessa_ordem = ModeloCodigos.objects.order_by('identificacao').filter(ordem=ordem_OBJ)
+            for codigo in codigos_dessa_ordem:
+                codigo.inserido = False
+                codigo.save()
+
+def ordem_atualiza_rowspan_e_codigos_inseridos(ordem_objeto):
+    # Atualiza a quantidade de codigos inseridos em uma ordem
+    # Atualiza a rowspan = quantidade de codigos inseridos
+    quant_codigos = ModeloCodigos.objects.filter(ordem=ordem_objeto).filter(inserido=True)
+    ordem_objeto.codigos_inseridos = len(quant_codigos)
+    ordem_objeto.ordem_rowspan = len(quant_codigos)
+    ordem_objeto.save()

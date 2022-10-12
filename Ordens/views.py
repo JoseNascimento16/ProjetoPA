@@ -7,15 +7,20 @@ from django.contrib import messages
 from .models import Ordens
 from codigos.forms import CodigosForm
 from Ordens.forms import OrdemForm, Edita_Ordem_Form, Cadastra_datas_Ordem_Form
+from plano_de_acao.views import plano
+from django.utils import timezone
 
 # Create your views here.
 
+
+
+##### VIEWS TESTADAS #####
 def ordem(request, ordem_id, mensagem=''): # Acesso aos códigos de uma ordem
     instancia_ordem = get_object_or_404(Ordens, pk=ordem_id)
-    tipo_usuario = request.user.classificacao.tipo_de_acesso
+    tipo_usuario = request.user.groups.get().name
     plano_objeto = instancia_ordem.plano
     
-    if tipo_usuario == 'Escola' and plano_objeto.alterabilidade == 'Escola' and plano_objeto.tipo_fia == False:
+    if tipo_usuario == 'Diretor_escola' and plano_objeto.alterabilidade == 'Escola' and plano_objeto.tipo_fia == False:
         if mensagem == 'Criou':
             messages.success(request, 'Código criado com sucesso!')
         elif mensagem == 'Deletou':
@@ -42,16 +47,15 @@ def ordem(request, ordem_id, mensagem=''): # Acesso aos códigos de uma ordem
     else:
         return redirect('pagina_planos_de_acao_mensagem', mensagem='Acesso_negado')
 
-def cria_ordem(request, plano_id):
+def cria_ordem(request, **kwargs):
     abre_nova_ordem = False
     form_ordem = OrdemForm()
-    instancia_plano = get_object_or_404(Plano_de_acao, pk=plano_id)
-    tipo_usuario = request.user.classificacao.tipo_de_acesso
-    if tipo_usuario == 'Escola' and instancia_plano.alterabilidade == 'Escola' and instancia_plano.tipo_fia == False:
+    instancia_plano = get_object_or_404(Plano_de_acao, pk=kwargs['plano_id'])
+    tipo_usuario = request.user.groups.get().name
+    if tipo_usuario == 'Diretor_escola' and instancia_plano.alterabilidade == 'Escola' and instancia_plano.tipo_fia == False:
         if request.method == 'POST':
-            form_ordem = OrdemForm(request.POST, plano_id_super=plano_id)
+            form_ordem = OrdemForm(request.POST, plano_id_super=kwargs['plano_id'])
             if form_ordem.is_valid():
-                print('SALVOU ORDEM!!!!')
                 ident_form = form_ordem.cleaned_data.get('identificacao_numerica')
                 descr_form = form_ordem.cleaned_data.get('descricao_do_problema')
                 # inic_form = form_ordem.cleaned_data.get('prazo_execucao_inicial')
@@ -63,93 +67,69 @@ def cria_ordem(request, plano_id):
                     descricao_do_problema = descr_form,
                     # prazo_execucao_inicial = None,
                     # prazo_execucao_final = None,
-                    resultados_esperados = result_form
+                    resultados_esperados = result_form,
+                    data_de_criação = timezone.now()
                 ) #nao precisei cadastrar os outros campos que existem no modelo de ordens, pois eles tem valor default que são preenchidos automaticamente quando uma ordem é criada.
                 ordem.save()
-                return redirect('chamando_1_plano_mensagem', plano_id=plano_id, mensagem='Criou')
+                return redirect('chamando_1_plano_mensagem', plano_id=kwargs['plano_id'], mensagem='Criou')
             else:
-                abre_nova_ordem = True
-                # controle_form_ordem = True
-                print('FORM ORDEM INVALIDO')
-
-                plano = get_object_or_404(Plano_de_acao, pk=plano_id)
-                plano2 = Plano_de_acao.objects.filter(pk=plano_id)
-                ordem2 = Ordens.objects.order_by('identificacao_numerica').filter(plano=plano_id)
-
-                plano_a_exibir = {
-                    'chave_planos' : plano,
-                    'chave_planos2' : plano2,
-                    'chave_ordens2' : ordem2,
-                    'chave_form_ordem' : form_ordem,
-                    'chave_abre_nova_ordem' : abre_nova_ordem,
-                }
-
-                return render(request, 'plano.html', plano_a_exibir)
+                contexto = plano(request, plano_id=kwargs['plano_id'], contx_cria_ordem=True)
+                contexto['chave_form_ordem'] = form_ordem
+                contexto['chave_abre_nova_ordem'] = True
+                return render(request, 'plano.html', contexto)
 
     return redirect('pagina_planos_de_acao_mensagem', mensagem='Acesso_negado')
 
-def deleta_ordem(request, elemento_id, plano_id):
-    instancia_plano = get_object_or_404(Plano_de_acao, pk=plano_id)
-    tipo_usuario = request.user.classificacao.tipo_de_acesso
-    if tipo_usuario == 'Escola' and instancia_plano.alterabilidade == 'Escola' and instancia_plano.tipo_fia == False:
-        ordem = get_object_or_404(Ordens, pk=elemento_id)
+def deleta_ordem(request, **kwargs):
+    instancia_plano = get_object_or_404(Plano_de_acao, pk=kwargs['plano_id'])
+    tipo_usuario = request.user.groups.get().name
+    if tipo_usuario == 'Diretor_escola' and instancia_plano.alterabilidade == 'Escola' and instancia_plano.tipo_fia == False:
+        ordem = get_object_or_404(Ordens, pk=kwargs['elemento_id'])
         ordem.delete()
         
-        return redirect('chamando_1_plano_mensagem', plano_id=plano_id, mensagem='Deletou')
+        return redirect('chamando_1_plano_mensagem', plano_id=kwargs['plano_id'], mensagem='Deletou')
     
     return redirect('pagina_planos_de_acao_mensagem', mensagem='Acesso_negado')
 
-def edita_ordem(request, plano_id, ordem_id):
-    instancia_plano = get_object_or_404(Plano_de_acao, pk=plano_id)
-    tipo_usuario = request.user.classificacao.tipo_de_acesso
-    if tipo_usuario == 'Escola' and instancia_plano.alterabilidade == 'Escola':
+def edita_ordem(request, **kwargs):
+    instancia_plano = get_object_or_404(Plano_de_acao, pk=kwargs['plano_id'])
+    tipo_usuario = request.user.groups.get().name
+    if tipo_usuario == 'Diretor_escola' and instancia_plano.alterabilidade == 'Escola':
         edita_ordem_form = OrdemForm()
         if request.method == 'POST':
-            edita_ordem_form = OrdemForm(request.POST, plano_id_super=plano_id, ordem_id_super=ordem_id)
+            edita_ordem_form = OrdemForm(request.POST, plano_id_super=kwargs['plano_id'], ordem_id_super=kwargs['ordem_id'])
             if edita_ordem_form.is_valid():
                 edita_identificacao_numerica = edita_ordem_form.cleaned_data.get('identificacao_numerica')
                 edita_descricao_do_problema = edita_ordem_form.cleaned_data.get('descricao_do_problema')
                 # edita_prazo_execucao_inicial = edita_ordem_form.cleaned_data.get('prazo_execucao_inicial')
                 # edita_prazo_execucao_final = edita_ordem_form.cleaned_data.get('prazo_execucao_final')
                 edita_resultados_esperados = edita_ordem_form.cleaned_data.get('resultados_esperados')
-                ordem = get_object_or_404(Ordens, pk=ordem_id)
+                ordem = get_object_or_404(Ordens, pk=kwargs['ordem_id'])
                 ordem.identificacao_numerica = edita_identificacao_numerica
                 ordem.descricao_do_problema = edita_descricao_do_problema
                 # ordem.prazo_execucao_inicial = edita_prazo_execucao_inicial
                 # ordem.prazo_execucao_final = edita_prazo_execucao_final
                 ordem.resultados_esperados = edita_resultados_esperados
                 ordem.save()
+                return redirect('chamando_1_plano_mensagem', plano_id=kwargs['plano_id'], mensagem='Editou')
 
             else:
-                plano = get_object_or_404(Plano_de_acao, pk=plano_id)
-                ordem = get_object_or_404(Ordens, pk=ordem_id)
-                plano2 = Plano_de_acao.objects.filter(pk=plano_id)
-                ordem2 = Ordens.objects.order_by('identificacao_numerica').filter(plano=plano_id)
-                abre_modal_edicao = True
-                insere_form = True
-
-                plano_a_exibir = {
-                'chave_planos' : plano,
-                'chave_planos2' : plano2,
-                'chave_ordens2' : ordem2,
-                'chave_ordens' : ordem,
-                'chave_form_ordem' : edita_ordem_form,
-                'chave_abre_modal_edicao' : abre_modal_edicao,
-                'chave_insere_form_edita_ordem' : insere_form,
-                }
-
-                return render(request, 'plano.html', plano_a_exibir)
-        
-        return redirect('chamando_1_plano_mensagem', plano_id=plano_id, mensagem='Editou')
+                ordem_objeto = get_object_or_404(Ordens, pk=kwargs['ordem_id'])
+                contexto = plano(request, plano_id=kwargs['plano_id'], contx_edita_ordem=True)
+                contexto['chave_form_ordem'] = edita_ordem_form
+                contexto['chave_ordens'] = ordem_objeto
+                contexto['chave_abre_modal_edicao'] = True
+                contexto['chave_insere_form_edita_ordem'] = True
+                return render(request, 'plano.html', contexto)
 
     return redirect('pagina_planos_de_acao_mensagem', mensagem='Acesso_negado')
 
-def cadastra_data(request, elemento_id, ordem_id):
+def cadastra_data(request, elemento_id, ordem_id, **kwargs):
     objeto_plano = get_object_or_404(Plano_de_acao, pk=elemento_id)
     ordem = get_object_or_404(Ordens, pk=ordem_id)
-    tipo_usuario = request.user.classificacao.tipo_de_acesso
-    if tipo_usuario == 'Func_sec' and objeto_plano.alterabilidade == 'Secretaria':
+    tipo_usuario = request.user.groups.get().name
 
+    if tipo_usuario == 'Func_sec' and objeto_plano.alterabilidade == 'Secretaria':
         if request.method == 'POST':
             cadastra_datas_form = Cadastra_datas_Ordem_Form(request.POST)
             
@@ -160,13 +140,12 @@ def cadastra_data(request, elemento_id, ordem_id):
                 ordem.prazo_execucao_final = edita_prazo_execucao_final
                 ordem.save()
                 return redirect('chamando_acao_plano', elemento_id=elemento_id)
+
             else:
-                
+                erro_form_datas = True
                 chama_acao_plano = acao_plano(request, elemento_id=elemento_id, ordem_id=ordem_id, contx_ordem=True) #contexto puxado da funcao acao_plano nas views de plano_de_acao
                 chama_acao_plano['chave_form_datas'] = cadastra_datas_form
-                
+                chama_acao_plano['chave_erro_form_datas'] = erro_form_datas
                 return render(request, 'acao-visualizacao.html', chama_acao_plano)
 
     return redirect('chamando_acao_plano_mensagem', elemento_id=elemento_id, mensagem='Acesso_negado')
-
-  

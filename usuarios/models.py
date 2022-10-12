@@ -6,6 +6,7 @@ from django.db.models.aggregates import Min
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from plano_de_acao.models import Plano_de_acao
+from Escolas.models import Escola
 
 # Create your models here.
 
@@ -16,20 +17,16 @@ class Usuario(models.Model):
 
 class Classificacao(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    escola = models.ForeignKey(Escola, on_delete=models.SET_NULL, null=True, blank=True)
     tipo_de_acesso = models.CharField(max_length=50)
-    cargo_herdado = models.CharField(max_length=50, blank=True)
-    municipio = models.CharField(max_length=50, blank=True)
     matriz = models.CharField(max_length=100, blank=True)
-    codigo_escola = models.IntegerField(default=0, blank=True)
-    nte = models.IntegerField(null=True, blank=True)
-    quant_funcionarios = models.IntegerField(default=0)
+    cargo_herdado = models.CharField(max_length=50, blank=True)
     plano_associado = models.ManyToManyField(Plano_de_acao, blank=True)
     assina_plano = models.BooleanField(default=False)
     assinatura = models.ImageField(upload_to='SetupPrincipal/img/signs', blank=True, null=True, verbose_name='Assinatura')
     is_active = models.BooleanField(default=True)
     usuario_diretor = models.BooleanField(default=False)
     usuario_coordenador = models.BooleanField(default=False)
-    possui_diretor = models.BooleanField(default=False)
     diretor_escolar = models.BooleanField(default=False)
     email_ativado = models.BooleanField(default=False)
     primeira_senha = models.BooleanField(default=True)
@@ -56,7 +53,7 @@ class Classificacao(models.Model):
         super().save(*args, **kwargs)
 
 class Turmas(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    escola = models.ForeignKey(Escola, on_delete=models.CASCADE, null=True, blank=True)
     nome = models.CharField(max_length=100)
     quantidade_alunos = models.IntegerField()
     plano_associado = models.ManyToManyField(Plano_de_acao)
@@ -64,23 +61,3 @@ class Turmas(models.Model):
 
     def __str__(self):
         return self.nome
-
-# class Turmas_plano(models.Model):
-#     plano_associado = models.ManyToManyField(Plano_de_acao)
-#     nome = models.CharField(max_length=100)
-#     quantidade_alunos = models.IntegerField()
-    
-
-
-# class Profile(models.Model):
-#     user = models.OneToOneField(User, on_delete=models.CASCADE)
-#     tipo = models.CharField(max_length=50, blank=True)
-
-# @ receiver(post_save, sender=User)
-# def create_user_profile(sender, instance, created, **kwargs):
-#     if created:
-#         Profile.objects.create(user=instance)
-
-# @receiver(post_save, sender=User)
-# def save_user_profile(sender, instance, **kwargs):
-#     instance.profile.save()

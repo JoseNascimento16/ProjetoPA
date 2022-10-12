@@ -32,11 +32,11 @@
     {% if chave_planos2 %}
     {% for plano in chave_planos2 %}
         <tr>
-            <td colspan="2"> UNIDADE: {{ plano.usuario.last_name }}</td>
+            <td colspan="2"> UNIDADE: {{ plano.escola.nome }}</td>
         </tr>
         <tr class="linha-municipio">
-            <td>MUNICÍPIO: {{ plano.usuario.classificacao.municipio }}</td>
-            <td>DIREC: {{ plano.usuario.username }}</td>
+            <td>MUNICÍPIO: {{ plano.escola.municipio }}</td>
+            <td>DIREC: NTE - {{ plano.escola.nte }}</td>
         </tr>
         
     </table>
@@ -74,19 +74,19 @@
             {% for codigo in chave_codigos %} <!-- PARA CADA CODIGO DO PLANO COMO UM TODO -->
                 <tr class="tr-codigos tr-dinamicos{{codigo.ordem.identificacao_numerica}}{{codigo.identificacao}}">
                     
-                    {% if user.classificacao.tipo_de_acesso == 'Secretaria' or user.classificacao.tipo_de_acesso == 'Func_sec' %}
+                    {% if user.groups.get.name == 'Secretaria' or user.groups.get.name == 'Func_sec' %}
                         {% if codigo.possui_sugestao_correcao %}
                         <td style="text-align: center;"> <a class="a-clear-acao tds-trs-{{codigo.ordem.identificacao_numerica}}{{codigo.identificacao}} desabilita-js" href="{% url 'chamando_correcao_despesa_plano' plano.id codigo.ordem.id codigo.id %}"><div style="height:100%;width:100%">{{codigo.ordem.identificacao_numerica}}{{codigo.identificacao}} <span class="tooltiptext3-tabela"> <i class="fas fa-edit"></i> Alterar correção!</span> </div> </a> </td>
                         {% else %}
                         <td style="text-align: center;"> <a class="a-clear-acao tds-trs-{{codigo.ordem.identificacao_numerica}}{{codigo.identificacao}} desabilita-js" href="{% url 'chamando_correcao_despesa_plano' plano.id codigo.ordem.id codigo.id %}"><div style="height:100%;width:100%">{{codigo.ordem.identificacao_numerica}}{{codigo.identificacao}} <span class="tooltiptext4-tabela"> <i class="fa-solid fa-arrow-left"></i> Sugerir correção!</span> </div> </a> </td>
                         {% endif %}
-                    {% elif user.classificacao.tipo_de_acesso == 'Escola' %}
+                    {% elif user.groups.get.name == 'Diretor_escola' %}
                         {% if codigo.possui_sugestao_correcao %}
                         <td style="text-align: center;"> <a class="a-clear-acao tds-trs-{{codigo.ordem.identificacao_numerica}}{{codigo.identificacao}}" href="{% url 'abrindo_correcao_despesa' plano.id codigo.ordem.identificacao_numerica codigo.identificacao 'Sim' %}"><div style="height:100%;width:100%">{{codigo.ordem.identificacao_numerica}}{{codigo.identificacao}} <span class="tooltiptext3-tabela"> <i class="fas fa-edit"></i> Corrigir!</span> </div> </a> </td>
                         {% else %}
                         <td style="text-align: center;"> <a class="a-clear-acao tds-trs-{{codigo.ordem.identificacao_numerica}}{{codigo.identificacao}}"><div style="height:100%;width:100%">{{codigo.ordem.identificacao_numerica}}{{codigo.identificacao}} </div> </a> </td>
                         {% endif %}
-                    {% elif user.classificacao.tipo_de_acesso == 'Funcionario' %}
+                    {% elif user.groups.get.name == 'Funcionario' %}
                         <td style="text-align: center;"> <a class="a-clear-acao tds-trs-{{codigo.ordem.identificacao_numerica}}{{codigo.identificacao}}"><div style="height:100%;width:100%">{{codigo.ordem.identificacao_numerica}}{{codigo.identificacao}} </div> </a> </td>
                     {% endif %}
 
@@ -164,15 +164,15 @@
 
         <tr>
             <td style="text-align: center;"> Presidente Cx Escolar </td>
-            <td style="text-align: center;width: 200px;font-weight: bold;"> {{plano.usuario.first_name}} </td>
+            <td style="text-align: center;width: 200px;font-weight: bold;"> {{plano.escola.diretor.first_name}} </td>
             <!-- ASSINATURA DIRETOR -->
             {% if chave_planos.classificacao_set.all %}
-            {% tag_any chave_planos.usuario chave_planos.classificacao_set.all as var3 %}
+            {% tag_any chave_planos.escola.diretor chave_planos.classificacao_set.all as var3 %}
                 {% if var3 and plano_aprovado or var3 and chave_planos.alterabilidade == 'Desativada' %}
-                    {% if chave_planos.usuario.classificacao.assinatura %}
-                    <td colspan="2"> <img class="assinaturas-foto-size" src="{{ chave_planos.usuario.classificacao.assinatura.url }}" alt=""> </td>
+                    {% if chave_planos.escola.diretor.classificacao.assinatura %}
+                    <td colspan="2"> <img class="assinaturas-foto-size" src="{{ chave_planos.escola.diretor.classificacao.assinatura.url }}" alt=""> </td>
                     {% else %}
-                    <td colspan="2", class="assinaturas", style="text-align: center;font-style: italic;font-family: Vladimir Script;font-size: 26px;"> {{chave_planos.usuario.first_name}} </td>
+                    <td colspan="2", class="assinaturas", style="text-align: center;font-style: italic;font-family: Vladimir Script;font-size: 26px;"> {{chave_planos.escola.diretor.first_name}} </td>
                     {% endif %}
                 {% else %}
                 <td colspan="2", style="text-align: center;">  </td>

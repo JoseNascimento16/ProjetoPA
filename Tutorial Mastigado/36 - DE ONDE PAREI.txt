@@ -3,13 +3,38 @@ TENHO QUE APRENDER A TROCAR DE MODELO DE USUARIO (USAR O ABSTRACT AUTH_USER)
 TENHO QUE APRENDER COMO REFERENCIAR UM FOREIGNKEY NO REVERSO QUANDO ESTA FOREIGNKEY TEM UM RELATED_NAME COMO ATRIBUTO(no momento só sei fazer isso quando não tem related_name configurado)
 
 ----------------------------------------------------------------------------------
-tipo_de_acesso = 'Escola'
-tipo_usuario = 'Escola'
-- Desassociar usuário de diretor de usuário de escola
+- OK configurar cadastro de tesoureiro 
+- configurar desativação de tesoureiro
+- OK configurar cadastro de membro colegiado 
+- configurar desativação de membro colegiado
+- testar
+- talvez alguns user.groups.get().name nao funcionem, trocar pelo novo formato
+- OK pesquisa de funcionarios bugada
+- OK verificar os checa_usuario
+- OK get_object_or_404(User, por get_object_or_404(Escola,
+- OK filter(usuarios=  por filter(escola=
+- OK groups == 'Escola'  por groups == 'Diretor_escola' 
+- OK talvez trocar User.objects... por Escola.objects...
+- OK talvez tipo_de_acesso == ' trocar por user.groups.get.name == '
+- OK verificar tipo_usuario que mando como contexto pro JSONparse
+- OK talvez user.last_name trocar por user.classificacao.matriz pois agora a matriz de diretores é dada pela classificacao
+- OK .groups completar com .groups.get.name().name
+- OK request.user.escola não funciona para FUNCIONARIOS nem FUNC_SEC. Teria que usar manytomany, desisti, estou usando o NOME da MATRIZ
+- OK Quando desativa um diretor, tem que remover ele também como OneToOne da Escola
+- OK Criar modelo de ESCOLAS
+    - OK transferir atributos de usuario escola, para novo modelo de escola
+    - OK transferir a criação de usuario de escola para objeto de escola
+    - OK Uma forma de criar objeto_suprot (escola)
+- OK Desassociar usuário de diretor de usuário de escola
     - Criar usuário de diretor(escolar) na pagina do cadastro de escola pela SECRETARIA
-    - Alterar no código, toda referencia à escola, considerar também o diretor
+    - OK Alterar no código, toda referencia à escola, considerar como diretor
 
-- testar de funcionalidade de primeira senha não bugou
+- Cadastro do novo objeto Secretaria pelo superusuario secretaria (no primeiro acesso o objeto é criado, se já não houver outro. E não pode ser apagado)
+- Cadastro de diretor da SUPROT
+- Cadastro de diretor de ESCOLA
+- botão criar plano e fia está mostrando em planos necessitando orrecao e finalizados
+- checar função cria_plano tem um trecho não acessivel
+- testar se funcionalidade de primeira senha não bugou
 
 - Talvez já cadastrar e-mail(opcional) no cadastro de novo usuário
 
