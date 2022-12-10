@@ -178,21 +178,52 @@ class TestViews(TestCase):
 
 ##################################################################################################
 
-    def test_altera_nome(self):
+    def test_altera_login(self):
+        #FORM INVALIDO
+        data = {'username':'qualquer',
+                'novo_username':'nome com espaço',
+                'novo_username2':'nome com espaço'  # erro, campo com espaço
+                }
+        response = self.c.post('/profile/altera/'+str(self.user.id), data, follow=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'profile.html')
 
         #FORM VALIDO
-        data = {'first_name':'nome qualquer'}
+        self.classificacao.login_original = True
+        self.classificacao.save()
+
+        data = {'username':'test','novo_username':'nomeDeUsuarioNovo','novo_username2':'nomeDeUsuarioNovo'}
         response = self.c.post('/profile/altera/'+str(self.user.id), data, follow=True)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'profile.html')
-
-        #FORM INVALIDO
-        data = {'first_name':'nome4444'}
-        response = self.c.post('/profile/altera/'+str(self.user.id), data, follow=True)
+        username_atualizado = User.objects.filter(username='nomeDeUsuarioNovo')
+        self.assertTrue(username_atualizado)
+        classificacao = get_object_or_404(Classificacao, user=self.user)
+        self.assertFalse(classificacao.login_original)
 
         self.assertEqual(response.status_code, 200)
+        self.assertRedirects(response, '/profile/'+str(self.user.id)+'/msg/success')
         self.assertTemplateUsed(response, 'profile.html')
+
+##################################################################################################
+
+    def vazio():
+        # def test_altera_nome(self):
+
+        #     #FORM VALIDO
+        #     data = {'first_name':'nome qualquer'}
+        #     response = self.c.post('/profile/altera/'+str(self.user.id), data, follow=True)
+
+        #     self.assertEqual(response.status_code, 200)
+        #     self.assertTemplateUsed(response, 'profile.html')
+
+        #     #FORM INVALIDO
+        #     data = {'first_name':'nome4444'}
+        #     response = self.c.post('/profile/altera/'+str(self.user.id), data, follow=True)
+
+        #     self.assertEqual(response.status_code, 200)
+        #     self.assertTemplateUsed(response, 'profile.html')
+        pass
 
 ##################################################################################################
 
@@ -214,12 +245,12 @@ class TestViews(TestCase):
         self.assertTemplateUsed(response, 'profile.html')
 
         # TESTE PADRÃO (GET)
-        # KWARGS altera == 'alt_name'
-        response = self.c.get(reverse('abre_altera_nome', kwargs={'user_id':self.user.id, 'altera':'alt_name'})) # Usa o nome da URL e atributos
+        # KWARGS altera == 'alt_login'
+        response = self.c.get(reverse('abre_altera_login', kwargs={'user_id':self.user.id, 'altera':'alt_login'})) # Usa o nome da URL e atributos
         
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'profile.html')
-        self.assertEquals(response.context['chave_abre_altera_nome'], True) #variavel setada TRUE quando altera == 'alt_name'
+        self.assertEquals(response.context['chave_abre_altera_login'], True) #variavel setada TRUE quando altera == 'alt_login'
 
         # TESTE PADRÃO (GET)
         # KWARGS altera == 'alt_sign'
@@ -327,24 +358,26 @@ class TestViews(TestCase):
         
         # TESTE USUARIO LOGADO: DIRETOR ESCOLA
         # DELETA FUNCIONARIO ESCOLA
+        grupos = Group.objects.all()
         self.group.name = 'Diretor_escola'
         self.group.save()
         self.user2 = User.objects.create_user(username="test2", email="test2@test.com", password="test")
-        self.classificacao2 = Classificacao.objects.create(user=self.user2)
-        self.classificacao2.tipo_de_acesso = 'Funcionario'
-        self.classificacao2.cargo_herdado = 'Membro do colegiado'
-        self.classificacao2.escola = self.escola
-        self.classificacao2.save()
+        self.classificacao2 = Classificacao.objects.create(user=self.user2, tipo_de_acesso = 'Funcionario', cargo_herdado = 'Membro do colegiado', escola = self.escola)
+        self.user3 = User.objects.create_user(username="test3", email="test3@test.com", password="test3")
+        self.classificacao3 = Classificacao.objects.create(user=self.user3, tipo_de_acesso = 'Funcionario', cargo_herdado = 'Membro do colegiado', escola = self.escola)
         self.escola2 = Escola.objects.create(nome='escola_teste2')
         self.escola.quant_membro_colegiado = 1
         self.escola.save()
         self.user2.classificacao.escola = self.escola2
         self.user2.save()
+        # print(len(Classificacao.objects.filter(tipo_de_acesso='Funcionario').filter(escola = self.escola)))
 
-        response = self.c.get(reverse('deletando_funcionario', kwargs={'elemento_id':self.classificacao2.id})) # Usa o nome da URL e atributos
+        response = self.c.get(reverse('deletando_funcionario', kwargs={'elemento_id':self.classificacao2.id}), follow=True) # Usa o nome da URL e atributos
         
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
         self.assertRedirects(response, '/cadastro_funcionarios_escola/'+str(self.user.id)+'/Deletou')
+        self.assertTemplateUsed(response, 'cadastros.html')
+        self.assertEquals(response.context['chave_len_funcionarios_cadastrados'], 1)# Só existem 2 Funcionarios cadastrados no teste, como a função deleta um, sobra 1.
 
     def test_deleta_funcionario2(self):
         # TESTE USUARIO LOGADO: FUNC SEC
@@ -376,6 +409,8 @@ class TestViews(TestCase):
         self.group2.save()
         self.user3 = User.objects.create_user(username="test4", email="test3@test.com", password="test")
         self.escola3 = Escola.objects.create(nome='escola_teste4')
+        self.escola3.diretor = self.user3
+        self.escola3.save()
         self.classificacao3 = Classificacao.objects.create(user=self.user3, escola=self.escola3)
         self.user3.groups.add(self.group2)
         self.user3.save()
@@ -383,7 +418,45 @@ class TestViews(TestCase):
         response = self.c.get(reverse('deletando_funcionario', kwargs={'elemento_id':self.classificacao3.id})) # Usa o nome da URL e atributos
         
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, '/cadastros_secretaria/'+str(self.user.id)+'/Sim/Deletou')
+        self.assertRedirects(response, '/profile/escola/'+str(self.escola3.id))
+
+##################################################################################################
+
+    def test_cadastros_da_secretaria(self):
+        # TESTE USUARIO LOGADO: FUNC SEC
+        # TESTE PADRÃO GET
+        self.group.name = 'Func_sec'
+        self.group.save()
+
+        response = self.c.get(reverse('chama_cadastros_secretaria')) # Usa o nome da URL e atributos
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'cadastros-secretaria.html')
+
+        # TESTE USUARIO LOGADO: FUNC SEC
+        # TESTE PADRÃO GET MENSAGEM
+        response = self.c.get(reverse('chama_cadastros_secretaria_mensagem', kwargs={'mensagem':'Criou'})) # Usa o nome da URL e atributos
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'cadastros-secretaria.html')
+
+        # TESTE USUARIO LOGADO: FUNC SEC
+        # TESTE SEARCH POR ESCOLAS
+
+        data = {'campo':'teste'}
+        response = self.c.get(reverse('pesquisa_cadastro_escolas', kwargs={'search':'sim'}), data) # Usa o nome da URL e atributos
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'cadastros-secretaria.html')
+        self.assertEquals(response.context['chave_var_pesquisa_escola'], True) #variavel setada TRUE quando há uma pesquisa
+
+        # TESTE USUARIO LOGADO: FUNC SEC
+        # TESTE CADASTRO DE DIRETOR
+        response = self.c.get(reverse('chama_cadastrar_diretor', kwargs={'escola_id':self.escola.id,'cadastro_diretor':True})) # Usa o nome da URL e atributos
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'cadastros-secretaria.html')
+        self.assertEquals(response.context['contexto_extra_form_diretor'], True) #variavel setada TRUE quando há uma pesquisa
 
 ##################################################################################################
 
@@ -392,65 +465,104 @@ class TestViews(TestCase):
         # FORMULARIO VALIDO
         self.group.name = 'Diretor_escola'
         self.group.save()
+        funcionarios_mais_um = self.escola.quant_funcionarios + 1
 
-        data = {'first_name':'nome qualquer2','cargo':'Tesoureiro(a)','username':'username2','password':'jfwoeaiHFOHAW','password2':'jfwoeaiHFOHAW'}
-        response = self.c.post(reverse('cadastrar_funcionarios', kwargs={'user_id':self.user.id}), data) # Usa o nome da URL e atributos
+        data = {'first_name':'Bezerra Menezes','cargo':'Tesoureiro(a)','email':'YkREep@fres.com'}
+        response = self.c.post(reverse('cadastrar_funcionarios', kwargs={'user_id':self.user.id}), data, follow=True) # Usa o nome da URL e atributos
         
-        self.assertEqual(response.status_code, 302)
+        usuario_criado = User.objects.filter(first_name='Bezerra Menezes') 
+        self.assertTrue(usuario_criado)
+        usuario_criado2 = get_object_or_404(User, first_name='Bezerra Menezes')
+        classificacao_teste = Classificacao.objects.filter(user=usuario_criado2)
+        self.assertTrue(classificacao_teste)
+        escola_matriz = get_object_or_404(Escola, pk=self.escola.id)
+        self.assertEqual(escola_matriz.quant_funcionarios, funcionarios_mais_um)
+
+        self.assertEqual(response.status_code, 200)
         self.assertRedirects(response, '/cadastro_funcionarios_escola/'+str(self.user.id)+'/Criou')
+        self.assertTemplateUsed(response, 'cadastros.html')
 
         # TESTE USUARIO LOGADO: DIRETOR ESCOLA
         # FORMULARIO INVALIDO
-        self.group.name = 'Diretor_escola'
-        self.group.save()
 
-        data = {'first_name':'nome qualquer','cargo':'ERRADO','username':'username','password':'jfwoeaiHFOHAW','password2':'jfwoeaiHFOHAW'}
+        data = {
+        'first_name':'nome qualquer',
+        'cargo':'Tesoureiro(a)',
+        'email':'test@test.com' # erro, ja existe
+        }
         response = self.c.post(reverse('cadastrar_funcionarios', kwargs={'user_id':self.user.id}), data) # Usa o nome da URL e atributos
         
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'cadastros.html')
+        self.assertEquals(response.context['contexto_extra_form_funcionarios'], True)
 
 ##################################################################################################
 
     def test_cadastro_de_escolas(self): # FUNC_SEC CADASTRANDO ESCOLAS
         # TESTE USUARIO LOGADO: FUNC SEC
-        # TESTE PADRÃO (GET)
+        # TESTE (POST) - CADASTRO DE ESCOLA
+        # POST SUCESSO
         self.group.name = 'Func_sec'
         self.group.save()
 
-        response = self.c.get(reverse('cadastrar_escolas', kwargs={'user_id':self.user.id})) # Usa o nome da URL e atributos
+        data = {'last_name':'nome qualquer','municipio':'qualquer','codigo_escola':'12345','nte':'30'}
+        response = self.c.post(reverse('cadastrar_escolas', kwargs={'user_id':self.user.id}), data, follow=True) # Usa o nome da URL e atributos
         
         self.assertEqual(response.status_code, 200)
+        self.assertRedirects(response, '/escola/cadastros/Criou')
         self.assertTemplateUsed(response, 'cadastros-secretaria.html')
-
-        # TESTE USUARIO LOGADO: FUNC SEC
-        # TESTE (POST) - CADASTRO DE ESCOLA
-        # POST SUCESSO
-        data = {'last_name':'nome qualquer','municipio':'qualquer','codigo_escola':'12345','nte':'30'}
-        response = self.c.post(reverse('cadastrar_escolas', kwargs={'user_id':self.user.id}), data) # Usa o nome da URL e atributos
-        
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, '/cadastro_escolas/'+str(self.user.id)+'/Criou')
+        self.assertEquals(response.context['chave_len_escolas_a_exibir'], 2) # 1 escola setada no teste, e outra criada na função.
 
         # TESTE USUARIO LOGADO: FUNC SEC
         # TESTE (POST) - CADASTRO DE ESCOLA
         # POST ERRO
-        data = {'last_name':'escola_teste','municipio':'qualquer','codigo_escola':'12345','nte':'30'}
+        data = {
+            'last_name':'escola_teste', # erro escola ja existe
+            'municipio':'qualquer',
+            'codigo_escola':'12345',
+            'nte':'30'}
         response = self.c.post(reverse('cadastrar_escolas', kwargs={'user_id':self.user.id}), data) # Usa o nome da URL e atributos
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'cadastros-secretaria.html')
         self.assertEquals(response.context['contexto_extra_form_escolas'], True) #variavel setada TRUE quando o form da ERRO
 
+##################################################################################################
+
+    def test_cadastro_diretor_escola(self):
         # TESTE USUARIO LOGADO: FUNC SEC
-        # TESTE SEARCH POR ESCOLAS
-        response = self.c.get(reverse('pesquisa_cadastro_escolas', kwargs={'user_id':self.user.id,'search':'sim'})) # Usa o nome da URL e atributos
+        # TESTE (POST) - CADASTRO DE ESCOLA
+        # POST ERRO
+        self.group.name = 'Func_sec'
+        self.group.save()
+
+        data = {
+            'first_name':'Ezequiel diretor', 
+            'email':'test@test.com'} # erro ja existe funcionario com este email
+        response = self.c.post(reverse('cadastrar_diretor', kwargs={'escola_id':self.escola.id}), data) # Usa o nome da URL e atributos
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'cadastros-secretaria.html')
-        self.assertEquals(response.context['chave_var_pesquisa_escola'], True) #variavel setada TRUE quando há uma pesquisa
+        self.assertEquals(response.context['contexto_extra_form_diretor'], True) #variavel setada TRUE quando o form da ERRO
 
-    ##################################################################################################
+        # TESTE (POST) - CADASTRO DE ESCOLA
+        # POST SUCESSO
+        if not Group.objects.filter(name='Diretor_escola').exists():
+            self.group2 = Group(name='Diretor_escola')
+            self.group2.save()
+        else:
+            self.group2.name = 'Diretor_escola'
+            self.group2.save()
+        data = {
+            'first_name':'Ezequiel diretor', 
+            'email':'email_unicoKFEPFS@test.com'} 
+        response = self.c.post(reverse('cadastrar_diretor', kwargs={'escola_id':self.escola.id}), data, follow=True) # Usa o nome da URL e atributos
+
+        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(response, '/escola/cadastros/Criou_diretor')
+        self.assertTemplateUsed(response, 'cadastros-secretaria.html')
+
+##################################################################################################
 
     def test_cadastro_de_funcionarios_secretaria(self): # FUNC_SEC CADASTRANDO OUTROS FUNC_SEC
         # TESTE USUARIO LOGADO: COORDENADOR
@@ -473,16 +585,30 @@ class TestViews(TestCase):
         self.classificacao.usuario_coordenador = False
         self.classificacao.save()
 
-        data = {'cargo':'Diretor','first_name':'nome qualquer','username':'username','password':'jfwoeaiHFOHAW','password2':'jfwoeaiHFOHAW'}
-        response = self.c.post(reverse('cadastrar_funcionarios_secretaria', kwargs={'user_id':self.user.id,'cad_funcionarios':'sim'}), data) # Usa o nome da URL e atributos
+        data = {'cargo':'Diretor SUPROT','email':'unico_JFeisaFSd@fes.com','first_name':'Cirino qualquer'}
+        kwargs = {'user_id':self.user.id,'cad_funcionarios':'sim'}
+        response = self.c.post(reverse('cadastrar_funcionarios_secretaria', kwargs=kwargs), data, follow=True) # Usa o nome da URL e atributos
 
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, '/cadastros_secretaria/'+str(self.user.id)+'/Sim/Criou')
+        usuario_criado = User.objects.filter(first_name='Cirino qualquer') 
+        self.assertTrue(usuario_criado)
+        usuario_criado2 = get_object_or_404(User, first_name='Cirino qualquer')
+        classificacao_teste = Classificacao.objects.filter(user=usuario_criado2)
+        self.assertTrue(classificacao_teste)
+        escola_matriz = get_object_or_404(Escola, pk=self.escola.id)
+        self.assertTrue(escola_matriz.possui_diretor)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(response, '/cadastros_secretaria/'+str(self.user.id)+'/Sim/Criou_func')
+        self.assertTemplateUsed(response, 'cadastros-secretaria.html')
 
         # TESTE USUARIO LOGADO: SECRETARIA
         # TESTE (POST) - CADASTRO DE DIRETOR/COORDENADOR/TECNICO
         # TESTE ERRO
-        data = {'cargo':'Diretor','first_name':'nome qualquer','username':'username','password':'jfwoeaiHFOHAW','password2':'senha_nao_coincidente'}
+        data = {
+        'cargo':'Diretor SUPROT',
+        'first_name':'nome qualquer',
+        'email':'test@test.com' # Erro email ja existente
+        }
         response = self.c.post(reverse('cadastrar_funcionarios_secretaria', kwargs={'user_id':self.user.id,'cad_funcionarios':'sim'}), data) # Usa o nome da URL e atributos
 
         self.assertEqual(response.status_code, 200)
@@ -490,9 +616,30 @@ class TestViews(TestCase):
         self.assertEquals(response.context['contexto_extra_form_funcionarios'], True) #variavel setada TRUE quando há um erro no form
 
         # TESTE USUARIO LOGADO: SECRETARIA
+        # TESTE PESQUISA FUNCIONARIOS
         # TESTE (POST) - CADASTRO DE DIRETOR/COORDENADOR/TECNICO
         response = self.c.get(reverse('pesquisa_cadastro_funcionarios', kwargs={'user_id':self.user.id,'cad_funcionarios':'sim','search':'sim'})) # Usa o nome da URL e atributos
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'cadastros-secretaria.html')
         self.assertEquals(response.context['chave_var_pesquisa_func'], True) #variavel setada TRUE quando há uma pesquisa
+
+##################################################################################################
+
+    def test_solicita_remocao(self):
+        # TESTE POST
+        # USUARIO LOGADO: FUNC_SEC
+        # SOLICITA REMOÇÃO DFE DIRETOR ESCOLAR
+        self.group.name = 'Func_sec'
+        self.group.save()
+        self.user2 = User.objects.create_user(username="test2", email="test2@test.com", password="test2")
+        self.classificacao2 = Classificacao.objects.create(user=self.user2, escola=self.escola)
+        self.escola.diretor = self.user2
+        self.escola.save()
+
+        response = self.c.post(reverse('solicitar_remocao', kwargs={'user_id':self.user2.id}), follow=True) # Usa o nome da URL e atributos
+
+        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(response, '/profile/escola/'+str(self.escola.id))
+        self.assertTemplateUsed(response, 'Profile_escola.html')
+        self.assertEquals(response.context['chave_confirma_remocao_diretor'], True)

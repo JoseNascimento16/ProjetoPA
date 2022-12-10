@@ -1,4 +1,5 @@
 from sys import api_version
+from tkinter import N
 from django import template
 from django.shortcuts import get_object_or_404
 from fia.models import Modelo_fia
@@ -130,3 +131,40 @@ def tag_verifica_diretor(objeto_escola):
     diretor = identifica_diretor(objeto_escola.id)
     
     return diretor
+
+@register.simple_tag
+def tag_disponibilidade_cargos(objeto_escola):
+    if objeto_escola.possui_tesoureiro and objeto_escola.quant_membro_colegiado == 3:
+        return False
+    return True
+
+@register.simple_tag
+def tag_funcsec_pode_assinar(elemento, chave_planos_assinados, user):
+    nao_assinado = elemento.ano_referencia not in chave_planos_assinados
+    if (nao_assinado and user.classificacao.usuario_diretor or
+        nao_assinado and user.classificacao.usuario_coordenador and not elemento.assinatura_coordenador or
+        nao_assinado and elemento.corretor_plano == user ):
+        return True
+    return False       
+
+@register.simple_tag
+def tag_funcsec_ja_assinou(elemento, chave_planos_assinados, user):
+    assinado = elemento.ano_referencia in chave_planos_assinados
+    if (assinado and user.classificacao.usuario_diretor or
+        assinado and user.classificacao.usuario_coordenador or
+        assinado and elemento.corretor_plano == user ):
+        return True
+    return False  
+
+@register.simple_tag
+def tag_nao_existe_coordenador_cadastrado():
+    coordenadores = Classificacao.objects.filter(cargo_herdado='Coordenador')
+    if coordenadores.exists():
+        return True
+    return False
+
+@register.filter(name='tipo_de_objeto')
+def tipo_de_objeto(objeto):
+    return str(objeto._meta.object_name)
+    # str(objeto._meta.model_name)
+    # str(objeto._meta.app_label)

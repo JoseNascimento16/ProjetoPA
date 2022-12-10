@@ -17,12 +17,24 @@
         {% endif %}
         {% csrf_token %}
         {% for elemento in chave_form_cadastro_funcionarios.visible_fields %}
-            {% if forloop.counter0 != 5 %}
+            {% if forloop.counter0 == 0 %}
             <div class="linha-input linha-input-coluna">
                 <label class="label-input label-input-form-django" for="{{ elemento.id_for_label }}">{{ elemento.label }}</label>
                 {{elemento|add_class:'input-input'}}
             </div>
-            {% elif forloop.counter0 == 5 %}
+            
+            {% elif forloop.counter0 == 1 %}
+            <div class="linha-input linha-input-coluna" style="margin-bottom: 0">
+                <label class="label-input label-input-form-django" for="{{ elemento.id_for_label }}">{{ elemento.label }}</label>
+                {{elemento|add_class:'input-input'}}
+            </div>
+            <p style="font-size: 12px">(Assegure que o e-mail cadastrado está correto)</p>
+            {% else %}
+            <div class="linha-input linha-input-coluna">
+                <label class="label-input label-input-form-django" for="{{ elemento.id_for_label }}">{{ elemento.label }}</label>
+                {{elemento|add_class:'input-input'}}
+            </div>
+            <p style="font-size: 14px;flex: 1">PS: As credenciais do usuário serão enviadas para o e-mail cadastrado.</p>
             <!-- <div class="linha-input2 linha-input-row">
                 <label class="label-input2 label-input-form-django" for="{{ elemento.id_for_label }}">{{ elemento.label }}</label>
                 {{elemento}} 

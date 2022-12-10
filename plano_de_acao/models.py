@@ -15,6 +15,7 @@ class Plano_de_acao(models.Model):
     ano_referencia = models.CharField(max_length=50)
     situacao = models.CharField(default='Em desenvolvimento', max_length=50)
     data_de_criação = models.DateField(default=date.today, blank=True)
+    ultima_modificacao = models.DateField(null=True, blank=True)
     assinaturas = models.IntegerField(default=0, blank=True)
     assinaturas_sec = models.IntegerField(default=0, blank=True)
     assinatura_corretor = models.BooleanField(default=False)
@@ -56,6 +57,13 @@ class Plano_de_acao(models.Model):
                         pass
                 kwargs['update_fields'] = changed_fields
             super().save(*args, **kwargs)
+
+    def save_without_signals(self):
+        # This allows for updating the model from code running inside post_save()
+        # signals without going into an infinite loop:
+        self._disable_signals = True
+        self.save()
+        self._disable_signals = False
 
 class Log_de_eventos(models.Model):
     plano =  models.ForeignKey(Plano_de_acao, on_delete=models.CASCADE)

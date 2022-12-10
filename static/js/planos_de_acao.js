@@ -3,7 +3,7 @@ $(document).ready(function(){
     var tipo_de_usuario = JSON.parse(document.getElementById('id-tipo-usuario').textContent);
     
     // PLANOS GERAIS
-    if (tipo_de_usuario == 'Secretaria'){
+    if (tipo_de_usuario == 'Secretaria' || tipo_de_usuario == 'Func_sec'){
         
     }else if (tipo_de_usuario == 'Diretor_escola'){
         
@@ -14,7 +14,7 @@ $(document).ready(function(){
     
     // PLANOS NECESSITANDO CORREÇÃO
 
-    if (tipo_de_usuario == 'Secretaria'){
+    if (tipo_de_usuario == 'Secretaria' || tipo_de_usuario == 'Func_sec'){
         $('.a-clear-href').removeAttr('href');
         $('.remove').remove('.remove');
     }else if (tipo_de_usuario == 'Diretor_escola'){
@@ -24,8 +24,9 @@ $(document).ready(function(){
         $('.remove').remove('.remove');
     }
 
-    // PLANOS CONCLUIDOS
+    // PLANOS FINALIZADOS
 
+    // TODOS OS USUARIOS
     
 
 })

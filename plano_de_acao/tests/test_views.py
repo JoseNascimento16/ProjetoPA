@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from django.test import TestCase, Client, RequestFactory
 from django.urls import reverse
 from django.utils import timezone
@@ -109,9 +110,22 @@ class TestViews(TestCase):
         # USUARIO LOGADO: CORRETO (Func_sec)
         self.group.name = 'Func_sec'
         self.group.save()
+        self.user5 = User.objects.create_user(first_name='test5', username="test5", email="test5@test.com", password="test")
+        self.classificacao = Classificacao.objects.create(user=self.user5, escola=self.escola)
+        self.user6 = User.objects.create_user(first_name='test6', username="test6", email="test6@test.com", password="test")
+        self.classificacao = Classificacao.objects.create(user=self.user6, escola=self.escola)
+        self.modelo_fia.membro_colegiado_1 = self.user5
+        self.modelo_fia.membro_colegiado_2 = self.user6
+        self.modelo_fia.save()
+        self.escola.diretor = self.user
+        self.escola.save()
+        self.plano.tipo_fia = True
+        self.plano.save()
 
         response = self.c.post(reverse('aprovar_plano', kwargs={'elemento_id':self.plano.id}))
 
+        plano = get_object_or_404(Plano_de_acao, pk=self.plano.id)
+        self.assertEqual(plano.situacao,'Aprovado')
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, '/planos_de_acao/Aprovou/msg')
 
@@ -534,7 +548,8 @@ class TestViews(TestCase):
         # TESTE (GET)
         # USUARIO CORRETO: Func_sec
         # ALTERABILIDADE: DESATIVADA
-        # SUCESSO: ASSINOU
+        # ERRO CHECAGEM: NAO PODE ASSINAR
+        # função: checa_se_pode_assinar_func_sec()
         self.group.name = 'Func_sec'
         self.group.save()
         self.plano.alterabilidade = 'Desativada'
@@ -542,12 +557,41 @@ class TestViews(TestCase):
         response = self.c.get(reverse('autorizar_plano_sec', kwargs={'elemento_id':self.plano.id}))
 
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, '/planos_de_acao/Assinado/msg')
+        self.assertRedirects(response, '/planos_de_acao/no_sign_funcsec/msg')
 
         # TESTE (GET)
         # USUARIO CORRETO: Func_sec
         # ALTERABILIDADE: DESATIVADA
-        # MENSAGEM: JA ASSINOU ESTE PLANO (assinatura realizada pelo teste anterior)
+        # SUCESSO: ASSINOU
+        self.classificacao.plano_associado.clear()
+        self.plano.corretor_plano = self.user # assinatura do corretor
+        self.plano.save()
+        response = self.c.get(reverse('autorizar_plano_sec', kwargs={'elemento_id':self.plano.id}))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, '/planos_de_acao/Assinado/msg')
+        # ----------
+        self.classificacao.plano_associado.clear()
+        self.classificacao.cargo_herdado = 'Coordenador' # assinatura do coordenador
+        self.classificacao.save()
+        self.user4 = User.objects.create_user(first_name='test4' ,username="test4", email="test4@test.com", password="test4")
+        self.plano.corretor_plano = self.user4
+        self.plano.save()
+        response = self.c.get(reverse('autorizar_plano_sec', kwargs={'elemento_id':self.plano.id}))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, '/planos_de_acao/Assinado/msg')
+        # ----------
+        self.classificacao.plano_associado.clear()
+        self.classificacao.cargo_herdado = 'Diretor SUPROT' # assinatura do diretor suprot
+        self.classificacao.save()
+        response = self.c.get(reverse('autorizar_plano_sec', kwargs={'elemento_id':self.plano.id}))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, '/planos_de_acao/Assinado/msg')
+
+
+        # TESTE (GET)
+        # USUARIO CORRETO: Func_sec
+        # ALTERABILIDADE: DESATIVADA
+        # MENSAGEM: JA ASSINOU ESTE PLANO (assinatura realizada pelo ultimo teste anterior)
         response = self.c.get(reverse('autorizar_plano_sec', kwargs={'elemento_id':self.plano.id}))
 
         self.assertEqual(response.status_code, 302)
@@ -573,8 +617,11 @@ class TestViews(TestCase):
         self.group.save()
         self.plano.alterabilidade = 'Desativada'
         self.plano.save()
+        len_antes_maisum = len(self.classificacao.plano_associado.all()) + 1 # 0 assinaturas + 1
         response = self.c.get(reverse('autorizar_plano', kwargs={'elemento_id':self.plano.id}))
 
+        len_depois = len(self.classificacao.plano_associado.all()) # 1 assinatura
+        self.assertEquals(len_antes_maisum, len_depois)
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, '/planos_de_acao/Assinado/msg')
 
@@ -609,13 +656,32 @@ class TestViews(TestCase):
         # USUARIO CORRETO: Diretor_escola ou Funcionario
         # PLANO TIPO FIA
         # ALTERABILIDADE: DESATIVADA ou pre_assinatura = True
-        # SUCESSO: ASSINOU FIA
-        self.modelo_fia2.membro_colegiado_1 = self.user
-        self.modelo_fia2.membro_colegiado_2 = self.user
+        # ERRO: GRUPO COMPLETO, MAS NÃO PODE ASSINAR (self.user (user 1) nao faz parte do grupo de autorizaçao)
+        self.user3 = User.objects.create_user(first_name='test3' ,username="test3", email="test3@test.com", password="test3")
+        self.user3.groups.add(self.group)
+        self.modelo_fia2.membro_colegiado_1 = self.user3
+        self.modelo_fia2.membro_colegiado_2 = self.user3
         self.modelo_fia2.tecnico_responsavel = 'qualquer nome'
         self.modelo_fia2.save()
+        self.plano2.escola.diretor = self.user3
+        self.escola.save()
         response = self.c.get(reverse('autorizar_plano', kwargs={'elemento_id':self.plano2.id}))
 
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, '/planos_de_acao/no_sign/msg')
+
+        # TESTE (GET)
+        # USUARIO CORRETO: Diretor_escola ou Funcionario
+        # PLANO TIPO FIA
+        # ALTERABILIDADE: DESATIVADA ou pre_assinatura = True
+        # SUCESSO: ASSINOU FIA
+        self.plano2.escola.diretor = self.user # Ser o diretor, coloca o usuario como parte do grupo de autorização
+        self.escola.save()
+        len_antes_maisum = len(self.classificacao.plano_associado.all()) + 1 # 0 assinaturas + 1
+        response = self.c.get(reverse('autorizar_plano', kwargs={'elemento_id':self.plano2.id}))
+
+        len_depois = len(self.classificacao.plano_associado.all()) # 1 assinatura
+        self.assertEquals(len_antes_maisum, len_depois)
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, '/planos_de_acao/Assinado/msg')
 

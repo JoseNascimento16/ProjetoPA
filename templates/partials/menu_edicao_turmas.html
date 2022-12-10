@@ -99,10 +99,13 @@
             {% elif chave_planos.situacao == 'Assinado' and chave_planos.alterabilidade == 'Desativada' %}
             <ul class="classe-menu-lateral1-edicao itens clear-edicao border-none">A situação atual do plano não permite que ele seja modificado!</ul>
 
-            <div class="tooltip5">
-                <button id="botao-reset" class=" myButton botao-reset classe-menu-lateral1-edicao">Reset</button>
-                <span class="tooltiptext5" style="left: 65px;width:200px">Use somente se detectar que correções ainda são necessárias.</span>                                                 
-            </div>
+                {% if chave_planos.corretor_plano == user %}
+                    <div class="tooltip5">
+                        <button id="botao-reset" class=" myButton botao-reset classe-menu-lateral1-edicao">Reset</button>
+                        <span class="tooltiptext5" style="left: 65px;width:200px">Use somente se detectar que correções ainda são necessárias.</span>                                                 
+                    </div>
+                {% endif %}
+
             {% elif chave_planos.alterabilidade == 'Desativada' %}
             <ul class="classe-menu-lateral1-edicao itens clear-edicao border-none">A situação atual do plano não permite que ele seja modificado!</ul>
             {% endif %}

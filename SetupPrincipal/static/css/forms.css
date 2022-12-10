@@ -50,6 +50,12 @@
         width: 100%;
     }
 
+.linha-input3{
+    display: flex;
+    /* flex-direction: column; */
+    margin-bottom: 30px;
+}
+
 .linha-input-coluna{
     flex-direction: column;
 }

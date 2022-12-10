@@ -23,7 +23,7 @@ def log_plano_enviado(nome_plano, checa_usuario, id_plano):
 
 def log_plano_re_enviado(nome_plano, checa_usuario, id_plano):
     e = EventGroup()
-    e.info('Plano "' + nome_plano + '" foi corrigido e re-enviado à Secretaria.', initiator=checa_usuario, plano_base=id_plano)
+    e.info('Plano "' + nome_plano + '" foi corrigido e re-enviado à Secretaria.', initiator=checa_usuario, plano_base=id_plano, plano_situacao_log='Corrigido pela escola')
 
 def log_plano_devolvido(nome_plano, checa_usuario, id_plano):
     e = EventGroup()
@@ -39,15 +39,15 @@ def log_pre_assinatura_permitida(nome_plano, checa_usuario, id_plano):
 
 def log_plano_concluido(nome_plano, checa_usuario, id_plano):
     e = EventGroup()
-    e.info('Plano "' + nome_plano + '" foi concluído e enviado à SUPROT.', initiator=checa_usuario, plano_base=id_plano)
+    e.info('Plano "' + nome_plano + '" foi concluído e enviado à SUPROT.', initiator=checa_usuario, plano_base=id_plano, plano_situacao_log='Assinado')
 
 def log_plano_aprovado(nome_plano, checa_usuario, id_plano):
     e = EventGroup()
-    e.info('Plano "' + nome_plano + '" foi aprovado pela Secretaria.', initiator=checa_usuario, plano_base=id_plano)
+    e.info('Plano "' + nome_plano + '" foi aprovado pela Secretaria.', initiator=checa_usuario, plano_base=id_plano, plano_situacao_log='Aprovado')
 
 def log_plano_aprovado_auto(nome_plano, id_plano):
     e = EventGroup()
-    e.info('Plano "' + nome_plano + '" aprovado automaticamente (já assinado).', initiator='Sistema', plano_base=id_plano)
+    e.info('Plano "' + nome_plano + '" aprovado automaticamente (já assinado).', initiator='Sistema', plano_base=id_plano, plano_situacao_log='Aprovado')
 
 def log_plano_pronto(nome_plano, id_plano):
     e = EventGroup()
@@ -55,11 +55,11 @@ def log_plano_pronto(nome_plano, id_plano):
 
 def log_plano_inteiramente_assinado(nome_plano, id_plano):
     e = EventGroup()
-    e.info('Plano "' + nome_plano + '" recebeu a ultima assinatura da Secretaria.', initiator='Sistema', plano_base=id_plano)
+    e.info('Plano "' + nome_plano + '" recebeu a ultima assinatura da Secretaria.', initiator='Sistema', plano_base=id_plano, plano_situacao_log='Inteiramente assinado')
 
 def log_plano_finalizado(nome_plano, checa_usuario, id_plano):
     e = EventGroup()
-    e.info('Plano "' + nome_plano + '" foi finalizado (completo)!!', initiator=checa_usuario, plano_base=id_plano)
+    e.info('Plano "' + nome_plano + '" foi finalizado (completo)!!', initiator=checa_usuario, plano_base=id_plano, plano_situacao_log='Finalizado')
 
 def log_plano_resetado(nome_plano, checa_usuario, id_plano):
     e = EventGroup()

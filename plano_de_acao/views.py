@@ -29,11 +29,13 @@ import json
 
 # Create your views here.
 
+
 ##### VIEWS TESTADAS #####
 
-# pagina listando todos os planos de ação possíveis de serem vistos
 def planos_de_acao(request, **kwargs):
-    from .alteracoes import define_matriz, mostra_alerta_laranja, gera_lista_planos_assinados
+    # pagina listando todos os planos de ação possíveis de serem vistos
+    from .alteracoes import define_matriz, mostra_alerta_laranja, gera_lista_planos_assinados, define_planos_coordenador, define_planos_corretor
+    from usuarios.alteracoes import atualiza_quant_funcionarios_da_escola, checa_se_possui_tesoureiro_e_atualiza, checa_membros_colegiado_e_atualiza
     form_plano = PlanoForm()
     form_fia = FiaForm()
     edita_plano_form = Edita_planoForm()
@@ -106,6 +108,10 @@ def planos_de_acao(request, **kwargs):
         messages.error(request, 'Os membros para autorização do documento ainda não foram totalmente definidos...')
     elif kwargs.get('mensagem') == 'reset_corretor':
         messages.error(request, 'Somente o "corretor" deste plano pode efetuar esta ação...')
+    elif kwargs.get('mensagem') == 'no_sign':
+        messages.error(request, 'Você não foi cadastrado como membro assinante para este plano...')
+    elif kwargs.get('mensagem') == 'no_sign_funcsec':
+        messages.error(request, 'Indisponível, talvez este plano já tenha todas as assinaturas...')
 
     if tipo_usuario == 'Secretaria' or tipo_usuario == 'Func_sec':
         
@@ -127,18 +133,9 @@ def planos_de_acao(request, **kwargs):
                     planos = Plano_de_acao.objects.order_by('-data_de_criação').filter(Q(situacao='Assinado') | Q(situacao='Inteiramente assinado'))
                     
                 elif checa_usuario.classificacao.usuario_coordenador:
-                    planos1 = Plano_de_acao.objects.filter(corretor_plano=checa_usuario).exclude(situacao='Em desenvolvimento').exclude(situacao='Publicado').exclude(situacao='Necessita correção').exclude(situacao='Aprovado').exclude(situacao='Pronto').exclude(situacao='Finalizado')
-                    planos2 = Plano_de_acao.objects.filter(corretor_plano=None).exclude(situacao='Em desenvolvimento').exclude(situacao='Publicado').exclude(situacao='Necessita correção').exclude(situacao='Aprovado').exclude(situacao='Pronto').exclude(situacao='Finalizado')
-                    planos3 = planos1.union(planos2)
-                    planos4 = Plano_de_acao.objects.filter(Q(situacao='Assinado') | Q(situacao='Inteiramente assinado')).filter(assinatura_coordenador=False)
-                    planos5 = planos3.union(planos4)
-                    planos_assinados = checa_usuario.classificacao.plano_associado.filter(Q(situacao='Assinado') | Q(situacao='Inteiramente assinado'))
-                    planos = planos5.union(planos_assinados).order_by('-data_de_criação')
-                
+                    planos = define_planos_coordenador(request)
                 else:
-                    planos1 = Plano_de_acao.objects.filter(corretor_plano=checa_usuario).exclude(alterabilidade='Escola').exclude(situacao='Finalizado')
-                    planos2 = Plano_de_acao.objects.filter(corretor_plano=None).filter(situacao='Pendente')
-                    planos = planos1.union(planos2).order_by('-data_de_criação')
+                    planos = define_planos_corretor(request)
 
             # transforma em "Inteiramente assinado" o plano caso já tenha todas as assinaturas necessárias
             from .alteracoes import plano_inteiramente_assinado
@@ -166,13 +163,18 @@ def planos_de_acao(request, **kwargs):
                     valor_pesquisa = request.GET.get('q','')
 
         # Se plano estiver pra ser devolvido com correções, manda formulário para permitir marcar checkbox de pré assinatura
-        if any(plano.situacao == 'Pendente' and plano.pre_analise_acao and plano.pre_analise_despesa and plano.correcoes_a_fazer > 0 for plano in planos):
+        if any(plano.pre_analise_acao and plano.pre_analise_despesa and plano.correcoes_a_fazer > 0 for plano in planos):
             form_pre_assinatura = PreAssinaturaForm()
                                
     elif tipo_usuario == 'Diretor_escola':
+        escola = request.user.classificacao.escola
+        escola.possui_tesoureiro = checa_se_possui_tesoureiro_e_atualiza(escola)
+        escola.quant_membro_colegiado = checa_membros_colegiado_e_atualiza(escola)
+        atualiza_quant_funcionarios_da_escola(escola)
+        escola.save()
+        
+        planos = Plano_de_acao.objects.order_by('-data_de_criação').filter(escola=objeto_matriz).filter(~Q(situacao='Pendente')).filter(~Q(situacao='Concluido')).filter(~Q(situacao='Necessita correção')).filter(~Q(situacao='Corrigido pela escola')).filter(~Q(situacao='Finalizado')).filter(~Q(situacao='Assinado')).filter(~Q(situacao='Inteiramente assinado'))
 
-        # planos = Plano_de_acao.objects.order_by('-data_de_criação').filter(escola=request.user.escola).filter(~Q(situacao='Pendente')).filter(~Q(situacao='Concluido')).filter(~Q(situacao='Necessita correção')).filter(~Q(situacao='Corrigido pela escola')).filter(~Q(situacao='Finalizado')).filter(~Q(situacao='Assinado')).filter(~Q(situacao='Inteiramente assinado'))
-        planos = Plano_de_acao.objects.order_by('-data_de_criação').filter(escola=objeto_matriz).filter(alterabilidade='Escola')
         ######################
         #Se for efetuada uma pesquisa por planos   
         if kwargs.get('search'): 
@@ -190,7 +192,7 @@ def planos_de_acao(request, **kwargs):
 
     elif tipo_usuario == 'Funcionario':
         
-        planos = Plano_de_acao.objects.order_by('-data_de_criação').filter(escola=objeto_matriz).filter(alterabilidade='Escola')
+        planos = Plano_de_acao.objects.order_by('-data_de_criação').filter(escola=objeto_matriz).filter(~Q(situacao='Pendente')).filter(~Q(situacao='Concluido')).filter(~Q(situacao='Necessita correção')).filter(~Q(situacao='Corrigido pela escola')).filter(~Q(situacao='Finalizado')).filter(~Q(situacao='Assinado')).filter(~Q(situacao='Inteiramente assinado'))
         
         lista_planos_assinados = gera_lista_planos_assinados(planos, checa_usuario)
 
@@ -1197,7 +1199,7 @@ def pagina_correcoes(request, **kwargs):
             return render(request, 'correcoes.html', contexto)
 
 def corrigindo_acao(request, **kwargs):
-    from .alteracoes import atualiza_quant_correcoes_plano
+    from .alteracoes import atualiza_quant_correcoes_plano, envia_email_plano_aprovado
     plano_objeto = get_object_or_404(Plano_de_acao, pk=kwargs['plano_id'])
     tipo_usuario = request.user.groups.get().name
 
@@ -1231,7 +1233,12 @@ def corrigindo_acao(request, **kwargs):
                     objeto.delete()
 
                 # Atualiza a quantidade de correções neste plano
-                atualiza_quant_correcoes_plano(plano_objeto)
+                quant = atualiza_quant_correcoes_plano(plano_objeto)
+
+                # Pré aprova o plano caso as condições sejam satisfeitas
+                if quant == 0 and plano_objeto.pre_assinatura and plano_objeto.devolvido:
+                    log_plano_aprovado_auto(plano_objeto.ano_referencia, plano_objeto.id)
+                    envia_email_plano_aprovado(request, plano_objeto)
 
                 # Salva as informações nos forms de codigos, nos seus respectivos objetos
                 for modelo in codigos_da_ordem_inseridos:
@@ -1259,7 +1266,7 @@ def corrigindo_acao(request, **kwargs):
     return redirect('dashboard')
 
 def corrigindo_despesas(request, **kwargs):
-    from .alteracoes import atualiza_quant_correcoes_plano
+    from .alteracoes import atualiza_quant_correcoes_plano, envia_email_plano_aprovado
     plano_objeto = get_object_or_404(Plano_de_acao, pk=kwargs['plano_id'])
     tipo_usuario = request.user.groups.get().name
 
@@ -1295,7 +1302,12 @@ def corrigindo_despesas(request, **kwargs):
                 correcao_de_codigo_especifico.delete()
 
                 # Atualiza a quantidade de correções neste plano
-                atualiza_quant_correcoes_plano(plano_objeto)
+                quant = atualiza_quant_correcoes_plano(plano_objeto)
+
+                # Pré aprova o plano caso as condições sejam satisfeitas
+                if quant == 0 and plano_objeto.pre_assinatura and plano_objeto.devolvido:
+                    log_plano_aprovado_auto(plano_objeto.ano_referencia, plano_objeto.id)
+                    envia_email_plano_aprovado(request, plano_objeto)
 
                 # print('SUCESSO')
                 return redirect('pagina_correcoes_mensagem', elemento_id=kwargs['plano_id'], mensagem='Sucesso')
@@ -1435,7 +1447,7 @@ def publica_plano(request, **kwargs):
 
 def autoriza_plano(request, **kwargs): #ASSINATURA
     from .alteracoes import cria_associacao, confere_assinaturas_muda_para_pronto, fia_confere_assinaturas_muda_para_pronto
-    from fia.alteracoes import checa_grupo_de_autorizacao
+    from fia.alteracoes import checa_grupo_de_autorizacao, checa_se_pode_assinar_escola_fia
     captura_plano = get_object_or_404(Plano_de_acao, pk=kwargs['elemento_id'])
     tipo_usuario = request.user.groups.get().name
 
@@ -1460,27 +1472,31 @@ def autoriza_plano(request, **kwargs): #ASSINATURA
                 # PLANO FIA
                 elif captura_plano.tipo_fia:
                     modelo_fia = get_object_or_404(Modelo_fia, plano=captura_plano)
-                    pode_assinar = checa_grupo_de_autorizacao(modelo_fia)
-                    if pode_assinar:
-                        # print('Nao existe funcionario com ID igual ao atual associado a este plano, CRIANDO AUTORIZAÇÃO!!')
-                        cria_associacao(request, captura_plano, captura_funcionario, kwargs['elemento_id'])
+                    grupo_completo = checa_grupo_de_autorizacao(modelo_fia)
+                    pode_assinar = checa_se_pode_assinar_escola_fia(request, modelo_fia)
+                    if grupo_completo:
+                        if pode_assinar:
+                            # print('Nao existe funcionario com ID igual ao atual associado a este plano, CRIANDO AUTORIZAÇÃO!!')
+                            cria_associacao(request, captura_plano, captura_funcionario, kwargs['elemento_id'])
+                        else:
+                            return redirect('pagina_planos_de_acao_mensagem', mensagem='no_sign')
                     else:
                         return redirect('pagina_planos_de_acao_mensagem', mensagem='grupo_incompleto')
 
             # PLANO COMUM
             if not captura_plano.tipo_fia:
-                confere_assinaturas_muda_para_pronto(captura_plano, captura_escola)
+                confere_assinaturas_muda_para_pronto(request, captura_plano, captura_escola)
                 
             # PLANO FIA
             elif captura_plano.tipo_fia:
-                fia_confere_assinaturas_muda_para_pronto(captura_plano)
+                fia_confere_assinaturas_muda_para_pronto(request, captura_plano)
 
             return redirect('pagina_planos_de_acao_mensagem', mensagem='Assinado')
     
     return redirect('pagina_planos_de_acao_mensagem', mensagem='Acesso_negado')
 
 def autoriza_plano_func_sec(request, **kwargs): #ASSINATURA FUNC_SEC
-    from .alteracoes import plano_inteiramente_assinado,atualiza_assinaturas_sec
+    from .alteracoes import plano_inteiramente_assinado,atualiza_assinaturas_sec, checa_se_pode_assinar_func_sec
     captura_plano = get_object_or_404(Plano_de_acao, pk=kwargs['elemento_id'])
     tipo_usuario = request.user.groups.get().name
 
@@ -1498,8 +1514,12 @@ def autoriza_plano_func_sec(request, **kwargs): #ASSINATURA FUNC_SEC
         else: # Significa que este usuário ainda não autorizou este plano, e portanto, criamos a autorização!!
             # print('Nao existe funcionario com ID igual ao atual associado a este plano, CRIANDO AUTORIZAÇÃO!!')
 
-            captura_funcionario.plano_associado.add(captura_plano) #salva no banco dizendo que este usuario acabou de autorizar este plano, e portanto já assinou e não precisa mais assinar. Gera um associação many-too_many.
-            
+            pode_assinar = checa_se_pode_assinar_func_sec(request, captura_plano)
+            if pode_assinar:
+                captura_funcionario.plano_associado.add(captura_plano) #salva no banco dizendo que este usuario acabou de autorizar este plano, e portanto já assinou e não precisa mais assinar. Gera um associação many-too_many.
+            else:
+                return redirect('pagina_planos_de_acao_mensagem', mensagem='no_sign_funcsec')
+
             # Seta as variaveis booleanas do modelo de plano que dizem quem dos 3 acabou de assinar
             if captura_funcionario.usuario_diretor:
                 captura_plano.assinatura_diretor = True
@@ -1594,6 +1614,7 @@ def envia_plano(request, **kwargs):
     return redirect('dashboard')
 
 def devolve_plano(request, **kwargs):
+    from .alteracoes import envia_email_plano_devolvido
     captura_plano = get_object_or_404(Plano_de_acao, pk=kwargs['elemento_id'])
     tipo_usuario = request.user.groups.get().name
     if tipo_usuario == 'Func_sec' and captura_plano.alterabilidade == 'Secretaria':
@@ -1615,6 +1636,7 @@ def devolve_plano(request, **kwargs):
                     checa_usuario = request.user.first_name
                     nome_plano = captura_plano.ano_referencia
                     log_plano_devolvido(nome_plano, checa_usuario, captura_plano.id)
+                    envia_email_plano_devolvido(request, captura_plano)
 
                     if valor_pre_assinatura == True:
                         log_pre_assinatura_permitida(nome_plano, checa_usuario, captura_plano.id)
@@ -1646,6 +1668,7 @@ def conclui_plano(request, **kwargs):
     return redirect('pagina_planos_de_acao_mensagem', mensagem='Acesso_negado')
 
 def finaliza_plano(request,  **kwargs):
+    from .alteracoes import envia_email_plano_finalizado
     captura_plano = get_object_or_404(Plano_de_acao, pk=kwargs['elemento_id'])
     tipo_usuario = request.user.groups.get().name
 
@@ -1657,6 +1680,7 @@ def finaliza_plano(request,  **kwargs):
 
             nome_plano = captura_plano.ano_referencia
             log_plano_finalizado(nome_plano, checa_usuario.first_name, captura_plano.id)
+            envia_email_plano_finalizado(request, captura_plano)
 
         return redirect('pagina_planos_de_acao_mensagem', mensagem='Finalizado')
 
@@ -1671,7 +1695,7 @@ def reseta_plano(request, **kwargs):
         if request.method == 'POST':
             nome_usuario = checa_usuario.first_name
             if plano.situacao == 'Assinado':
-                if tipo_usuario == 'Secretaria' or tipo_usuario == 'Func_sec':
+                if tipo_usuario == 'Func_sec':
                     if plano.corretor_plano == checa_usuario:
                         funcionario_associado = Classificacao.objects.filter(plano_associado=plano)#DE TODOS OS FUNCIONARIOS ASSOCIADOS A ESTE PLANO
                         for objeto in funcionario_associado:
@@ -1689,6 +1713,10 @@ def reseta_plano(request, **kwargs):
                         plano.situacao = 'Pendente'
                         plano.data_assinaturas_escola = None
                         plano.data_assinaturas_suprof = None
+                        plano.assinatura_corretor = False
+                        plano.assinatura_coordenador = False
+                        plano.assinatura_diretor = False
+                        plano.alterabilidade = 'Secretaria'
                         plano.save()
     
                         log_plano_resetado(plano.ano_referencia, nome_usuario, kwargs['elemento_id'])
@@ -1854,6 +1882,7 @@ def atribui_corretor(request, **kwargs):
     return redirect('pagina_planos_de_acao_mensagem', mensagem='Acesso_negado_situacao')
 
 def aprova_plano(request, **kwargs):
+    from .alteracoes import envia_email_plano_aprovado
     captura_plano = get_object_or_404(Plano_de_acao, pk=kwargs['elemento_id'])
     tipo_usuario = request.user.groups.get().name
 
@@ -1870,6 +1899,7 @@ def aprova_plano(request, **kwargs):
             nome_plano = captura_plano.ano_referencia
             checa_usuario = request.user.first_name
             log_plano_aprovado(nome_plano,checa_usuario, captura_plano.id)
+            envia_email_plano_aprovado(request, captura_plano)
 
             return redirect('pagina_planos_de_acao_mensagem', mensagem='Aprovou')
 

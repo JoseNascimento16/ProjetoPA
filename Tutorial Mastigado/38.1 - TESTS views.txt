@@ -9,9 +9,17 @@ https://docs.djangoproject.com/en/4.0/topics/testing/tools/#assertions
 
 # Usa o nome da URL com KWARGS
 - response = self.client.get(reverse('enviando_email', kwargs={'key':'value', 'key2':'value2'})) 
-self.assertEqual(302, response.status_code)
+  self.assertEqual(302, response.status_code)
 
-response = funcao_qualquer(self.client.get('envia_mail/')) # Simula um request numa função especifica da views
+# URL COM FOLLOW = TRUE
+   response = self.c.get(reverse('url_name', kwargs={'foo':bar}), follow=True) # Usa o nome da URL e atributos e follow=true
+      
+   self.assertEqual(response.status_code, 200) # tem que ser 200, pois o resultado final é uma renderização
+   self.assertRedirects(response, '/url')
+   self.assertTemplateUsed(response, 'template.html')
+   self.assertEquals(response.context['chave_variavel_de_contexto'], True)
+
+# response = funcao_qualquer(self.client.get('envia_mail/')) # Simula um request numa função especifica da views
 
 # Verifica se valor da variável de contexto = True (Exatamente este valor)
    self.assertEquals(response.context['chave_abre_modal_edicao'], True)
@@ -30,7 +38,14 @@ self.assertRedirects(response, '/planos_de_acao/'+str(self.plano.id)+'/msg')
    # Se tiver algum objeto: passa no teste
    # Se for um queryset 'vazio' falha no teste
 
-
+# Testando a Criação de objetos (coloca depois da definição do response)
+   usuario_criado = User.objects.filter(first_name='Cirino qualquer') 
+   self.assertTrue(usuario_criado)
+   usuario_criado2 = get_object_or_404(User, first_name='Cirino qualquer')
+   classificacao_teste = Classificacao.objects.filter(user=usuario_criado2)
+   self.assertTrue(classificacao_teste)
+   escola_matriz = get_object_or_404(Escola, pk=self.escola.id)
+   self.assertTrue(escola_matriz.possui_diretor)
 
 # Para testar campos com imagens:
    from django.core.files.uploadedfile import SimpleUploadedFile

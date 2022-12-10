@@ -1,0 +1,50 @@
+{% load static %}
+{% load widget_tweaks %}
+
+{% if contexto_extra_form_diretor %}
+<div class="div-form-cadastro-escolas" style="display: block;">
+{% else %}
+<div class="div-form-cadastro-escolas">
+{% endif %}
+    <div class="titulo-modal">
+        <h2>Cadastro de Diretor</h2>
+    </div>
+    
+    <div class="classe-form-modal">
+        <form class="form-modal" action="{% url 'cadastrar_diretor' chave_escola.id %}" method="POST">
+        {% csrf_token %}
+        {% for elemento in chave_form_cadastro_diretor.visible_fields %}
+
+        {% if forloop.counter0 == 0 %}
+            <div class="linha-input linha-input-row">
+                <label class="label-input label-input-form-django" for="{{ elemento.id_for_label }}">{{ elemento.label }}</label>
+                {{elemento|add_class:'input-input'}}
+            </div>
+        
+        {% else %}
+            
+            <div class="linha-input linha-input-row" style="margin-bottom: 0">
+                <label class="label-input label-input-form-django" for="{{ elemento.id_for_label }}">{{ elemento.label }}</label>
+                {{elemento|add_class:'input-input'}}
+            </div>
+            <div style="display: flex; flex-direction: row">
+                <p style="flex: 0.3"></p>
+                <p style="font-size: 12px;flex: 1">(Assegure que o e-mail cadastrado está correto)</p>
+                <!-- <h5 style="flex: 1; margin: 0">Confira se o e-mail digitado está correto</h5> -->
+            </div>
+
+            <p style="font-size: 14px;flex: 1">PS: As credenciais do usuário serão enviadas para o e-mail cadastrado.</p>
+
+        {% endif %}
+
+        {% for error in elemento.errors %}
+        <section class="alert alert-danger" role="alert"> {{ elemento.errors }} </section>
+        {% endfor %}
+
+        {% endfor %}
+        <div class="linha-submit">
+            <input class="myButton" type="submit" value="Cadastrar"></input>
+        </div>
+        </form>
+    </div>
+</div>

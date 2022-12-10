@@ -6,6 +6,10 @@
     margin: 15px;
   }
 
+  .classe-div-container-corpo-profile{
+    display: block !important;
+  }
+
       .classe-texto-container-corpo{
         border: 1px solid black;
       }

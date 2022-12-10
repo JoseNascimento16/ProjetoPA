@@ -71,12 +71,24 @@ def remove_assinatura_membro(plano_objeto, membro):
 
             atualiza_assinaturas_escola(plano_objeto.id)
 
-# Checa se um plano fia já tem todos os membros definidos
+
 def checa_grupo_de_autorizacao(modelo_fia):
+    # Checa se um plano fia já tem todos os membros definidos
     if modelo_fia.membro_colegiado_1 and modelo_fia.membro_colegiado_2 and modelo_fia.tecnico_responsavel:
         return True
-    else:
-        return False
+    return False
+
+def checa_se_pode_assinar_escola_fia(request, modelo_fia):
+    # Checa se o funcionário faz parte do grupo de autorização cadastrado
+    # Escola: 1 Diretor, 1 técnico, 2 membros do colegiado
+    # SUPROT: 1 Corretor do plano, 1 coordenador, 1 Diretor suprot
+    lista_de_autorizados = []
+    lista_de_autorizados.append(modelo_fia.membro_colegiado_1)
+    lista_de_autorizados.append(modelo_fia.membro_colegiado_2)
+    lista_de_autorizados.append(modelo_fia.plano.escola.diretor)
+    if any(request.user == usuario for usuario in lista_de_autorizados):
+        return True
+    return False
 
 def renderiza_form_fia(plano_objeto, modelo_fia_objeto):
     membro1=''

@@ -64,6 +64,9 @@
     .classe-header2{
         display: none;
     }
+    .box-plano1-1{
+        flex-direction: column;
+    }
 }
 
 @media only screen and (max-width: 360px) {
@@ -173,7 +176,7 @@
     .tooltiptext5-tabela{
         left: 20% !important;
         bottom: 87% !important;
-      }
+    }
 }
 
 @media only screen and (max-width: 785px) {
@@ -189,16 +192,46 @@
     }
 }
 
-@media only screen and (max-width: 460px) {
+@media only screen and (max-width: 516px) {
     .classe-div-menu-lateral{
         flex-direction: column;
       }
+
+    .box-profile1-1{
+        justify-content: center !important;
+    }
+
+    .box-profile1-1-2-1{
+        display: none !important;
+    }
+    .box-profile1-2{
+        display: flex !important;
+    }
+    .div-botoes-criar{
+        flex-direction: column;
+    }
+    .div-botoes-criar2{
+        display: flex;
+    }
+    .a-criar-planos{
+        /* width: -webkit-fill-available ;*/
+        text-align: center; 
+        flex-grow: 1;
+    }
+}
+
+@media only screen and (max-width: 322px) {
+    .search-bar{
+        width: 170px;
+      }
+    
 }
 
 @media only screen and (max-height: 785px) {
     .classe-div-container-corpo{
         flex: 5;
       }
+}
 
 @media only screen and (max-height: 580px) {
     .classe-div-container-corpo{
@@ -212,13 +245,30 @@
       }
 }
 
+/* MENU LATERAL EDICAO */
+
+@media only screen and (max-width: 1025px) {
+    .classe-container-central-visualizacao{
+        flex-direction: column !important;
+    }
+    .classe-div-menu-lateral-edicao{
+        width: auto;
+    }
+}
 
 /* CORPO */
 
-@media only screen and (max-width: 1025px) {
+@media only screen and (max-width: 1029px) {
 
     .classe-container-central-correcoes{
-        flex-direction: column;
+        flex-direction: column !important;
+    }
+}
+
+@media only screen and (max-width: 876px) {
+
+    .card-nome-instituicao{
+        display: none !important;
     }
 }
 
@@ -228,8 +278,42 @@
     }
 }
 
-@media only screen and (max-width: 460px) {
-    
+@media only screen and (max-width: 526px) {
+    .box-plano1-1 {
+        min-width: 176px;
+    }
+    .box-plano1-1 h5{
+        font-size: 15px !important;
+    }
+    .cards-planos{
+        flex-direction: column !important;
+    }
+    .itens-cards-planos{
+        margin: 5px !important;
+    }
+    .p1-itens-cards-planos{
+        display: flex ;
+    }
+    .display-flex-media{
+        display: flex !important;
+    }
+    .tooltip5{
+        /* display: flex !important; */
+    }
+    .flex-grow-media{
+        flex-grow: 1 !important;
+        text-align: center;
+    }
+    .tooltiptext5{
+        flex-grow: 1 !important;
+        width: auto !important;
+    }
+    .box-plano1-2{
+        display: none !important;
+    }
+    .box-plano-1-2-compact{
+        display: flex !important;
+    }
 }
 
 /* FORMULARIOS */
@@ -248,8 +332,18 @@
 } */
 
 @media print {
-    .pagebreak {
-        clear: both;
-        page-break-after: always;
+
+    body {
+        background: #CCCCCC;
+        background: none;
+        -ms-zoom: 1.665;
+        transform: scale(0.97);
+        /* filter: grayscale(100%); */
     }
+
+    @page {
+        size: auto;
+        margin: 1mm;
+    }
+
 }

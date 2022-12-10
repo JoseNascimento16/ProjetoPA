@@ -22,6 +22,10 @@
 @import url(css/tooltips.css);
 @import url(css/correcoes.css);
 @import url(css/imprimir.css);
+@import url(css/avulsos.css);
+@import url(css/profile.css);
+@import url(css/pagination.css);
+@import url(css/menu_impressao.css);
 
 body{
     margin: 0px;
@@ -119,4 +123,12 @@ h5 {
 
 .flex-02{
   flex: 0.2 !important;
+}
+
+/* impede seleção de partes da tabela */
+
+.prevent-select {
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
 }

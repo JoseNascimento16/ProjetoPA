@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
-
+from datetime import date
 from fia.models import Modelo_fia
 from .models import Plano_de_acao
 from django.contrib.auth.models import User
@@ -38,19 +38,10 @@ def cria_modelo_fia(sender, instance, created, *args, **kwargs):
         instance.forca_criacao_modelo_fia = False
         instance.save()
 
-# @receiver(post_save, sender=User)
-# def atualiza_alterabilidade2(sender, instance, created, *args, **kwargs):
+@receiver(pre_save, sender=Plano_de_acao)
+def define_ultima_modificacao(sender, instance, **kwargs):
     
-#     planos = Plano_de_acao.objects.all()
-#     for instancia_plano in planos:
-        
-#         if instancia_plano.situacao == 'Pendente' or instancia_plano.situacao == 'Corrigido pela escola':
-#             instancia_plano.alterabilidade = 'Secretaria'
-#             instancia_plano.save()
-#         elif instancia_plano.situacao == 'Em desenvolvimento' or instancia_plano.situacao == 'Publicado' or instancia_plano.situacao == 'Necessita correção':
-#             instancia_plano.alterabilidade = 'Escola'
-#             instancia_plano.save()
-#         elif instancia_plano.situacao == 'Aprovado' or instancia_plano.situacao == 'Pronto' or instancia_plano.situacao == 'Assinado' or instancia_plano.situacao == 'Inteiramente assinado' or instancia_plano.situacao == 'Finalizado':
-#             instancia_plano.alterabilidade = 'Desativada'
-#             instancia_plano.save()
+    if not getattr(instance, '_disable_signals', False):
+        instance.ultima_modificacao = date.today()
+        instance.save_without_signals()
 

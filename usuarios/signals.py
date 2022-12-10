@@ -4,17 +4,17 @@ from plano_de_acao.alteracoes import atualiza_assinaturas_sec
 from django.contrib.auth.models import User
 from .models import Classificacao
 from plano_de_acao.models import Plano_de_acao
+from django.contrib.auth.models import Group
 
 # Signal que retorna a situação de planos "Inteiramente assinados" para "Assinados" quando um novo Func_sec é criado.
 @receiver(post_save, sender=Classificacao)
 def retorna_situacao(sender, instance, created, *args, **kwargs):
     if created:
         if instance.assina_plano:
-            print('SIGNAL retorna situacao')
+            # print('SIGNAL retorna situacao')
             todos_planos = Plano_de_acao.objects.filter(situacao='Inteiramente assinado')
             for plano in todos_planos:
                 plano.situacao = 'Assinado'
-                print(plano.situacao)
                 plano.save()
     else:
         # O valor do update_fields não vem no frozenset, somente a KEY, que no nosso caso é o nome da variavel "assina_plano", o valor da variável não vem!
@@ -22,7 +22,7 @@ def retorna_situacao(sender, instance, created, *args, **kwargs):
             campos = list(kwargs.get('update_fields'))
             if any(item == 'assina_plano' for item in campos):
                 if instance.assina_plano: 
-                    print('SIGNAL retorna situacao')
+                    # print('SIGNAL retorna situacao')
                     todos_planos = Plano_de_acao.objects.filter(situacao='Inteiramente assinado')
                     for plano in todos_planos:
                         plano.situacao = 'Assinado'
@@ -58,3 +58,19 @@ def user_updated(sender, **kwargs):
                 user.classificacao.save()
                 # do what you need here
                     
+# Signal que detecta a criação de um grupo (Secretaria) e cria o restante                    
+@receiver(post_save, sender=Group)
+def group_criado(sender, instance, created, *args, **kwargs):
+    if instance.name == 'Secretaria':
+        if not Group.objects.filter(name='Escola').exists():
+            Group.objects.create(name='Escola')
+            # print('criou grupo Escola')
+        if not Group.objects.filter(name='Diretor_escola').exists():
+            Group.objects.create(name='Diretor_escola')
+            # print('criou grupo diretor escola')
+        if not Group.objects.filter(name='Funcionario').exists():
+            Group.objects.create(name='Funcionario')
+            # print('criou grupo Funcionario')
+        if not Group.objects.filter(name='Func_sec').exists():
+            Group.objects.create(name='Func_sec')
+            # print('criou grupo Func_sec')

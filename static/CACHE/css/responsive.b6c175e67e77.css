@@ -1,0 +1,22 @@
+/* line 13, SetupPrincipal/static/scss/responsive.scss */
+.wrapper {
+  font-size: calc((100vw - 600px) * 0.00537 + 11px); }
+  @media (max-width: 600px) {
+    /* line 13, SetupPrincipal/static/scss/responsive.scss */
+    .wrapper {
+      font-size: 11px; } }
+  @media (min-width: 6000px) {
+    /* line 13, SetupPrincipal/static/scss/responsive.scss */
+    .wrapper {
+      font-size: 40px; } }
+/* line 17, SetupPrincipal/static/scss/responsive.scss */
+.titulo-wrapper {
+  font-size: calc((100vw - 600px) * 0.00794 + 13px); }
+  @media (max-width: 600px) {
+    /* line 17, SetupPrincipal/static/scss/responsive.scss */
+    .titulo-wrapper {
+      font-size: 13px; } }
+  @media (min-width: 4000px) {
+    /* line 17, SetupPrincipal/static/scss/responsive.scss */
+    .titulo-wrapper {
+      font-size: 40px; } }

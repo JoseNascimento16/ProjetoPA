@@ -2,7 +2,7 @@
 
 <!-- este modal-partial esta posicionado em cada pagina.html que precise dele -->
 
-{% if contexto_edicao_plano or contexto_extra_edita_plano or chave_abre_modal_edicao or chave_edita_ordem_existente or chave_abre_altera_nome or chave_abre_altera_mail or chave_abre_altera_assinatura or contexto_extra_modelo_fia or contexto_extra_ordem_fia or chave_abre_form_extra_criacao or chave_abre_form_extra_edicao %}
+{% if contexto_edicao_plano or contexto_extra_edita_plano or chave_abre_modal_edicao or chave_edita_ordem_existente or chave_abre_altera_login or chave_abre_altera_mail or chave_abre_altera_assinatura or contexto_extra_modelo_fia or contexto_extra_ordem_fia or chave_abre_form_extra_criacao or chave_abre_form_extra_edicao %}
 <div class="modelo-modal-edicao" style="display: flex;">
 {% else %}
 <div class="modelo-modal-edicao" >
@@ -51,8 +51,8 @@
             {% include 'partials/formularios/form-cadastro-turmas.html' %}
             {% endif %}
 
-            {% if chave_abre_altera_nome %}
-            {% include 'partials/formularios/form-altera-nome.html' %}
+            {% if chave_abre_altera_login %}
+            {% include 'partials/formularios/form-altera-login.html' %}
             {% endif %}
 
             {% if chave_abre_altera_assinatura %}

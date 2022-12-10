@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'djmoney',
     'widget_tweaks',
     'tempus_dominus',
+    'compressor',
     'eventlog.apps.EventLogConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -165,3 +166,13 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'mails.sistema.sipa@gmail.com'
 EMAIL_HOST_PASSWORD = 'bgkyhthqmocgfvht'
 DEFAULT_FROM_EMAIL = 'Sistema SIPA <noreply@sistema.sipa>'
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+)
+
+COMPRESS_PRECOMPILERS = (    
+    ('text/x-scss', 'django_libsass.SassCompiler'),
+)

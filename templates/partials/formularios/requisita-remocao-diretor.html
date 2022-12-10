@@ -1,0 +1,23 @@
+{% load static %}
+<!-- O LINK PARA ACESSAR ESTE FORM NÃO É MOSTRADO CASO NAO HAJA DIRETOR CADASTRADO NA ESCOLA -->
+<div class="div-confirma-devolve">
+    <div class="titulo-modal titulo-modal-devolve">
+        <h4>Confirmação</h4>
+        <div style="flex: 0.5;" class="fechar-modal">
+            <a href="#"><i class="fas fa-times fa-2x fecha-modal"></i></a>
+        </div>
+    </div>
+    <div class="classe-form-modal">
+        {% if chave_diretor %}
+        <form class="form-modal" action="{% url 'solicitar_remocao' chave_diretor.id %}" method="POST">
+        {% else %}
+        <form class="form-modal" action="#" method="POST">
+        {% endif %}
+            {% csrf_token %}
+            <p style="font-size: 1 em;">Para excluir este usuário será necessária a confirmação do diretor da SUPROT. Deseja efetuar esta requisição?</p>
+            <div class="linha-submit">
+                <input class="myButton" type="submit" value="Solicitar exclusão">
+            </div>
+        </form>
+    </div>
+</div>

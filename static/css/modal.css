@@ -60,10 +60,12 @@
 
 .fundo-modal-confirma{
     background-color: rgb(255, 255, 255);
-    width: 30%;
+    width: 410px;
     height: 30%;
     border-radius: 10px;
     position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .fundo-modal-correcao{
@@ -105,6 +107,9 @@
     margin-bottom: 50px;
 }
 
-.input-modal{
-    
+.titulo-modal-devolve{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
 }
+

@@ -12,6 +12,54 @@ $(document).ready(function(){
 			$(".div-form-plano").css("display", "none")  });
 		});
 
+// MOSTRA MODAL DE CRIAR FIA
+$(document).ready(function(){
+	$("#chama-form-fia").click(function(){ 
+		$(".modelo-modal").css("display", "flex"),
+		$(".div-form-fia").css("display", "block")  });
+  });
+	$(document).ready(function(){
+		$(".fecha-modal").click(function(){ 
+			$(".modelo-modal").css("display", "none"),
+			$(".div-form-fia").css("display", "none")  });
+		});
+
+// MOSTRA MODAL DE EDITAR MODELO_FIA
+$(document).ready(function(){
+	$("#id-abre-ordem1-fia").click(function(){ 
+		$(".modelo-modal-edicao").css("display", "flex"),
+		$(".div-form-modelo-fia").css("display", "block")  });
+  });
+	$(document).ready(function(){
+		$(".fecha-modal").click(function(){ 
+			$(".modelo-modal-edicao").css("display", "none"),
+			$(".div-form-modelo-fia").css("display", "none")  });
+		});
+
+// MOSTRA MODAL DE CRIAÇÃO DE ORDEM EXTRA FIA
+$(document).ready(function(){
+	$("#chama-form-extra-fia").click(function(){ 
+		$(".modelo-modal-edicao").css("display", "flex"),
+		$(".div-form-ordem-extra-fia").css("display", "block")  });
+  });
+	$(document).ready(function(){
+		$(".fecha-modal").click(function(){ 
+			$(".modelo-modal-edicao").css("display", "none"),
+			$(".div-form-ordem-extra-fia").css("display", "none")  });
+		});
+
+// MOSTRA MODAL DE ASSINATURA TECNICO RESPONSAVEL FIA
+$(document).ready(function(){
+	$("#abre-modal-assinatura-tecnico").click(function(){ 
+		$(".modelo-modal-edicao").css("display", "flex"),
+		$(".div-confirma-devolve").css("display", "block") });
+  });
+	$(document).ready(function(){
+		$(".fecha-modal").click(function(){ 
+			$(".modelo-modal-edicao").css("display", "none"),
+			$(".div-confirma-devolve").css("display", "none") });
+		});
+
 // MOSTRA MODAL DE EDITAR PLANO
 $(document).ready(function(){
 	$("#chama-form-edita-plano").click(function(){ 
@@ -85,15 +133,30 @@ $(document).ready(function(){
 		});	
 
 // MOSTRA MODAL DE CONFIRMAÇÃO DE AÇÃO		
+
+
+// MOSTRA MODAL DE RESET DE PLANO		
 $(document).ready(function(){
-	$("#chama-confirma-deleta").click(function(){ 
+	$("#botao-reset").click(function(){ 
 		$(".modelo-modal-confirma").css("display", "flex"),
-		$(".div-confirma-deleta").css("display", "block")  });
+		$(".div-confirma-devolve").css("display", "block")  });
+  });
+	$(document).ready(function(){
+		$(".fecha-modal").click(function(){ 
+			$(".modelo-modal-confirma-devolve").css("display", "none"),
+			$(".div-confirma-devolve").css("display", "none")});
+		});
+
+// MOSTRA MODAL DE CONFIRMA CORRIGE (VIRAR CORRETOR)		
+$(document).ready(function(){
+	$("#botao-corrigir").click(function(){ 
+		$(".modelo-modal-confirma").css("display", "flex"),
+		$(".div-confirma-devolve").css("display", "block")  });
   });
 	$(document).ready(function(){
 		$(".fecha-modal").click(function(){ 
 			$(".modelo-modal-confirma").css("display", "none"),
-			$(".div-confirma-deleta").css("display", "none")});
+			$(".div-confirma-devolve").css("display", "none")});
 		});
 
 // MODAL DE CORRECAO DE AÇÃO		
@@ -102,4 +165,16 @@ $(document).ready(function(){
 		$(".fecha-modal").click(function(){ 
 			$(".modelo-modal-correcao").css("display", "none"),
 			$(".div-form-correcao-acao").css("display", "none")});
+		});
+
+// MOSTRA MODAL DE CONFIRMA SOLICITAÇÃO EXCLUSÃO DE DIRETOR ESCOLAR		
+$(document).ready(function(){
+	$("#id_remove_diretor").click(function(){ 
+		$(".modelo-modal-confirma").css("display", "flex"),
+		$(".div-confirma-devolve").css("display", "block")  });
+  });
+	$(document).ready(function(){
+		$(".fecha-modal").click(function(){ 
+			$(".modelo-modal-confirma").css("display", "none"),
+			$(".div-confirma-devolve").css("display", "none")});
 		});

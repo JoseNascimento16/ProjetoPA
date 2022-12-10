@@ -44,10 +44,20 @@
                 <h5>Diretor: </h5>
                 {% if user.groups.get.name == 'Func_sec' %}
                     {% if chave_diretor %}
-                    <p>{{chave_diretor.first_name}}</p>
-                    <a class="" href="#" style="font-size: 12px;padding-left: 0;"> (alterar)</a>
+                        <p>{{chave_diretor.first_name}}</p>
+                        {% if user.classificacao.usuario_coordenador and not chave_diretor.classificacao.marcado_para_exclusao %}
+                            <a id="id_remove_diretor" href="#" style="font-size: 12px;padding-left: 0;"> (remover)</a>
+                        {% elif user.classificacao.usuario_coordenador and chave_diretor.classificacao.marcado_para_exclusao %}
+                            <a style="font-size: 12px;padding-left: 0; color: rgb(235, 94, 0)"> (remoção solicitada)</a>
+                        {% elif user.classificacao.usuario_diretor and chave_diretor.classificacao.marcado_para_exclusao %}
+                            <a id="id_remove_diretor" href="#" style="font-size: 12px;padding-left: 0;"> (remover)</a>
+                        {% endif %}
                     {% else %}
-                    <a class="" href="#" style="font-size: 12px;padding-left: 0;"> (cadastrar)</a>
+                        {% if user.classificacao.cargo_herdado == 'Corretor (Técnico)' %}
+                        <p> ------</p>
+                        {% else %}
+                        <a class="" href="{% url 'chama_cadastrar_diretor' chave_escola.id True %}" style="font-size: 12px;padding-left: 0;"> (cadastrar)</a>
+                        {% endif %}
                     {% endif %}
                 {% elif user.groups.get.name == 'Diretor_escola' %}
                 <p>{{chave_diretor.first_name}}</p>

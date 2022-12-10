@@ -2,7 +2,7 @@
 
 <!-- este modal-partial esta posicionado em cada pagina.html que precise dele -->
 
-{% if contexto_extra or contexto_extra_plano or contexto_extra_fia or contexto_extra_form_funcionarios or contexto_extra_turmas or contexto_extra_ordem or contexto_extra_form_escolas or chave_abre_nova_ordem %}
+{% if contexto_extra or contexto_extra_plano or contexto_extra_fia or contexto_extra_form_funcionarios or contexto_extra_turmas or contexto_extra_ordem or contexto_extra_form_escolas or contexto_extra_form_diretor or chave_abre_nova_ordem %}
 <div class="modelo-modal" style="display: flex;">
 {% else %}
 <div class="modelo-modal" >
@@ -42,6 +42,10 @@
 
             {% if chave_form_cadastro_turmas %}
             {% include 'partials/formularios/form-cadastro-turmas.html' %}
+            {% endif %}
+
+            {% if contexto_extra_form_diretor %}
+            {% include 'partials/formularios/form-cadastro-diretores.html' %}
             {% endif %}
 
         </div>

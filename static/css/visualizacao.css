@@ -9,6 +9,20 @@
     /* border: 1px solid black; */
   }
 
+  .div-visualizacao-bloco-fia table{
+    padding: 1px 10px;
+  }
+
+  .div-visualizacao-bloco-fia th{
+    font-weight: 600;
+    font-size: 11px !important;
+    padding: 2px 1px;
+  }
+
+  .div-visualizacao-bloco-fia td{
+    padding: 3px 3px;
+  }
+
 .div-visualizacao-img{
   flex: 1;
   margin-bottom: 15px;
@@ -16,6 +30,18 @@
 
   .visualizacao-img{
     max-width: 100%;
+    display: block;
+    /* position: absolute; */
+    height: auto;
+    top: 0px;
+  }
+
+.div-header-fia{
+  display: flex;
+}
+
+  .visualizacao-img-fia{
+    width: 50%;
     display: block;
     /* position: absolute; */
     height: auto;
@@ -49,9 +75,9 @@ td{
 .titulo-plano{
   text-align: center;
 }
-.titulo-plano h4{
-  margin: 5px;
-  font-size: 16px;
+.titulo-plano p{
+  margin: 3px 0;
+  font-size: 12px;
   font-weight: bold;
 }
 
@@ -67,6 +93,7 @@ td{
   -webkit-print-color-adjust: exact;
   color-adjust: exact;
   text-align: center;
+  font-size: 11px;
 }
 
 .tabela-principal td{
@@ -75,6 +102,22 @@ td{
 
 .background-tr-acoes{ /* HOVER, ESTA PELO JQUERY pagina_acoes.js */
   background-color: rgba(46, 137, 255, 0.137);
+}
+
+.background-hover:hover{
+  background-color: rgba(46, 137, 255, 0.137);
+}
+
+#id-background-hover:hover{
+  /* background-color: rgba(46, 137, 255, 0.137); */
+}
+
+#id-background-hover:hover span{
+  display: block;
+}
+
+#id-background-hover:hover a{
+  position: relative;
 }
 
 .background-possui-correcao{ /* TROCA O BACKGROUND SE A ORDEM POSSUIR CORREÇÃO A SER FEITA */
@@ -91,18 +134,146 @@ td{
   padding: 1px 2px;
 }
 
+.assinaturas{
+  color: rgb(9, 66, 172);
+}
+
+.assinaturas-fia{
+  color: rgb(9, 66, 172) !important;
+  font-size: 26px !important;
+}
+
+.assinaturas-foto-size{
+  width: 190px;
+  height: 40px;
+}
+
+.assinaturas-foto-fia{
+  width: 50%;
+  height: 40px;
+}
+
+.assinaturas-empty{
+  text-align: left;
+  width: 232px;
+  background-color: rgba(255, 102, 0, 0.404);
+}
+
+/* CSS PAGINA DOCUMENTO FIA */
+.titulo-fia{
+  margin: 2px 0 2px 0;
+  font-weight: bold;
+}
+
+.table1-fia{
+  margin: auto;
+  text-align: center;
+}
+  .table1-fia > td{
+    padding: 1px;
+  }
+
+  .h5-1-fia{
+    margin: 48px 20px 0 0;
+    flex: 0.7;
+    padding-top: 2px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+.table2-fia{
+  margin: 10px 0 3px 0;
+}
+
+.table3-fia{
+  width: 100%;
+  font-size: 12px;
+}
+
+  .table3-fia > td{
+    text-align: left;
+  }
+
+.table4-fia{
+  border-top: none;
+  width: 100%;
+  font-size: 12px;
+}
+  .table4-fia > td{
+    border-top: none;
+    text-align: left;
+  }
+
+.table5-fia{
+  width: 100%;
+  margin: 5px 0 5px 0;
+}
+  .table5-fia > th td{
+    font-size: 11px;
+    text-align: center;
+  }
+
+.table6-fia{
+  width: 100%;
+}
+  .table6-fia > th td{
+    font-size: 11px;
+    text-align: center;
+  }
+
+.table7-fia{
+  width: 100%;
+  margin-top: 5px;
+}
+  .table7-fia > th td{
+    font-size: 11px;
+  }
+
+.table8-fia{
+  width: 100%;
+  
+}
+  .table8-fia > th td{
+    font-size: 11px;
+  }
+  
+.table9-fia{
+  width: 100%;
+  border-top: none !important;
+}
+  .table9-fia th, td{
+    font-size: 11px;
+    /* border-top: none !important; */
+  }
+
+.classe-discriminacao{
+  width: 300px;
+  text-align: left;
+  padding-left: 3px !important;
+}
+
 /* testes de quebra de pagina na impressão*/
 
-table.quebra-pagina{
-  page-break-inside:auto;
-}
+/* table.quebra-pagina{
+  page-break-inside:avoid;
+} */
 
 table.quebra-pagina2{
   page-break-inside:avoid;
-  page-break-before:avoid;
+  page-break-after:avoid;
 }
 
+/*
 table tr.quebra-pagina{
   display: block;
   page-break-after:always;
+} */
+
+.tr-extra{
+  border-left: 2px rgb(255, 255, 255) solid;
+  border-right: 2px rgb(255, 255, 255) solid;
 }
+
+/* tr { page-break-inside:avoid; page-break-after:avoid } */
+/* td { page-break-inside:avoid; page-break-after:avoid } */
+/* table { page-break-inside:avoid; page-break-after:avoid } */

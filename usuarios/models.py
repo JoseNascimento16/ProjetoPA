@@ -30,6 +30,9 @@ class Classificacao(models.Model):
     diretor_escolar = models.BooleanField(default=False)
     email_ativado = models.BooleanField(default=False)
     primeira_senha = models.BooleanField(default=True)
+    login_original = models.BooleanField(default=True)
+    marcado_para_exclusao = models.BooleanField(default=False)
+    remocao_solicitante = models.CharField(max_length=100, blank=True)
     
     def __str__(self):
         return self.user.first_name

@@ -166,3 +166,15 @@ $(document).ready(function(){
 			$(".modelo-modal-correcao").css("display", "none"),
 			$(".div-form-correcao-acao").css("display", "none")});
 		});
+
+// MOSTRA MODAL DE CONFIRMA SOLICITAÇÃO EXCLUSÃO DE DIRETOR ESCOLAR		
+$(document).ready(function(){
+	$("#id_remove_diretor").click(function(){ 
+		$(".modelo-modal-confirma").css("display", "flex"),
+		$(".div-confirma-devolve").css("display", "block")  });
+  });
+	$(document).ready(function(){
+		$(".fecha-modal").click(function(){ 
+			$(".modelo-modal-confirma").css("display", "none"),
+			$(".div-confirma-devolve").css("display", "none")});
+		});

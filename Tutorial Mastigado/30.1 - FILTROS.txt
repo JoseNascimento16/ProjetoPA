@@ -1,0 +1,23 @@
+Semelhantes às template tags, os filtros são utilizados para customizar de maneira simples alguma informação de um objeto ou variável.
+
+Como exemplo imaginemos o cenário:
+
+- Temos uma variavel de contexto em forma de lista, e dentro dela possuimos objetos de varios tipos(escolas, usuarios, planos). Queremos que o nosso HTML possa diferenciar qual tipo de objeto é cada um quando formos varrer pelo FOR. Usamos um filtro para obter essa informação:
+
+	@register.filter(name='tipo_de_objeto')
+	   def tipo_de_objeto(objeto):
+    		return str(objeto._meta.object_name)
+
+		# print(str(objeto._meta.object_name))
+    		# print(str(objeto._meta.model_name))
+    		# print(str(objeto._meta.app_label))
+
+	e no html podemos fazer assim:
+	   {% if OBJETO|tipo_de_objeto == 'Escola' %}
+		do something
+	   {% endif %}
+
+	   {{OBJETO|tipo_de_objeto}}
+
+	# O if acima irá verificar se o nome do objeto é o mesmo atribuido na definição do modelo
+	# Os exemplos de print acima retornam outros tipos de informação que podem ser relevantes também (nome do modelo, nome do app)

@@ -9,14 +9,13 @@
         {% if user.groups.get.name == 'Funcionario'  %}
         <li><a id="clear">{{user.classificacao.matriz}}</a></li>
         {% else %}
-        <li><a id="clear">{{user.escola.nome}}</a></li>
+        <li><a id="clear">{{user.classificacao.escola.nome}}</a></li>
         {% endif %}
       </div>
       <div class="sub-div-navbar2">
-        <li class=""><a href="#"><i class="fa fa-cog"></i></a></li>
-        <li class=""><a href="{% url 'dashboard' %}">Home</a></li>
-        <li class=""><a href="{% url 'fazendo_logout' %}">Sair</a></li>
-        
+        <li class="engrenagem"><a href="#"><i class="fa fa-cog"></i></a></li>
+        <li class="dash-inicio"><a href="{% url 'dashboard' %}">Início</a></li>
+        <li class="dash-sair"><a href="{% url 'fazendo_logout' %}">Sair</a></li>
       </div>
     </ul>
   </div>

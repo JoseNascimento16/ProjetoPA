@@ -1,4 +1,5 @@
 {% load static %}
+{% load compress %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,6 +9,12 @@
     <title>SIPA - Sistema de Planos de Ação</title>
     <link rel="icon" href="{% static 'img/logo_barra.jpg' %}">
     
+    <!-- SCSS -->
+    {% compress css %}
+    <!-- <link type="text/x-scss" rel="stylesheet" href="{% static 'site.scss' %}" media="screen"> -->
+    <link type="text/x-scss" rel="stylesheet" href="{% static 'scss/responsive.scss' %}" media="screen">
+    {% endcompress %}
+
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'site.css' %}">
@@ -30,6 +37,9 @@
     <script src="{% static 'js/forms.js' %}"></script>
     <script src="{% static 'js/menu_impressao.js' %}"></script>
     <script src="{% static 'js/number_input.js' %}"></script>
+    <script src="{% static 'js/cadastros_escola.js' %}"></script>
+    <script src="{% static 'js/navbar.js' %}"></script>
+    <script src="{% static 'js/responsivo.js' %}"></script>
     
     <!-- MEDIA DO TEMPUS DOMINUS -->
     {{ chave_form_ordem.media }}

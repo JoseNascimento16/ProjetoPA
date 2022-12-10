@@ -5,7 +5,7 @@ from usuarios.forms import FuncionariosSecretariaForm
 def campo_cargo_func_sec(request, tipo_usuario):
     if tipo_usuario == 'Secretaria':
         FuncionariosSecretariaForm.base_fields['cargo']  = forms.ChoiceField(
-        choices=[('-------','-------'),('Corretor (Técnico)','Corretor (Técnico)'),('Coordenador','Coordenador'),('Diretor','Diretor')],
+        choices=[('-------','-------'),('Corretor (Técnico)','Corretor (Técnico)'),('Coordenador','Coordenador'),('Diretor SUPROT','Diretor SUPROT')],
         label='Cargo:',
         widget=forms.Select(attrs={
             'class': 'fonte-italic'

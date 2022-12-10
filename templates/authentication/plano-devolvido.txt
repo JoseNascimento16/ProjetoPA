@@ -1,0 +1,16 @@
+{% autoescape off %}
+
+Olá, {{first_name}}
+
+O plano "{{plano}}" foi devolvido pela SUPROT e possui correções a serem feitas.
+
+Acesse o endereço abaixo para verificar.
+
+http://{{domain}}
+
+Atenciosamente,
+
+Equipe SIPA
+Sistema de Planos de Ação
+
+{% endautoescape %}

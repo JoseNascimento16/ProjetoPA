@@ -16,12 +16,73 @@
         font-size: 20px;
     }
 
+    .search-bar{
+        padding: 2px;
+        margin: 10px;
+        margin-right: 0;
+    }
+
+        .search-bar:focus{
+            outline: solid rgb(146, 157, 173) 1px;
+        }
+
 .box-plano1-2{
     display: flex;
     flex-direction: row;
     color: rgb(101, 101, 102);
-    margin-left: 10px;
 }
+    .box-plano1-2 h5{
+        flex: 1;
+        margin: 22px 0 5px 0;
+    }
+
+.box-plano-1-2-compact{
+    display: none;
+    margin: 5px 0 0 5px;
+    color: rgb(101, 101, 102);
+}
+
+
+.accordion-planos{
+    background-color: rgb(235, 241, 247);
+    display: none;
+    flex-direction: row;
+}
+
+    .box-plano-accordion{
+        flex-direction: row;
+        color: rgb(101, 101, 102);
+        margin-left: 10px;
+    }
+
+        .box-plano-accordion h5{
+            flex: 1;
+            margin: 10px 0 15px 5px;
+        }
+
+.background-accordion-planos{
+    background-color: rgb(235, 241, 247);
+}
+
+.div-info-accordion{
+    flex: 0.9;
+}
+
+.div-assinaturas-escolas{
+    flex: 0.5;
+}
+
+    .div-assinaturas-escolas p{
+        font-size: 14.4px;
+    }
+
+.div-assinaturas-suprot{
+    flex: 0.7;
+}
+
+    .div-assinaturas-suprot p{
+        font-size: 14.4px;
+    }
 
 .box-plano1-3 p{
     display: flex;
@@ -38,26 +99,74 @@
     color: #1d1abc;
 }
 
-.box-plano1-2 h5{
-    flex: 1;
-    margin: 22px 0 5px 0;
-}
-
 .div-cards-planos{
     display: flex;
     flex-direction: column;
 }
 
-.cards-planos{
+.cards-planos-box{
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     flex: 1;
     margin-left: 10px;
     border-bottom: 1px solid rgba(20, 22, 112, 0.705);
 }
+    .cards-planos-box p{
+        margin: 10px 0;
+        color: rgb(101, 101, 102);
+    }
+    .cards-planos-box a:hover i:hover{
+        color: #1d1abc;
+    }
+    .cards-planos-box:hover{
+        background-color: rgba(46, 137, 255, 0.137);
+    }
+    .itens-cards-planos{
+        flex: 1;
+    }
+        .itens-cards-planos i:hover{
+            color: #1d1abc;
+        }
+
+    .lixeira:hover{
+        color: red;
+    }
+
+    .div-corretor-flex{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .div-corretor-flex h5{
+        flex: 0;
+        margin: 10px 0px;
+    }
+
+    .div-corretor-flex p{
+        font-size: 0.9em;
+        margin: 5px 0;
+        margin-left: 5px;
+    }
+
+    .div-corretor-flex a{
+        font-size: 0.9em;
+        margin-left: 5px;
+    }
+
+.cards-planos{
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    /* margin-left: 10px; */
+    border-bottom: 1px solid rgba(20, 22, 112, 0.705); 
+}
     .cards-planos p{
         margin: 10px 0;
         color: rgb(101, 101, 102);
+    }
+    .p-situacao{
+        min-width: 162px;
     }
     .cards-planos a:hover{
         color: #1d1abc;
@@ -68,7 +177,15 @@
     .itens-cards-planos{
         flex: 1;
     }
-
+    .p1-itens-cards-planos{
+        min-width: 131px;
+    }
+    .p2-itens-cards-planos{
+        /* min-width: 131px; */
+    }
+    .p3-itens-cards-planos{
+        min-width: 109px;
+    }
     .lixeira:hover{
         color: red;
     }
@@ -99,4 +216,14 @@
 
 .li-mensagens{
     margin-bottom: 0%;
+}
+
+.div-botoes-criar{
+    display: flex;
+}
+
+.a-fia{
+    display: inline;
+    color: blue !important;
+    font-size: 10px;
 }

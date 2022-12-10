@@ -587,7 +587,7 @@ def salva_assinatura_tecnico_fia(request, **kwargs):
             # Instancio novamente, para atualizar as informações alteradas salvas na função acima que ainda não estão na instancia desta função atual.
             modelo_fia = get_object_or_404(Modelo_fia, pk=kwargs['modelo_fia_id'])
 
-            fia_confere_assinaturas_muda_para_pronto(modelo_fia.plano)
+            fia_confere_assinaturas_muda_para_pronto(request, modelo_fia.plano)
 
             return redirect('chamando_documento_fia', elemento_id=modelo_fia.plano.id)
     else:

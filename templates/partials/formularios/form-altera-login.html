@@ -3,13 +3,13 @@
 
 <div class="div-confirma-devolve">
     <div class="titulo-modal">
-        <h2>Alterar nome</h2>
+        <h2>Alterar Login</h2>
     </div>
     <div class="classe-form-modal">
-        <form class="form-modal" action="{% url 'altera_nome' user.id %}" method="POST">
+        <form class="form-modal" action="{% url 'altera_login' user.id %}" method="POST">
             {% csrf_token %}
-            {% for elemento in chave_form_altera_nome.visible_fields %}
-            <div class="linha-input2 linha-input-row">
+            {% for elemento in chave_form_altera_login.visible_fields %}
+            <div class="linha-input3 linha-input-coluna">
                 <label style="width: 200px;" class="label-input2 label-input-form-django flex-0-4" for="{{ elemento.id_for_label }}">{{ elemento.label }}</label>
                 {{elemento|add_class:'input-input'}}
             </div>
@@ -19,6 +19,8 @@
             {% endfor %}
 
             {% endfor %}
+            <p style="font-size: 12px">PS: Esta operação só poderá ser efetuada 1 (uma) única vez!</p>
+            <p style="font-size: 12px">PS: Esta operação NÃO modifica a sua senha de acesso!</p>
             <div class="linha-submit">
                 <input class="myButton" type="submit" value="Confirmar">
             </div>

@@ -1,0 +1,11 @@
+/* line 13, SetupPrincipal/static/scss/responsive.scss */
+.wrapper {
+  font-size: calc((100vw - 200px) * 0.005 + 11px); }
+  @media (max-width: 200px) {
+    /* line 13, SetupPrincipal/static/scss/responsive.scss */
+    .wrapper {
+      font-size: 11px; } }
+  @media (min-width: 6000px) {
+    /* line 13, SetupPrincipal/static/scss/responsive.scss */
+    .wrapper {
+      font-size: 40px; } }

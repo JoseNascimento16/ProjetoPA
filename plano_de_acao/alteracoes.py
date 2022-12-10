@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.core.mail import send_mail
 from plano_de_acao.views import *
 from .models import Correcoes, Plano_de_acao
 from django.shortcuts import get_object_or_404
@@ -5,11 +7,42 @@ from usuarios.models import Classificacao
 from fia.models import Modelo_fia
 from datetime import date
 from Escolas.models import Escola
+from logs.logs import *
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+
+def define_planos_coordenador(request):
+    planos1 = Plano_de_acao.objects.filter(corretor_plano=request.user).exclude(situacao='Em desenvolvimento').exclude(situacao='Publicado').exclude(situacao='Necessita correção').exclude(situacao='Aprovado').exclude(situacao='Pronto').exclude(situacao='Finalizado')
+    planos2 = Plano_de_acao.objects.filter(corretor_plano=None).exclude(situacao='Em desenvolvimento').exclude(situacao='Publicado').exclude(situacao='Necessita correção').exclude(situacao='Aprovado').exclude(situacao='Pronto').exclude(situacao='Finalizado')
+    planos3 = planos1.union(planos2)
+    planos4 = Plano_de_acao.objects.filter(Q(situacao='Assinado') | Q(situacao='Inteiramente assinado')).filter(assinatura_coordenador=False)
+    planos5 = planos3.union(planos4)
+    planos_assinados = request.user.classificacao.plano_associado.filter(Q(situacao='Assinado') | Q(situacao='Inteiramente assinado'))
+    planos = planos5.union(planos_assinados).order_by('-data_de_criação')
+    
+    return planos
+
+def define_planos_corretor(request):
+    planos1 = Plano_de_acao.objects.filter(corretor_plano=request.user).exclude(alterabilidade='Escola').exclude(situacao='Finalizado')
+    planos2 = Plano_de_acao.objects.filter(corretor_plano=None).filter(situacao='Pendente')
+    planos = planos1.union(planos2).order_by('-data_de_criação')
+    
+    return planos
 
 def zera_assinaturas(id_plano):
     plano = get_object_or_404(Plano_de_acao, pk=id_plano)
     plano.assinaturas = 0
     plano.save()
+
+def checa_se_pode_assinar_func_sec(request, captura_plano):
+    cargo = request.user.classificacao.cargo_herdado
+    if captura_plano.corretor_plano == request.user and not captura_plano.assinatura_corretor:
+        return True
+    elif cargo == 'Coordenador' and captura_plano.corretor_plano != request.user and not captura_plano.assinatura_coordenador:
+        return True
+    elif cargo == 'Diretor SUPROT' and not captura_plano.assinatura_diretor:
+        return True
+    return False
 
 def inclui_assinatura(elemento_id):
     plano = get_object_or_404(Plano_de_acao, pk=elemento_id)
@@ -19,7 +52,6 @@ def inclui_assinatura(elemento_id):
 def atualiza_assinaturas_escola(elemento_id):
     lista = []
     plano = get_object_or_404(Plano_de_acao, pk=elemento_id)
-    # func_que_assinam = Classificacao.objects.filter(assina_plano=True)
     
     assinaturas = plano.classificacao_set.all()
     if assinaturas:
@@ -37,7 +69,6 @@ def atualiza_assinaturas_escola(elemento_id):
         if modelo_fia.assinatura_tecnico:
             plano.assinaturas += 1
         plano.save()
-    # print(plano.assinaturas)
 
 def atualiza_assinaturas_sec(elemento_id):
     lista = []
@@ -74,7 +105,7 @@ def plano_inteiramente_assinado(captura_plano):
         nome_plano = captura_plano.ano_referencia
         log_plano_inteiramente_assinado(nome_plano, captura_plano.id)
 
-def confere_assinaturas_muda_para_pronto(captura_plano, captura_escola):
+def confere_assinaturas_muda_para_pronto(request, captura_plano, captura_escola):
     # Se tiver aprovado e com todas as assinaturas
     if captura_plano.situacao == 'Aprovado' and captura_plano.assinaturas > 0 and captura_plano.assinaturas == captura_escola.quant_funcionarios:
         # if request.method == 'POST':
@@ -94,10 +125,9 @@ def confere_assinaturas_muda_para_pronto(captura_plano, captura_escola):
 
         nome_plano = captura_plano.ano_referencia
 
-        log_plano_aprovado_auto(nome_plano, captura_plano.id)
         log_plano_pronto(nome_plano, captura_plano.id)
 
-def fia_confere_assinaturas_muda_para_pronto(captura_plano):
+def fia_confere_assinaturas_muda_para_pronto(request, captura_plano):
     # Se tiver aprovado e com todas as assinaturas
     if captura_plano.situacao == 'Aprovado' and captura_plano.assinaturas == 4:
         # if request.method == 'POST':
@@ -118,7 +148,6 @@ def fia_confere_assinaturas_muda_para_pronto(captura_plano):
 
         nome_plano = captura_plano.ano_referencia
 
-        log_plano_aprovado_auto(nome_plano, captura_plano.id)
         log_plano_pronto(nome_plano, captura_plano.id)
 
 def cria_associacao(request, captura_plano, captura_funcionario, elemento_id):
@@ -165,7 +194,8 @@ def atualiza_quant_correcoes_plano(plano):
     correcoes_no_plano = Correcoes.objects.filter(plano_associado=plano)
     plano.correcoes_a_fazer = len(correcoes_no_plano)
     plano.save()
-    # print(plano.correcoes_a_fazer)
+
+    return len(correcoes_no_plano)
 
 def calcula_soma_capital(codigos_iteravel):
     # SOMA OS VALORES DE TODOS PRODUTOS DO TIPO CAPITAL
@@ -203,3 +233,81 @@ def ordem_atualiza_rowspan_e_codigos_inseridos(ordem_objeto):
     ordem_objeto.codigos_inseridos = len(quant_codigos)
     ordem_objeto.ordem_rowspan = len(quant_codigos)
     ordem_objeto.save()
+
+def define_destinatarios(plano):
+    lista_destinatarios = []
+    if not plano.tipo_fia:
+        classificacoes = Classificacao.objects.filter(escola=plano.escola).filter(is_active=True)
+        for item in classificacoes:
+            usuario = item.user
+            lista_destinatarios.append(usuario)
+    elif plano.tipo_fia:
+        modelo_fia = get_object_or_404(Modelo_fia, plano=plano)
+        lista_destinatarios.append(modelo_fia.membro_colegiado_1)
+        lista_destinatarios.append(modelo_fia.membro_colegiado_2)
+        lista_destinatarios.append(plano.escola.diretor)
+
+    return lista_destinatarios
+
+def envia_email_plano_aprovado(request, plano):
+    # ENVIA UM EMAIL INFORMANDO ÀS PARTES INTERESSADAS QUE O PLANO FOI APROVADO
+
+    lista_destinatarios = define_destinatarios(plano)
+    # print(lista_destinatarios)
+
+    site_atual = get_current_site(request)
+    for usuario in lista_destinatarios:
+        contexto = {
+            'first_name' : usuario.first_name,
+            'plano' : plano.ano_referencia,
+            'domain' : site_atual,
+        }
+
+        subject = 'SIPA - Plano aprovado'
+        message = render_to_string('authentication/plano-aprovado.txt', contexto)
+        remetente = settings.EMAIL_HOST_USER
+        destinatario = usuario.email
+
+        send_mail(subject, message, remetente, [destinatario], fail_silently=False)
+
+def envia_email_plano_finalizado(request, plano):
+    # ENVIA UM EMAIL INFORMANDO ÀS PARTES INTERESSADAS QUE O PLANO FOI FINALIZADO
+    
+    lista_destinatarios = define_destinatarios(plano)
+    # print(lista_destinatarios)
+
+    site_atual = get_current_site(request)
+    for usuario in lista_destinatarios:
+        contexto = {
+            'first_name' : usuario.first_name,
+            'plano' : plano.ano_referencia,
+            'domain' : site_atual,
+        }
+
+        subject = 'SIPA - Plano finalizado'
+        message = render_to_string('authentication/plano-finalizado.txt', contexto)
+        remetente = settings.EMAIL_HOST_USER
+        destinatario = usuario.email
+
+        send_mail(subject, message, remetente, [destinatario], fail_silently=False)
+
+def envia_email_plano_devolvido(request, plano):
+    # ENVIA UM EMAIL INFORMANDO ÀS PARTES INTERESSADAS QUE O PLANO FOI DEVOLVIDO
+    
+    lista_destinatarios = define_destinatarios(plano)
+    # print(lista_destinatarios)
+
+    site_atual = get_current_site(request)
+    for usuario in lista_destinatarios:
+        contexto = {
+            'first_name' : usuario.first_name,
+            'plano' : plano.ano_referencia,
+            'domain' : site_atual,
+        }
+
+        subject = 'SIPA - Plano devolvido'
+        message = render_to_string('authentication/plano-devolvido.txt', contexto)
+        remetente = settings.EMAIL_HOST_USER
+        destinatario = usuario.email
+
+        send_mail(subject, message, remetente, [destinatario], fail_silently=False)

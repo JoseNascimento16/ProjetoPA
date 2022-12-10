@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load custom_tags %}
 {% block content %}
 
 {{ chave_tipo_usuario|json_script:"id-tipo-usuario" }}
@@ -100,9 +101,17 @@
         <a id="chama-form-cadastro-escolas" class="myButton a-cadastros">Novo cadastro</a>
     </div>
     {% elif user.groups.get.name == 'Diretor_escola' %}
-    <div class="box-botao-cadastro1">
-        <a id="chama-form-cadastro-funcionario" class="myButton a-cadastros">Novo cadastro</a>
-    </div>
+        {% tag_disponibilidade_cargos user.classificacao.escola as disponivel %}
+        {% if disponivel %}
+        <div class="box-botao-cadastro1">
+            <a id="chama-form-cadastro-funcionario" class="myButton a-cadastros">Novo cadastro</a>
+        </div>
+        {% else %}
+        <div class=" tooltip5 box-botao-cadastro1">
+            <a class="myButtonGrey a-cadastros cursor-default">Novo cadastro</a>
+            <span class="tooltiptext5" style="left: 100px; width: 300px">Limite de funcionários cadastrados!</span>
+        </div>
+        {% endif %}
     {% endif %}
 </div>
 

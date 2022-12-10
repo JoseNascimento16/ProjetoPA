@@ -27,7 +27,12 @@
             {% if chave_altera_cargo %}
             {% include 'partials/formularios/form-altera-cargo.html' %}
             {% endif %}
-
+            {% if chave_requisita_remocao_diretor %}
+            {% include 'partials/formularios/requisita-remocao-diretor.html' %}
+            {% endif %}
+            {% if chave_confirma_remocao_diretor %}
+            {% include 'partials/formularios/confirma-remocao-diretor.html' %}
+            {% endif %}
         </div>
     </div>
   </div>

@@ -1,0 +1,23 @@
+{% autoescape off %}
+
+Olá, {{first_name}}
+
+Seu usuário foi criado no SIPA - Sistema de Planos de Ação.
+
+Acesse o endereço abaixo e utilize as credenciais fornecidas:
+
+http://{{domain}}
+
+###################
+Usuário: {{user}}
+Senha: {{password}}
+###################
+
+Não se esqueça de trocar a sua senha.
+
+Atenciosamente,
+
+Equipe SIPA
+Sistema de Planos de Ação
+
+{% endautoescape %}

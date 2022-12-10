@@ -1,3 +1,5 @@
+from django.contrib.auth.models import Group
+
 - Pegando o grupo do usuário ATUAL LOGADO:
 
     group = request.user.groups.all()[0].name
@@ -6,6 +8,10 @@
     group = request.user.groups.get() só funciona se tiver 1 somente (pega o objeto)
 
     Se o usuário pertencer a mais de um grupo, não posso usar o get, tenho que usar um dos outros e varrer num FOR.
+
+- Testando se usuário não estiver em nenhum grupo:
+
+    if not request.user.groups.exists():
 
 - Pegando o grupo de OUTRO USUÁRIO. (o request aqui não serve para nós)
     queryset_grupo = usuario_objeto.groups.filter(name='Funcionario').exists() ,retorna um queryset

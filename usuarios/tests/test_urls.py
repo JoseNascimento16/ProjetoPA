@@ -91,9 +91,9 @@ class Testurls(SimpleTestCase):
         self.assertEquals(resolve(url).func, logout)
 
     def test_pesquisa_cadastro_escolas_resolve(self):
-        url = reverse('pesquisa_cadastro_escolas', args=[1,'slug'])
+        url = reverse('pesquisa_cadastro_escolas', args=['slug'])
         # print(resolve(url))
-        self.assertEquals(resolve(url).func, cadastro_de_escolas)
+        self.assertEquals(resolve(url).func, cadastros_da_secretaria)
 
     def test_pesquisa_cadastro_funcionarios_resolve(self):
         url = reverse('pesquisa_cadastro_funcionarios', args=[1,'slug','slug'])
@@ -105,13 +105,13 @@ class Testurls(SimpleTestCase):
         # print(resolve(url))
         self.assertEquals(resolve(url).func, meu_acesso)
 
-    def test_altera_nome_resolve(self):
-        url = reverse('altera_nome', args=[1])
+    def test_altera_login_resolve(self):
+        url = reverse('altera_login', args=[1])
         # print(resolve(url))
-        self.assertEquals(resolve(url).func, altera_nome)
+        self.assertEquals(resolve(url).func, altera_login)
 
-    def test_abre_altera_nome_resolve(self):
-        url = reverse('abre_altera_nome', args=[1,'slug'])
+    def test_abre_altera_login_resolve(self):
+        url = reverse('abre_altera_login', args=[1,'slug'])
         # print(resolve(url))
         self.assertEquals(resolve(url).func, meu_acesso)
 

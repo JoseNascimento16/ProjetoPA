@@ -1,0 +1,16 @@
+{% autoescape off %}
+
+Olá, {{first_name}}
+
+O plano "{{plano}}" foi "Aprovado" e já pode ser assinado.
+
+Acesse o endereço abaixo e assine caso já não o tenha feito.
+
+http://{{domain}}
+
+Atenciosamente,
+
+Equipe SIPA
+Sistema de Planos de Ação
+
+{% endautoescape %}

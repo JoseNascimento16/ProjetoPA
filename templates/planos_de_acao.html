@@ -36,7 +36,7 @@
     
     {% if chave_planos_com_correcao %}
     <div class="box-plano1-3">
-        <p>Há planos com correções a serem feitas, <a href="{% url 'pagina_planos_a_serem_corrigidos' 'slug' %}"> clique aqui!</a> </p>
+        <p>Há planos com correções a serem feitas, <a style="white-space:nowrap" href="{% url 'pagina_planos_a_serem_corrigidos' 'slug' %}">clique aqui!</a> </p>
     </div>
     {% endif %}
 
@@ -49,10 +49,10 @@
     {% endif %}
 
     <div class="box-plano1-2" style="margin-left: 10px">
-        <h5 style="min-width: 131px">Plano de ação</h5>
+        <h5 style="min-width: 150px">Plano de ação</h5>
         <!-- <h5 class="flex-02"></h5> -->
-        <h5>Visualizar</h5>
-        <h5>Visualizar</h5>
+        <h5 style="min-width: 131px">Visualizar</h5>
+        <h5 style="min-width: 109px">Visualizar</h5>
         {% if user.groups.get.name == 'Secretaria' or user.groups.get.name == 'Func_sec' %}
         <h5 class="card-nome-instituicao" style="flex: 2;">Instituição de ensino:</h5>
         {% if user.groups.get.name == 'Func_sec' %}
@@ -76,7 +76,7 @@
             <div class="cards-planos border-0">
                     <!-- POS 1 PLANO -->
                     <h5 class="box-plano-1-2-compact">Plano de ação</h5>
-                    <p class="clear-2 itens-cards-planos p1-itens-cards-planos">
+                    <div class="clear-2 itens-cards-planos p1-itens-cards-planos">
                     
                         <!-- <i id="icone-accordion" class="fas fa-edit margem-icones-menu icone-accordion"></i> -->
                         <i id="icone-accordion" class="arrow fa-solid fa-angle-right setinha margem-icones-menu icone-accordion" style="margin-left: 5px"></i>
@@ -85,15 +85,35 @@
                         <a class="a-clear-href tooltip5" href="{% url 'chamando_1_plano' elemento.id %}">
                             {{ elemento.ano_referencia|truncatechars:15 }}
                             <span class="tooltiptext5" style="left: 100px;width: 200px; min-width: 120px">{{elemento.ano_referencia}}</span>
+                            <div class="box-edit-erase-planos-compacto">
+                                <a class="a-clear-href margem-left-10" href="{% url 'abrindo_edicao_plano' elemento.id 'edita' %}">
+                                    <i class="fas fa-edit margem-icones-menu"></i>
+                                </a>
+                                <a class="margem-left-10" href="{% url 'deletar_plano' elemento.id %}" method="POST" onclick="return confirm('Deseja realmente apagar o plano de ação: {{ elemento.ano_referencia }}?')" >
+                                    <i class="fa fa-trash tooltip4 lixeira" aria-hidden="true">
+                                    <span class="tooltiptext4">Excluir plano!</span>
+                                    </i>
+                                </a>
+                            </div>
                         </a>
                         {% else %}
                         <a class="a-fia">(FIA)</a>
                         <a class="a-clear-href tooltip5">
                             {{ elemento.ano_referencia|truncatechars:15 }}
                             <span class="tooltiptext5" style="left: 100px;width: 200px; min-width: 120px">(FIA) {{elemento.ano_referencia}}</span>
+                            <div class="box-edit-erase-planos-compacto">
+                                <a class="a-clear-href margem-left-10" href="{% url 'abrindo_edicao_plano' elemento.id 'edita' %}">
+                                    <i class="fas fa-edit margem-icones-menu"></i>
+                                </a>
+                                <a class="margem-left-10" href="{% url 'deletar_plano' elemento.id %}" method="POST" onclick="return confirm('Deseja realmente apagar o plano de ação: {{ elemento.ano_referencia }}?')" >
+                                    <i class="fa fa-trash tooltip4 lixeira" aria-hidden="true">
+                                    <span class="tooltiptext4">Excluir plano!</span>
+                                    </i>
+                                </a>
+                            </div>
                         </a>
                         {% endif %}
-                    </p>
+                    </div>
                     <!-- POS 2 AÇÕES -->
                     <h5 class="box-plano-1-2-compact">Visualizar</h5> <!-- hidden -->
                     {% if not elemento.tipo_fia %}
@@ -181,8 +201,10 @@
                 {% if user.groups.get.name == 'Func_sec' %}
                 
                     {% if elemento.situacao == 'Assinado' %}
-                            
-                        {% if elemento.ano_referencia not in chave_planos_assinados and user.classificacao.usuario_diretor or elemento.ano_referencia not in chave_planos_assinados and user.classificacao.usuario_coordenador and not elemento.assinatura_coordenador or elemento.ano_referencia not in chave_planos_assinados and elemento.corretor_plano == user %}
+                         
+                        {% tag_funcsec_pode_assinar elemento chave_planos_assinados user as pode_assinar %}
+                        {% tag_funcsec_ja_assinou elemento chave_planos_assinados user as ja_assinou %}
+                        {% if pode_assinar %}
                         <div class="box-botao-cadastro1 itens-cards-planos">
                             <form class="tooltip2 display-flex-media" action="{% url 'autorizar_plano_sec' elemento.id %}" method="POST" onclick="return confirm('Deseja realmente assinar o plano de ação: {{ elemento.ano_referencia }}?')">
                                 {% csrf_token %}
@@ -190,7 +212,7 @@
                                 <span style="left: 40px;" class="tooltiptext2">Você já pode assinar este plano.</span>  
                             </form>
                         </div>
-                        {% elif elemento.ano_referencia in chave_planos_assinados and user.classificacao.usuario_diretor or elemento.ano_referencia in chave_planos_assinados and user.classificacao.usuario_coordenador or elemento.ano_referencia in chave_planos_assinados and elemento.corretor_plano == user %}
+                        {% elif ja_assinou %}
                         <div class="box-botao-cadastro1 itens-cards-planos">
                             <form class="tooltip2 display-flex-media" method="#">
                                 <input class="myButtonGrey flex-grow-media" type="button" value="Assinado">
@@ -386,7 +408,7 @@
                 
                 <!-- POS 6 EDIÇÃO NOME E LIXEIRA ESCOLA -->
                     {% if not chave_pagina_correcoes %}
-                        <div class="box-botao-cadastro1 itens-cards-planos">
+                        <div class="box-edit-erase-planos box-botao-cadastro1 itens-cards-planos">
                             <p class="clear-2 itens-cards-planos">
 
                                 {% if elemento.situacao != 'Finalizado' %}
@@ -601,7 +623,7 @@
             {% endif %}
         </div>
         {% endif %}
-        {% if user.groups.get.name == 'Diretor_escola' %}
+        {% if user.groups.get.name == 'Diretor_escola' and not chave_pagina_correcoes %}
         <div class="div-botoes-criar">
             <div class="box-botao-cadastro1 div-botoes-criar2">
                 <a id="chama-form-plano" class="myButton a-cadastros a-criar-planos">Criar Plano</a>

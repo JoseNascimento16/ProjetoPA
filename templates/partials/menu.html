@@ -37,7 +37,7 @@
       <ul class="classe-menu-lateral1 itens clear"><a class="item-principal-menu" href="#"><i class="fa fa-table margem-icones-menu"></i>Cadastros<i class="arrow fa fa-angle-right pull-right setinha"></i></a>
           <ul class="sub-menu">
             {% if user.groups.get.name == 'Secretaria' or user.groups.get.name == 'Func_sec' %}
-            <li class="sub-menu-item"><a href="{% url 'cadastrar_escolas' user.id %}">Cadastro de Escolas</a>
+            <li class="sub-menu-item"><a href="{% url 'chama_cadastros_secretaria' %}">Cadastro de Escolas</a>
             </li>
               {% if user.groups.get.name == 'Secretaria' or user.classificacao.usuario_diretor == True or user.classificacao.usuario_coordenador == True %}
                 <li class="sub-menu-item"><a href="{% url 'cadastrar_funcionarios_secretaria' user.id 'Sim' %}">Cadastro de funcionários</a>

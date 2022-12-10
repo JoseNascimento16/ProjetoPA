@@ -135,6 +135,40 @@
 
   /* ####################################### */
 
+/* ####### BRANCO ####### */
+.tooltip5 {
+  position: relative;
+  display: inline-block;
+  /* border-bottom: 1px dotted black; */
+}
+
+.tooltip5 .tooltiptext5 {
+  visibility: hidden;
+  width: 120px;
+  background-color: rgb(253, 253, 253);
+  color: rgba(0, 0, 0, 0.705);
+  text-align: center;
+  border: 1px solid rgba(0, 0, 0, 0.568);
+  /* border-radius: 6px; */
+  padding: 5px 0;
+  font-size: 0.7em;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+  width: 400px;
+  bottom: 90%;
+  left: 150%;
+  margin-left: -60px;
+}
+
+.tooltip5:hover .tooltiptext5 {
+  visibility: visible;
+  transition-delay: 0.5s;
+}
+
+/* ####################################### */
+
   /* ####### TABELA AMARELO ####### */
 
   .tooltip1-tabela{
@@ -336,4 +370,40 @@
     left: 13%;
     margin-left: 30px;
     margin-bottom: -23px;
+  }
+
+  /* ####################################### */
+
+  /* ####### TABELA BRANCO MENU IMPRESSAO ####### */
+
+  .tooltip7-menu{
+    position:relative;
+  }
+
+  /* ISSO FOI TRANSFERIDO PARA JQUERY pagina_acoes.js */
+  .tooltip7-menu:hover span.tooltiptext7-tabela {  
+    display:block;
+  }
+
+  .tooltiptext7-tabela {
+    display: none;
+    position: absolute; 
+    z-index:100;
+    width: auto;
+    background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgb(255, 255, 255) 6%, rgb(255, 255, 255) 100%);
+    color: rgba(0, 0, 0, 0.705);
+    text-align: center;
+    border: 1px solid rgba(0, 0, 0, 0.568);
+    border-radius: 6px;
+    padding: 5px 0;
+    font-size: 0.77em;
+    font-weight: 600;
+  
+    height: 30px;
+    width: auto;
+    bottom: 50%;
+    left: 13%;
+    margin-left: 30px;
+    margin-bottom: -23px;
+    padding: 5px;
   }

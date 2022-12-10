@@ -2,7 +2,6 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 import re
 from Escolas.models import Escola
-
 from usuarios.models import Classificacao
 # from django.core import validators
 
@@ -16,22 +15,29 @@ def funcionario_ja_cadastrado(valor_first_name, first_name, lista_de_erros):
 def funcao_nao_foi_selecionada(valor_cargo, cargo, lista_de_erros):
     if valor_cargo == '-------':
         lista_de_erros[cargo] = 'Escolha o cargo do funcionário'
-
-def ja_existe_diretor(valor_cargo, cargo, lista_de_erros):
-    if valor_cargo == 'Diretor':
-        lista_func_sec = Classificacao.objects.filter(tipo_de_acesso='Func_sec').filter(usuario_diretor=True)
-        if lista_func_sec:
-            lista_de_erros[cargo] = 'Já existe um diretor da SUPROT cadastrado no sistema...'
         
 def login_ja_existe(valor, campo, lista_de_erros):
     instancia_user = User.objects.filter(username=valor).exists()
     if instancia_user:
         lista_de_erros[campo] = 'Este login não está disponível, escolha outro'
 
+def seu_login_nao_e_esse(user, valor, campo, lista_de_erros):
+    usuario_logado = get_object_or_404(User, pk=user.id)
+    if usuario_logado.username != valor:
+        lista_de_erros[campo] = 'Informe o seu login atual corretamente. Atenção à letras maiúsculas e minúsculas...'
+
 def senhas_nao_sao_iguais(valor_password1, valor_password2, campo, lista_de_erros):
     if valor_password1 != valor_password2:
         lista_de_erros[campo] = 'As senhas não coincidem...'
+
+def logins_nao_sao_iguais(valor1, valor2, campo, lista_de_erros):
+    if valor1 != valor2:
+        lista_de_erros[campo] = 'As informações não coincidem...'
     
+def minimo_5_digitos_login(valor, campo, lista_de_erros):
+    if len(valor) < 5:
+        lista_de_erros[campo] = 'Use ao menos 5 digitos para este campo...'
+
 def campo_none(valor, campo, lista_de_erros):
     if not valor:
         lista_de_erros[campo] = 'Preencha este campo corretamente...'
@@ -64,8 +70,13 @@ def valida_minimo_caracter_senha(valor, campo, lista_de_erros):
 # VALIDACAO DE ESCOLAS (algumas validacoes acima também foram reaproveitadas)
 
 def escola_ja_cadastrada(valor, campo, lista_de_erros):
-    instancia_escola = Escola.objects.filter(nome=valor).exists()
-    if instancia_escola:
+    instancia_escola = Escola.objects.filter(nome=valor)
+    if instancia_escola.exists():
+        lista_de_erros[campo] = 'Já existe cadastro para esta escola...'
+
+def escola_ja_cadastrada2(valor, campo, lista_de_erros):
+    instancia_escola = Escola.objects.filter(codigo_escola=valor)
+    if instancia_escola.exists():
         lista_de_erros[campo] = 'Já existe cadastro para esta escola...'
 
 def chega_disponibilidade_do_cargo(valor_cargo, campo, escola, lista_de_erros):
@@ -102,3 +113,16 @@ def email_ja_cadastrado2(valor, campo, lista_de_erros):
         usuarios = User.objects.filter(email=valor) # Só 1 objeto deve obrigatoriamente ser encontrado
         if usuarios:
             lista_de_erros[campo] = 'Indisponível! Já existe usuário com este endereço de e-mail...'
+
+def escola_ja_possui_diretor_ativo(valor, campo, lista_de_erros):
+    if valor:
+        classificacao = Classificacao.objects.filter(diretor_escolar=True).filter(escola=valor).filter(is_active=True)
+        if classificacao.exists():
+            lista_de_erros[campo] = 'Já existe um diretor cadastrado e ativo para esta escola'
+
+def matriz_ja_possui_diretor_ativo(valor_cargo, escola, campo, lista_de_erros):
+    if valor_cargo:
+        if valor_cargo == 'Diretor':
+            classificacao = Classificacao.objects.filter(usuario_diretor=True).filter(escola=escola).filter(is_active=True)
+            if classificacao.exists():
+                lista_de_erros[campo] = 'Já existe um diretor cadastrado e ativo da SUPROT'

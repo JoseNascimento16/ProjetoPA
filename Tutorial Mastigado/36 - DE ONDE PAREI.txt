@@ -1,48 +1,42 @@
 TENHO QUE APRENDER A TROCAR DE MODELO DE USUARIO (USAR O ABSTRACT AUTH_USER)
 
+NO ADMIN NAO SEI REFERENCIAR OS ATRIBUTOS DE UM FIELD ONE_TO_ONE()
+
 TENHO QUE APRENDER COMO REFERENCIAR UM FOREIGNKEY NO REVERSO QUANDO ESTA FOREIGNKEY TEM UM RELATED_NAME COMO ATRIBUTO(no momento só sei fazer isso quando não tem related_name configurado)
 
+TESTAR SEMPRE
 ----------------------------------------------------------------------------------
+
+- OK DashBoard.
+- Talvez Inserir funcionalidade de alteração de cadastro de escola.
+
+- OK Verificar as chamadas de logs, se estão todas funcionando (teste)
+- OK Enviar e-mail sempre que determinadas ações forem executadas. (plano aprovado, plano devolvido, plano finalizado )
+- OK Botão de engrenagem para telas pequenas
+- OK Opção de mudar username 1 vez
+- OK Sugestão de criar DIRETOR e COORDENADORES logo nos primeiros acessos do usuario SECRETARIA
+- OK Cadastro de diretor da SUPROT pelo usuario Secretaria
+- OK No primeiro acesso do usuario Secretaria
+    - OK Criar Matriz Secretaria da Educação na criação
+    - OK Definir Matriz e classificação do usuário Secretaria 
+- OK Transformar todos cadastros de usuários em aleatorio
 - OK configurar cadastro de tesoureiro 
-- configurar desativação de tesoureiro
+- OK configurar desativação de tesoureiro
 - OK configurar cadastro de membro colegiado 
-- configurar desativação de membro colegiado
-- testar
+- OK configurar desativação de membro colegiado
 - talvez alguns user.groups.get().name nao funcionem, trocar pelo novo formato
 - OK pesquisa de funcionarios bugada
-- OK verificar os checa_usuario
-- OK get_object_or_404(User, por get_object_or_404(Escola,
-- OK filter(usuarios=  por filter(escola=
-- OK groups == 'Escola'  por groups == 'Diretor_escola' 
-- OK talvez trocar User.objects... por Escola.objects...
-- OK talvez tipo_de_acesso == ' trocar por user.groups.get.name == '
-- OK verificar tipo_usuario que mando como contexto pro JSONparse
-- OK talvez user.last_name trocar por user.classificacao.matriz pois agora a matriz de diretores é dada pela classificacao
-- OK .groups completar com .groups.get.name().name
-- OK request.user.escola não funciona para FUNCIONARIOS nem FUNC_SEC. Teria que usar manytomany, desisti, estou usando o NOME da MATRIZ
-- OK Quando desativa um diretor, tem que remover ele também como OneToOne da Escola
 - OK Criar modelo de ESCOLAS
     - OK transferir atributos de usuario escola, para novo modelo de escola
     - OK transferir a criação de usuario de escola para objeto de escola
     - OK Uma forma de criar objeto_suprot (escola)
 - OK Desassociar usuário de diretor de usuário de escola
-    - Criar usuário de diretor(escolar) na pagina do cadastro de escola pela SECRETARIA
+    - OK Criar usuário de diretor(escolar) na pagina do cadastro de escola pela SECRETARIA
     - OK Alterar no código, toda referencia à escola, considerar como diretor
+- OK Cadastro de diretor de ESCOLA
+- OK testar se funcionalidade de primeira senha não bugou
+- OK cadastrar e-mail no cadastro de novo usuário
 
-- Cadastro do novo objeto Secretaria pelo superusuario secretaria (no primeiro acesso o objeto é criado, se já não houver outro. E não pode ser apagado)
-- Cadastro de diretor da SUPROT
-- Cadastro de diretor de ESCOLA
-- botão criar plano e fia está mostrando em planos necessitando orrecao e finalizados
-- checar função cria_plano tem um trecho não acessivel
-- testar se funcionalidade de primeira senha não bugou
-
-- Talvez já cadastrar e-mail(opcional) no cadastro de novo usuário
-
-- Verificar as chamadas de incluir assinaturas e logs, se estão todas funcionando (teste)
-- Se uma alteração for feita num plano a partir de publicado, gera LOG. (SIGNALS)
-
-- Enviar e-mail sempre que determinadas ações forem executadas. (plano aprovado, plano devolvido, plano enviado)(SIGNALS)
-- Botão de engrenagem para telas pequenas
 
 
 LOG DE EVENTOS
@@ -54,18 +48,13 @@ LOG DE EVENTOS
 - OK Centralizar a criação de logs num unico arquivo.
 - inserir a geração de logs nas devidas views e afins.
 - Gerar log quando Func_sec altera cargo
-- Talvez já começar a mecher no DashBoard.(ainda nao)
+
 
 - ok IMPEDIR ACESSO ÀS VIEWS PARA FUNCIONARIOS/ESCOLAS/SECRETARIA
 
 - ok DESABILITAR LINKS DESNECESSARIOS 
-   - Secretaria
-   - Escolas
-   - Funcionários
 
 - ok SISTEMA DE MENSAGENS
-
-- Talvez Inserir funcionalidade de alteração de cadastro de escola.
 
 - BUGS
     - menu edicao nao mostra para planos finalizados para funcioarios func sec (este bug não consigo reproduzir)
@@ -77,14 +66,13 @@ LOG DE EVENTOS
 - OK FUNCIONALIDADE DE ENVIO DE EMAIL
 - OK Criar funcionalidade de TROCA de SENHA 
 - OK Planos Fia
-- OK Form de cadastro de funcionarios func_sec nao esta abrindo quando acabou de ser criado um func_sec do mesmo tipo
-- OK Não permitir que Tesoureiro assine plano FIA
-- OK Não permitir que membros do colegiado não escolhidos assinem planos FIA
-- OK atualizar a quantidade de assinaturas do plano FIA considerando assinatura do tecnico.
-- OK Quando APROVADO, perde alterabilidade. O icone da assinatura do tecnico_fia não irá aparecer para ele assinar, consertar isso
-- OK Não permitir a primeira assinatura se o grupo de Autorização não estiver completo.   
-- OK Remover assinatura, quando remover membro do colegiado do modelo_fia.
-- OK Se sobrescrever o tecnico, remove assinatura tbm
+  - OK Não permitir que Tesoureiro assine plano FIA
+  - OK Não permitir que membros do colegiado não escolhidos assinem planos FIA
+  - OK atualizar a quantidade de assinaturas do plano FIA considerando assinatura do tecnico.
+  - OK Quando APROVADO, perde alterabilidade. O icone da assinatura do tecnico_fia não irá aparecer para ele assinar, consertar isso
+  - OK Não permitir a primeira assinatura se o grupo de Autorização não estiver completo.   
+  - OK Remover assinatura, quando remover membro do colegiado do modelo_fia.
+  - OK Se sobrescrever o tecnico, remove assinatura tbm
 
 - OK Remover capacidade de selecionar texto para burlar impressão
 
@@ -167,13 +155,15 @@ LOG DE EVENTOS
    - OK cadastra funcionarios
    - OK exclui funcionario
 
-- OK Assinatura de planos
+- OK ASSINATURA DE PLANOS
 - OK Criar funcionalidade de aprovação para membos do colegiado e tesoureiro, gerando logs.
 - OK Criar condicao para só poder concluir quando todos os membros aprovarem.
-- OK Não pode enviar plano à Secretaria se não houver no minimo 1 funcionário cadastrado
+- OK Não pode enviar plano à Secretaria se não houver no minimo 1 tesoureiro e 1 membro colegiado cadastrados
 - OK Não pode enviar plano à Secretaria se não houver no minimo 1 ordem e 1 codigo já cadastrados e JÁ ADICIONADOS!
 - OK Link para a criação de ordens e códigos a partir do menu do documento AÇÃO
 - OK Secretaria e funcionarios não acessam páginas de ordens nem códigos
+- OK Assinaturas plano FIA
+   - OK Só pode assinar se fizer parte do grupo de autorização
 
 - OK FUNÇÃO DE EDIÇÃO DE PLANO/ORDENS/CODIGOS
 - OK CADASTRO DE ESCOLAS E FUNCIONARIOS

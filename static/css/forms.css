@@ -3,6 +3,9 @@
 }
 
 .div-form-plano,
+.div-form-fia,
+.div-form-modelo-fia,
+.div-form-ordem-extra-fia,
 .div-form-edita-plano,
 .div-form-cadastro,
 .div-form-ordem,
@@ -17,10 +20,27 @@
     align-items: stretch;
     margin-bottom: 30px;
 }
+.linha-input2{
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+}
     .label-input{
         display: flex;
         align-items: center;
         flex: 0.3;
+    }
+    .label-input2{
+        display: flex;
+        align-items: center;
+        flex: 0.16;
+        margin-bottom: 0 !important;
+    }
+    .label-input3{
+        display: flex;
+        align-items: center;
+        width: 108px;
+        margin-bottom: 0 !important;
     }
     .input-input{
         flex: 1 !important;
@@ -30,8 +50,17 @@
         width: 100%;
     }
 
+.linha-input3{
+    display: flex;
+    /* flex-direction: column; */
+    margin-bottom: 30px;
+}
+
 .linha-input-coluna{
     flex-direction: column;
+}
+.linha-input-row{
+    flex-direction: row;
 }
 
     .label-input-form-django{
@@ -55,6 +84,7 @@ textarea{
     .linha-submit{
         display: flex;
         justify-content: flex-end;
+        margin-bottom: 5px;
     }
 
 .fonte-italic{
