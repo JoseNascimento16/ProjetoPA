@@ -1,7 +1,0 @@
-O django contib humaniza nos fornece uma ferramente poderosa para formatar numeros ao exibir no template
-
-https://docs.djangoproject.com/en/dev/ref/contrib/humanize/#ref-contrib-humanize
-
-Podemos também mesclar com o floatformat:
-
-{{ value|floatformat:2|intcomma }}

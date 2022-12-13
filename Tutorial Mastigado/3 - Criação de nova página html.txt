@@ -1,7 +1,0 @@
-Na SetupPrincipal > templates > New file > index.html
-
-em index.html
-    
-    html:5 > enter
-
-

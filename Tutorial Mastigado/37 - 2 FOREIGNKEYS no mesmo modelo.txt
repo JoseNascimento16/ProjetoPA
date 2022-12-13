@@ -1,6 +1,0 @@
-class Plano_de_acao(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='Criador')
-    corretor_plano = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='corretor')
-   .
-   .
-   .

@@ -1,9 +1,0 @@
-Vamos fazer isso usando o Admin. Vamos importar a nossa classe modelo
-
-Em nome_do_app > admin.py
-
-    from .models import Classe_Modelo (linha2)
-
-E depois registramos a classe
-
-    admin.site.register(Classe_Modelo) (linha5)

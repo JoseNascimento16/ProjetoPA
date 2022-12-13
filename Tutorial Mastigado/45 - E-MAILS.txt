@@ -1,8 +1,0 @@
-A funcionalidade de enviar e-mails é bem simples, mas requer algumas configurações:
-
-- Configuração do server SMTP
-- Cadastro do server SMTP no settings.py
-- Configuração do envio de emails na views.
-
-
-# No nosso caso não temos um domínio ainda, portanto iremos utilizar o STMP que o GMAIL disponibiliza.

@@ -1,3 +1,0 @@
-- Alguns testes de forms
-	
-	https://stackoverflow.com/questions/52977331/how-to-test-django-createview-and-form-valid

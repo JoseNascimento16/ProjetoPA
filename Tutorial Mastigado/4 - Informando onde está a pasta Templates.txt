@@ -1,5 +1,0 @@
-Em SetupPrincipal > settings.py
-
-	'DIRS': [os.path.join(BASE_DIR, 'SetupPrincipal/templates')],   (linha 59)
-
-*ESTE PROCESSO JÁ FOI FEITO QUANDO PREPARAMOS OS AMBIENTE DE TRABALHO!!!

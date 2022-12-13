@@ -1,9 +1,0 @@
-- No carregamento do .scss não consegui fazer um arquivo unico para carregar todos os .scss (igual fazemos com o .css no arquivo site.css).
-- Portanto fiz o carregamento individual:
-
-{% compress css %}
-    <link type="text/x-scss" rel="stylesheet" href="{% static 'scss/responsive.scss' %}" media="screen">
-{% endcompress %}
-
-- A configração da compressão do .scss está explicada no tutorial 1
-- Um exemplo prático do sistema funcionando está no link logo no início do tutorial 2
