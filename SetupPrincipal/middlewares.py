@@ -1,4 +1,3 @@
-from msilib.schema import Class
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.utils.deprecation import MiddlewareMixin
@@ -16,7 +15,7 @@ class AuthRequiredMiddleware(MiddlewareMixin):
             while not (request.path == reverse('fazendo_login')):
                 return redirect(reverse('fazendo_login'))
 
-    def process_request(selt, request):
+    # def process_request(self, request):
         # MIDDLEWARE QUE ANALISA SE É SUPERUSER
         # ADICIONA AO GRUPO DA SECRETARIA
         # SE NÃO HOUVER GRUPO, CRIA GRUPO SECRETARIA E DEPOIS ASSOCIA
@@ -32,8 +31,8 @@ class AuthRequiredMiddleware(MiddlewareMixin):
                     print('criou grupo Secretaria')
                     # Gerra um SIGNAL que irá criar os outros grupos
 
-    def process_request(selt, request):
-        # CRIA MATRIZ "SECRETARIA DA EDUCAÇÃO" CASO AINDA NAO EXISTA
+    # def process_request(self, request):
+        # CRIA MATRIZ (ESCOLAR) "SECRETARIA DA EDUCAÇÃO" CASO AINDA NAO EXISTA
         # CRIA CLASSIFICACAO DO USUARIO "SECRETARIA" CASO AINDA NAO EXISTA
         if request.user.is_superuser:
             if not Escola.objects.filter(nome='Secretaria da educação').exists():

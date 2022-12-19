@@ -173,7 +173,6 @@ class FuncionariosForm(forms.ModelForm):
         funcao_nao_foi_selecionada(valor_cargo, 'cargo', lista_de_erros)
         chega_disponibilidade_do_cargo(valor_cargo, 'cargo', escola, lista_de_erros)
         email_ja_cadastrado2(valor_email, 'email', lista_de_erros)
-        escola_ja_possui_diretor_ativo(escola, 'email', lista_de_erros)
         
 
         if lista_de_erros is not None:

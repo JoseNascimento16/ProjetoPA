@@ -1,0 +1,34 @@
+@charset "UTF-8";
+/* line 13, c:/users/josé/onedrive/área de trabalho/projetopa/static/scss/responsive.scss */
+.wrapper {
+  font-size: calc((100vw - 600px) * 0.00453 + 11px); }
+  @media (max-width: 600px) {
+    /* line 13, c:/users/josé/onedrive/área de trabalho/projetopa/static/scss/responsive.scss */
+    .wrapper {
+      font-size: 11px; } }
+  @media (min-width: 7000px) {
+    /* line 13, c:/users/josé/onedrive/área de trabalho/projetopa/static/scss/responsive.scss */
+    .wrapper {
+      font-size: 40px; } }
+/* line 17, c:/users/josé/onedrive/área de trabalho/projetopa/static/scss/responsive.scss */
+.titulo-wrapper {
+  font-size: calc((100vw - 600px) * 0.00794 + 13px); }
+  @media (max-width: 600px) {
+    /* line 17, c:/users/josé/onedrive/área de trabalho/projetopa/static/scss/responsive.scss */
+    .titulo-wrapper {
+      font-size: 13px; } }
+  @media (min-width: 4000px) {
+    /* line 17, c:/users/josé/onedrive/área de trabalho/projetopa/static/scss/responsive.scss */
+    .titulo-wrapper {
+      font-size: 40px; } }
+/* line 21, c:/users/josé/onedrive/área de trabalho/projetopa/static/scss/responsive.scss */
+.titulo-wrapper-laranja {
+  font-size: calc((100vw - 600px) * 0.01208 + 11px); }
+  @media (max-width: 600px) {
+    /* line 21, c:/users/josé/onedrive/área de trabalho/projetopa/static/scss/responsive.scss */
+    .titulo-wrapper-laranja {
+      font-size: 11px; } }
+  @media (min-width: 3000px) {
+    /* line 21, c:/users/josé/onedrive/área de trabalho/projetopa/static/scss/responsive.scss */
+    .titulo-wrapper-laranja {
+      font-size: 40px; } }

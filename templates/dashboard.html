@@ -5,16 +5,16 @@
 
 <div class="box-noticias1">
     {% if user.classificacao.primeira_senha %}
-    <div class="box-plano1-3">
+    <div class="titulo-wrapper-laranja box-plano1-3">
         {% if not user.email %}
         <p>Você não tem um e-mail cadastrado, <a href="{% url 'abre_altera_mail' user.id 'chng_mail' %}"> cadastrar e-mail!</a> </p>
         {% endif %}
-        <p>Usuário novo? Cadastre uma nova senha, <a href="{% url 'reset_password' %}"> alterar senha!</a> </p>
+        <p>Usuário novo? Cadastre uma nova senha, <a href="{% url 'reset_password' %}">alterar senha!</a> </p>
     </div>
     {% endif %}
     {% if user.classificacao.tipo_de_acesso == 'Secretaria' %}
     {% tag_nao_existe_coordenador_cadastrado as existe_coordenador %}
-    <div class="box-plano1-3">
+    <div class="titulo-wrapper-laranja box-plano1-3">
         {% if not user.classificacao.escola.diretor %}
         <p>Cadastre um usuário para o(a) diretor(a) da SUPROT. <a href="{% url 'cadastrar_funcionarios_secretaria' user.id 'Sim' %}"> aqui!</a></a> </p>
         {% endif %}
@@ -25,7 +25,7 @@
     {% endif %}
     <div class="titulo-wrapper box-noticias1-1">
         <i class="fas fa-newspaper fa-2x margem-icones-menu"></i>
-        <h4 class="">ULTIMAS ATUALIZAÇÕES</h4>
+        <h4>ULTIMAS ATUALIZAÇÕES</h4>
     </div>
     <!-- <a class="" href="{% url 'enviando_email' %}" style="font-size: 12px;">(link teste)</a> -->
     <div class="div-cards-noticias">
@@ -119,6 +119,12 @@
                     </p>
                 </div>
             {% endif %}
+        {% elif user.groups.get.name == 'Secretaria' %}
+            <div class="cards-planos">
+                <p class="clear-2 itens-cards-planos">
+                    Sem atualizações no momento...
+                </p>
+            </div>
         {% endif %}
     <!-- ##### Pagination ##### -->
         <section class="top-catagory-area section-padding-20-0">

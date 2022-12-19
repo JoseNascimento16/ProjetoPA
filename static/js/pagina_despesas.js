@@ -59,7 +59,7 @@ $(document).ready(function(){
 
         $( lista_ordens_codigos ).each(function(index,element) {
 
-            if (tipo_de_usuario == 'Secretaria' || tipo_de_usuario == 'Funcionario' ){
+            if (tipo_de_usuario == 'Secretaria' || tipo_de_usuario == 'Funcionario' || tipo_de_usuario == 'Func_sec' ){
                 // SE A ORDEM/CODIGO POSSUIR CORREÇÕES
                 if ( lista_codigos_correcao.includes(element) )  { 
                     $('.tr-dinamicos' + element).addClass('background-possui-correcao'),
@@ -110,24 +110,43 @@ $(document).ready(function(){
 
     // DESABILITA MODIFICAR PLANOS EM ESTADOS EM QUE ELES NAO PODEM SER ALTERADOS
 
-    
-    
-    if (situacao_do_plano == 'Pendente' || situacao_do_plano == 'Corrigido pela escola' || situacao_do_plano == 'Aprovado' || situacao_do_plano == 'Concluido'){
 
-        if (tipo_de_usuario == 'Secretaria'){
+    if (tipo_de_usuario == 'Secretaria' || tipo_de_usuario == 'Func_sec'){
 
-            if (situacao_do_plano == 'Em desenvolvimento' || situacao_do_plano == 'Publicado' || situacao_do_plano == 'Corrigido' || situacao_do_plano == 'Aprovado' || situacao_do_plano == 'Concluido'){
-                $(".desabilita-js").removeAttr('href'); // Desabilita alguns links
-                $('.display-none').removeClass("display-none"); // Mostra mensagem que o plano nao pode ser alterado
-                $('.botao-concluir-js').addClass("display-none"); // Esconde botão
-                $('.mensagem-menu-js').addClass("display-none"); // Esconde mensagem
-            }
-            
-        }else if (tipo_de_usuario == 'Diretor_escola'){
-            $(".desabilita-js").removeAttr('href');
-        }else if (tipo_de_usuario == 'Funcionario'){
-            
+        if (situacao_do_plano == 'Em desenvolvimento' || situacao_do_plano == 'Publicado' || situacao_do_plano == 'Corrigido' || situacao_do_plano == 'Aprovado' || situacao_do_plano == 'Assinado' || situacao_do_plano == 'Finalizado'){
+            $(".desabilita-js").removeAttr('href'); // Desabilita alguns links
+            $('.display-none').removeClass("display-none"); // Mostra mensagem que o plano nao pode ser alterado
+            $('.botao-concluir-js').addClass("display-none"); // Esconde botão
+            $('.mensagem-menu-js').addClass("display-none"); // Esconde mensagem
         }
+        
+    }else if (tipo_de_usuario == 'Diretor_escola'){
+
+        if (situacao_do_plano == 'Pendente' || situacao_do_plano == 'Corrigido pela escola' || situacao_do_plano == 'Pronto' || situacao_do_plano == 'Aprovado' || situacao_do_plano == 'Assinado' || situacao_do_plano == 'Finalizado'){
+            $(".desabilita-js").removeAttr('href');
+            $('.display-none').removeClass("display-none"); // Mostra mensagem que o plano nao pode ser alterado
+        }
+        
+    }else if (tipo_de_usuario == 'Funcionario'){
+        
     }
+
+    // TOOLTIP QUESTION MARK DE IMPRESSÃO
+            
+    showContext = $('.question-menu-impressao').hover(function() {
+        var e = window.event;
+    
+        var posX = e.clientX - 15;
+        var posY = e.clientY - 39;
+        var context = document.getElementById("id-tooltip7-menu")
+        context.style.top = posY + "px";
+        context.style.left = posX + "px";
+        context.style.display = "block";
+
+        $('.question-menu-impressao').mouseleave(function(){
+        $('.question-menu-impressao').removeClass('tooltip7-menu'),
+        $('.tooltiptext7-tabela').css("display","none");
+        })
+    })
 
 })

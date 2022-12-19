@@ -1,4 +1,3 @@
-from msilib.schema import Class
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from plano_de_acao.models import Plano_de_acao

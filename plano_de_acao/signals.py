@@ -38,10 +38,8 @@ def cria_modelo_fia(sender, instance, created, *args, **kwargs):
         instance.forca_criacao_modelo_fia = False
         instance.save()
 
+#SEMPRE QUE UM PLANO RECEBE O save(), ATUALIZA O ATRIBUTO "ultima_modificacao"
 @receiver(pre_save, sender=Plano_de_acao)
 def define_ultima_modificacao(sender, instance, **kwargs):
-    
-    if not getattr(instance, '_disable_signals', False):
-        instance.ultima_modificacao = date.today()
-        instance.save_without_signals()
+    Plano_de_acao.objects.filter(pk=instance.pk).update(ultima_modificacao = date.today())
 

@@ -116,7 +116,7 @@ class TestViews(TestCase):
 ##################################################################################################
     
     def test_salva_assinatura(self):
-        imagem = SimpleUploadedFile(name='test_image.jpg', content=open('SetupPrincipal/static/img/canvas_data_test.jpg', 'rb').read(), content_type='image/jpeg')
+        imagem = SimpleUploadedFile(name='test_image.jpg', content=open('static/img/canvas_data_test.jpg', 'rb').read(), content_type='image/jpeg')
         imgTo_base64_str = base64.b64encode(imagem.read()).decode('utf-8')
         prefixo = 'data:image/jpeg;base64,'
         DataUrl = prefixo + imgTo_base64_str

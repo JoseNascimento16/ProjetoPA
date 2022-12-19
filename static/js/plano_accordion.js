@@ -1,54 +1,39 @@
 // INFO EXTRA PLANOS
 
-
-
 $(document).ready(function(){
     
-    var tipo_de_usuario = JSON.parse(document.getElementById('id-tipo-usuario').textContent);
-    // var icone_seta = document.getElementById('icone-accordion');
-    
-    //if (tipo_de_usuario == 'Secretaria' || tipo_de_usuario == 'Func_sec'){
+    // var tipo_de_usuario = JSON.parse(document.getElementById('id-tipo-usuario').textContent);
         
         $(".icone-accordion").click(function(){ 
-            
+
+            // EXECUTA O ACCORDION
             $('.accordion-planos').slideUp(550),
             $('.cards-planos').removeClass('background-accordion-planos')
-            if ($(".icone-accordion").hasClass('rotate-90')){
-                $(".icone-accordion").removeClass('rotate-90')
+
+            if ($(this).closest(".cards-planos").next().is(":hidden")){
+                $(this).closest(".cards-planos").next().slideDown(550)
             }
-            // $(".icone-accordion").removeClass('rotate-90')
-            // $(this).removeClass('rotate-90')
-        });
+            // ----------------------------------
 
-        $(".icone-accordion").click(function(){ 
-
-            $(this).closest("div").click(function(){
-                if ($(this).next().is(":hidden")){
-                    $(this).next().slideDown(550),
-                    $(this).next().css('display','flex'),
-                    $(this).removeClass('background-accordion-planos')
-                    // sessionStorage.setItem("variable",1)
-                }else{  } 
-            })
-
-            // let var1 = sessionStorage.getItem("variable");
-            if ($(this).next().is(":visible") && $(this).not('.rotate-90')){
-                $(this).addClass('rotate-90') // rotate-90 estao em avulsos.css
-                // sessionStorage.setItem("variable",0)
-                // $(this).querySelector('.icone-accordion').style.transform = "rotate(90deg)";
-                // sessionStorage.setItem("variable",1)
+            // ROTACIONA AS SETINHAS
+            if($(this).hasClass('rotate-90')){
+                $(this).removeClass('rotate-90')
+            }else{
+                $('.rotate-90').removeClass('rotate-90')
+                $(this).addClass('rotate-90')
             }
+            // -----------------------------
+            
         });
-        // $(this).addClass('rotate-90') // rotate-90 estao em avulsos.css
+            
+            // if ($(this).next().is(":visible") && $(this).not('.rotate-90')){
+            //     $(this).addClass('rotate-90') // rotate-90 estao em avulsos.css
+            // }
 
-        
+            // if ($(this).closest(".cards-planos").next().is(":visible")){
+            //     $(this).addClass('rotate-90')
+            // }
 
-    // }else if (tipo_de_usuario == 'Diretor_escola'){
-        
-    // }else if (tipo_de_usuario == 'Funcionario'){
-        
-    //}
-    
 });
 
     

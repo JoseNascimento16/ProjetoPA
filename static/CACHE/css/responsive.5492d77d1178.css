@@ -1,0 +1,24 @@
+.wrapper {
+  font-size: calc((100vw - 600px) * 0.00453 + 11px); }
+  @media (max-width: 600px) {
+    .wrapper {
+      font-size: 11px; } }
+  @media (min-width: 7000px) {
+    .wrapper {
+      font-size: 40px; } }
+.titulo-wrapper {
+  font-size: calc((100vw - 600px) * 0.00794 + 13px); }
+  @media (max-width: 600px) {
+    .titulo-wrapper {
+      font-size: 13px; } }
+  @media (min-width: 4000px) {
+    .titulo-wrapper {
+      font-size: 40px; } }
+.titulo-wrapper-laranja {
+  font-size: calc((100vw - 600px) * 0.00453 + 11px); }
+  @media (max-width: 600px) {
+    .titulo-wrapper-laranja {
+      font-size: 11px; } }
+  @media (min-width: 7000px) {
+    .titulo-wrapper-laranja {
+      font-size: 40px; } }

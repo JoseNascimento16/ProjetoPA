@@ -37,8 +37,8 @@
     flex: 0.4;
 }
 
-.border-0{
-    border: 0 !important;
+.border-nenhuma{
+    border: 0;
 }
 
 .rotate-90{

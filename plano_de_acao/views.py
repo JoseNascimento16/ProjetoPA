@@ -23,7 +23,6 @@ from .alteracoes import *
 from .pesquisas import *
 from django.http import HttpResponse
 from django.template.loader import get_template
-from xhtml2pdf import pisa
 import json
 
 
@@ -1336,12 +1335,12 @@ def cria_plano(request):
             form_plano = PlanoForm(request.POST, escola_super=escola)
             if form_plano.is_valid():
                 ano_form = form_plano.cleaned_data.get('ano_referencia')
-                plano = Plano_de_acao.objects.create(
+                Plano_de_acao.objects.create(
                     ano_referencia = ano_form,
                     escola = request.user.classificacao.escola,
                 )
                 # print('SALVOU PLANO!!!!')
-                plano.save()
+                # plano.save()
                 return redirect('pagina_planos_de_acao_mensagem', mensagem='Criou')
             else:
                 controle_form_plano = True
@@ -1941,24 +1940,7 @@ def adiciona_remove_turma(request, **kwargs):
 
 ##### VIEWS NAO TESTADAS #####
 def gera_pdf(request, plano_id):
-    template_path = 'pdf-acao.html'
-    contexto = acao_plano(request, elemento_id=plano_id,  pdf=True)
-    context = contexto
-    # Create a Django response object, and specify content_type as pdf
-    response = HttpResponse(content_type='application/pdf')
-    # response['Content-Disposition'] = 'attachment; filename="report.pdf"'
-    response['Content-Disposition'] = 'filename="DOCUMENTO.pdf"'
-    # find the template and render it.
-    template = get_template(template_path)
-    html = template.render(context)
-
-    # create a pdf
-    pisa_status = pisa.CreatePDF(
-        html, dest=response)
-    # if error then show some funy view
-    if pisa_status.err:
-        return HttpResponse('We had some errors <pre>' + html + '</pre>')
-    return response
+    pass
 
 def teste(request):
     pass

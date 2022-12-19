@@ -73,7 +73,7 @@
         {% if chave_planos %}
         {% for elemento in chave_planos.object_list %}
         <div class="cards-planos-box">
-            <div class="cards-planos border-0">
+            <div class="cards-planos border-nenhuma">
                     <!-- POS 1 PLANO -->
                     <h5 class="box-plano-1-2-compact">Plano de ação</h5>
                     <div class="clear-2 itens-cards-planos p1-itens-cards-planos">
@@ -534,76 +534,77 @@
 
             <!-- ACCORDION DE INFORMAÇÕES EXTRAS -->
             
-                <div class="box-plano-accordion accordion-planos" style="margin-left: 0;">
-                    <div class="div-info-accordion">
-                        <div class="div-corretor-flex tooltip5" style="display: flex"> <h5  style="min-width: 148px">Instituição de ensino:</h5><p style="font-style: italic;margin-left: 0;">{{elemento.escola.nome|truncatechars:27}}</p>
-                            <span class="tooltiptext5" style="left: 100px; width: 300px">{{elemento.escola.nome}}</span>
-                        </div>
-                        {% if elemento.situacao == 'Publicado' and elemento.devolvido == True and elemento.correcoes_a_fazer == 0 and elemento.pre_assinatura == True %}
-                        <div class="div-corretor-flex"> <h5>Situação:</h5><p style="font-style: italic;">Pré-aprovado (ver legenda)</p> </div>
-                        {% else %}
-                            <div class="div-corretor-flex"> <h5>Situação:</h5><p style="font-style: italic;">{{elemento.situacao}} (ver legenda)</p> </div>
-                        {% endif %}
-
-                        {% if elemento.corretor_plano != None %}
-                            <div class="div-corretor-flex"> <h5>Corretor:</h5><p style="font-style: italic;">{{elemento.corretor_plano.first_name}}</p>
-                                {% if user.classificacao.usuario_diretor and elemento.alterabilidade != 'Desativada' or user.classificacao.usuario_coordenador and elemento.alterabilidade != 'Desativada' %}
-                                <a class="" style="font-style: italic;" href="{% url 'abrindo_altera_corretor' elemento.id True %}">(Alterar)</a>
-                                {% endif %}
-                            </div>
-                        {% else %}
-                            <div class="div-corretor-flex"> <h5>Corretor:</h5><p style="font-style: italic;">-------</p> </div>
-                        {% endif %}
+            <div class="box-plano-accordion accordion-planos" style="margin-left: 0;">
+                <div class="div-info-accordion">
+                    <div class="div-corretor-flex tooltip5" style="display: flex"> <h5  style="min-width: 148px">Instituição de ensino:</h5><p style="font-style: italic;margin-left: 0;">{{elemento.escola.nome|truncatechars:27}}</p>
+                        <span class="tooltiptext5" style="left: 100px; width: 300px">{{elemento.escola.nome}}</span>
                     </div>
-
-                    <!-- MOSTRA QUAIS AS ASSINATURAS DA ESCOLA -->
-                    {% tag_len_funcionarios chave_classificacoes elemento.escola.nome elemento as len_funcionarios %}
-                    {% tag_len_assinaturas elemento.classificacao_set.all elemento as len_assinaturas %}
-                    <!-- aprovado -->
-                    {% if elemento.situacao == 'Aprovado' or elemento.situacao == 'Pronto' or elemento.situacao == 'Assinado' or elemento.situacao == 'Inteiramente assinado' or elemento.situacao == 'Finalizado' %}
-                    <div class="div-assinaturas-escolas">
-                        <h5 style="margin-left: 0">Assinaturas Escola ({{len_assinaturas}}/{{len_funcionarios}}):</h5>
-                        {% for item in elemento.classificacao_set.all %}
-                            {% if item.user.groups.get.name == 'Diretor_escola' or item.user.groups.get.name == 'Funcionario' %}
-                            <p>- {{item}}</p>
-                            {% endif %}
-                        {% endfor %}
-                        {% for modelo in elemento.modelo_fia_set.all %}<!-- 1 objeto modelo_fia somente -->
-                            {% if modelo.assinatura_tecnico %}
-                                <p>- {{modelo.tecnico_responsavel}} (técnico)</p>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                    <!-- pré-aprovado -->
-                    {% elif elemento.situacao == 'Publicado' and elemento.devolvido == True and elemento.correcoes_a_fazer == 0 and elemento.pre_assinatura == True %}
-                    <div class="div-assinaturas-escolas">
-                        <h5 style="margin-left: 0">Assinaturas Escola ({{len_assinaturas}}/{{len_funcionarios}}):</h5>
-                        {% for item in elemento.classificacao_set.all %}
-                            {% if item.user.groups.get.name == 'Diretor_escola' or item.user.groups.get.name == 'Funcionario' %}
-                            <p>- {{item}}</p>
-                            {% endif %}
-                        {% endfor %}
-                        {% for modelo in elemento.modelo_fia_set.all %}<!-- 1 objeto modelo_fia somente -->
-                            {% if modelo.assinatura_tecnico %}
-                                <p>- {{modelo.tecnico_responsavel}} (técnico)</p>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
+                    {% if elemento.situacao == 'Publicado' and elemento.devolvido == True and elemento.correcoes_a_fazer == 0 and elemento.pre_assinatura == True %}
+                    <div class="div-corretor-flex"> <h5>Situação:</h5><p style="font-style: italic;">Pré-aprovado (ver legenda)</p> </div>
+                    {% else %}
+                        <div class="div-corretor-flex"> <h5>Situação:</h5><p style="font-style: italic;">{{elemento.situacao}} (ver legenda)</p> </div>
                     {% endif %}
-                    
-                    <!-- MOSTRA QUAIS AS ASSINATURAS DA SUPROT -->
-                    {% tag_len_suprof elemento.classificacao_set.all as len_suprof %}
-                    {% if elemento.situacao == 'Pronto' or elemento.situacao == 'Assinado' or elemento.situacao == 'Inteiramente assinado' or elemento.situacao == 'Finalizado' %}
-                    <div class="div-assinaturas-suprot">
-                        <h5 style="margin-left: 0">Assinaturas SUPROT ({{len_suprof}}/3):</h5>
-                        {% for item in elemento.classificacao_set.all %}
-                            {% if item.user.groups.get.name == 'Func_sec' %}
-                            <p>- {{item}}</p>
+
+                    {% if elemento.corretor_plano != None %}
+                        <div class="div-corretor-flex"> <h5>Corretor:</h5><p style="font-style: italic;">{{elemento.corretor_plano.first_name}}</p>
+                            {% if user.classificacao.usuario_diretor and elemento.alterabilidade != 'Desativada' or user.classificacao.usuario_coordenador and elemento.alterabilidade != 'Desativada' %}
+                            <a class="" style="font-style: italic;" href="{% url 'abrindo_altera_corretor' elemento.id True %}">(Alterar)</a>
                             {% endif %}
-                        {% endfor %}
-                    </div>
+                        </div>
+                    {% else %}
+                        <div class="div-corretor-flex"> <h5>Corretor:</h5><p style="font-style: italic;">-------</p> </div>
                     {% endif %}
                 </div>
+
+                <!-- MOSTRA QUAIS AS ASSINATURAS DA ESCOLA -->
+                {% tag_len_funcionarios chave_classificacoes elemento.escola.nome elemento as len_funcionarios %}
+                {% tag_len_assinaturas elemento.classificacao_set.all elemento as len_assinaturas %}
+                <!-- aprovado -->
+                {% if elemento.situacao == 'Aprovado' or elemento.situacao == 'Pronto' or elemento.situacao == 'Assinado' or elemento.situacao == 'Inteiramente assinado' or elemento.situacao == 'Finalizado' %}
+                <div class="div-assinaturas-escolas">
+                    <h5 style="margin-left: 0">Assinaturas Escola ({{len_assinaturas}}/{{len_funcionarios}}):</h5>
+                    {% for item in elemento.classificacao_set.all %}
+                        {% if item.user.groups.get.name == 'Diretor_escola' or item.user.groups.get.name == 'Funcionario' %}
+                        <p>- {{item}}</p>
+                        {% endif %}
+                    {% endfor %}
+                    {% for modelo in elemento.modelo_fia_set.all %}<!-- 1 objeto modelo_fia somente -->
+                        {% if modelo.assinatura_tecnico %}
+                            <p>- {{modelo.tecnico_responsavel}} (técnico)</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <!-- pré-aprovado -->
+                {% elif elemento.situacao == 'Publicado' and elemento.devolvido == True and elemento.correcoes_a_fazer == 0 and elemento.pre_assinatura == True %}
+                <div class="div-assinaturas-escolas">
+                    <h5 style="margin-left: 0">Assinaturas Escola ({{len_assinaturas}}/{{len_funcionarios}}):</h5>
+                    {% for item in elemento.classificacao_set.all %}
+                        {% if item.user.groups.get.name == 'Diretor_escola' or item.user.groups.get.name == 'Funcionario' %}
+                        <p>- {{item}}</p>
+                        {% endif %}
+                    {% endfor %}
+                    {% for modelo in elemento.modelo_fia_set.all %}<!-- 1 objeto modelo_fia somente -->
+                        {% if modelo.assinatura_tecnico %}
+                            <p>- {{modelo.tecnico_responsavel}} (técnico)</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <!-- MOSTRA QUAIS AS ASSINATURAS DA SUPROT -->
+                {% tag_len_suprof elemento.classificacao_set.all as len_suprof %}
+                {% if elemento.situacao == 'Pronto' or elemento.situacao == 'Assinado' or elemento.situacao == 'Inteiramente assinado' or elemento.situacao == 'Finalizado' %}
+                <div class="div-assinaturas-suprot">
+                    <h5 style="margin-left: 0">Assinaturas SUPROT ({{len_suprof}}/3):</h5>
+                    {% for item in elemento.classificacao_set.all %}
+                        {% if item.user.groups.get.name == 'Func_sec' %}
+                        <p>- {{item}}</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
             <!-- FIM ACCORDION INFORMAÇÕES EXTRAS -->
 
         </div>

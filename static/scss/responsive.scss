@@ -1,6 +1,3 @@
-$text-color: #475156;
-$border-color: #b1b7b9;
-
 @mixin responsive-type($min-size, $max-size, $min-width, $max-width) {
   $slope: ($max-size - $min-size) / ($max-width - $min-width);
   font-size: calc((100vw - #{$min-width}) * #{$slope} + #{$min-size});
@@ -14,5 +11,14 @@ $border-color: #b1b7b9;
 }
 
 .wrapper {
-  @include responsive-type(12px, 38px, 400px, 1280px);
+  @include responsive-type(11px, 40px, 600px, 7000px);
 }
+
+.titulo-wrapper {
+  @include responsive-type(13px, 40px, 600px, 4000px);
+}
+
+.titulo-wrapper-laranja {
+  @include responsive-type(11px, 40px, 600px, 7000px);
+}
+

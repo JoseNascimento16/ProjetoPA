@@ -97,9 +97,20 @@ DATABASES = {
         'NAME': 'SetupPrincipal',
         'USER': 'postgres',
         'PASSWORD': '123456',
-        'HOST': 'localhost'
+        'HOST': 'localhost',
+        'PORT': ''
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'Zivesanywhere$minhadatabase',
+#         'USER': 'Zivesanywhere',
+#         'PASSWORD': 'ZivesMySQL',
+#         'HOST': 'Zivesanywhere.mysql.pythonanywhere-services.com'
+#     }
+# }
 
 
 # Password validation
@@ -150,8 +161,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 STATICFILES_DIRS = [
-            os.path.join(BASE_DIR, 'SetupPrincipal/static')
-            ]
+    os.path.join(BASE_DIR, 'SetupPrincipal/static_files')
+]
 
 LOGIN_URL = '/'
 
@@ -176,3 +187,7 @@ STATICFILES_FINDERS = (
 COMPRESS_PRECOMPILERS = (    
     ('text/x-scss', 'django_libsass.SassCompiler'),
 )
+
+# COMPRESS_ENABLED = True
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

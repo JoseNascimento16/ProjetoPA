@@ -23,7 +23,7 @@
         display: none;
     }
     .header-img-logo-bahia{
-        width: 140px;
+        width: 250px;
         height: 60px;
     }
 }
@@ -284,6 +284,15 @@
     }
     .box-plano1-1 h5{
         font-size: 15px !important;
+    }
+    .box-edit-erase-planos{
+        display: none;
+    }
+    .box-edit-erase-planos-compacto{
+        display: flex !important;
+    }
+    .p-situacao{
+        display: none;
     }
     .cards-planos{
         flex-direction: column !important;

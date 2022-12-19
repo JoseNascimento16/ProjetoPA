@@ -58,7 +58,7 @@ class TestViews(TestCase):
         # REDIRECIONA
         self.classificacao.plano_associado.add(self.plano)
         self.classificacao.save()
-        self.modelo_fia.assinatura_tecnico = SimpleUploadedFile(name='test_image.jpg', content=open('SetupPrincipal/static/img/hexagonal.jpg', 'rb').read(), content_type='image/jpeg')
+        self.modelo_fia.assinatura_tecnico = SimpleUploadedFile(name='test_image.jpg', content=open('static/img/hexagonal.jpg', 'rb').read(), content_type='image/jpeg')
         self.modelo_fia.save()
         # print(len(self.plano.classificacao_set.all()))
         self.plano.assinaturas = 2
@@ -86,7 +86,7 @@ class TestViews(TestCase):
         self.modelo_fia.membro_colegiado_2 = self.user
         self.modelo_fia.tecnico_responsavel = 'Queiroz'
         self.modelo_fia.save()
-        imagem = SimpleUploadedFile(name='test_image.jpg', content=open('SetupPrincipal/static/img/canvas_data_test.jpg', 'rb').read(), content_type='image/jpeg')
+        imagem = SimpleUploadedFile(name='test_image.jpg', content=open('static/img/canvas_data_test.jpg', 'rb').read(), content_type='image/jpeg')
         imgTo_base64_str = base64.b64encode(imagem.read()).decode('utf-8')
         prefixo = 'data:image/jpeg;base64,'
         DataUrl = prefixo + imgTo_base64_str

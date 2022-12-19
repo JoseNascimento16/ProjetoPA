@@ -58,12 +58,6 @@ class Plano_de_acao(models.Model):
                 kwargs['update_fields'] = changed_fields
             super().save(*args, **kwargs)
 
-    def save_without_signals(self):
-        # This allows for updating the model from code running inside post_save()
-        # signals without going into an infinite loop:
-        self._disable_signals = True
-        self.save()
-        self._disable_signals = False
 
 class Log_de_eventos(models.Model):
     plano =  models.ForeignKey(Plano_de_acao, on_delete=models.CASCADE)

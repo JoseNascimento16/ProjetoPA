@@ -8,6 +8,9 @@ $(document).ready(function(){
     var plano_devolvido = JSON.parse(document.getElementById('id-chave-devolvido').textContent);
     var tipo_de_usuario = JSON.parse(document.getElementById('id-tipo-usuario').textContent);
     var situacao_do_plano = JSON.parse(document.getElementById('id-situacao-plano').textContent);
+    // var quebra_linha = JSON.parse(document.getElementById('id-q-linha').textContent);
+    // var apos_print = JSON.parse(document.getElementById('id-apos-print').textContent);
+    
     // var planoString2 = planoString.replace('[', '');
     // var planoString3 = planoString2.replace(']', '');
     // var planoArray = new Array(planoString3)
@@ -66,11 +69,11 @@ $(document).ready(function(){
         });
     
     }
-    else { // SE O PLANO JA ESTIVER DEVOLVIDO OU COM SUGESTÕES DE CORRECOES DE AÇÕES CONCLUIDAS
+    else{ // SE O PLANO JA ESTIVER DEVOLVIDO OU COM SUGESTÕES DE CORRECOES DE AÇÕES CONCLUIDAS
 
         $( lista_de_ordens ).each(function(index,element) {
         
-            if (tipo_de_usuario == 'Secretaria' || tipo_de_usuario == 'Funcionario' ){
+            if (tipo_de_usuario == 'Secretaria' || tipo_de_usuario == 'Funcionario' || tipo_de_usuario == 'Func_sec'){
                 // SE A ORDEM/CODIGO POSSUIR CORREÇÕES
                 if ( lista2_de_ordens.includes(element) )  { 
                     $('.tr-dinamicos' + element).addClass('background-possui-correcao'),
@@ -78,14 +81,16 @@ $(document).ready(function(){
                 }
                 // SE A ORDEM/CODIGO NÃO POSSUIR CORREÇÕES
                 else {
+                    $('.a-clear-acao').removeAttr('href');
+                    $('.a-clear-href').removeAttr('href');
 
                     $('.tds-trs-' + element).hover(function(){
                     $('.tr-dinamicos' + element).addClass('background-tr-acoes');
                     }),
                     $('.tds-trs-' + element).mouseleave(function(){
-                    $('.tr-dinamicos' + element).removeClass('background-tr-acoes'),
-                    $('.a-clear-acao').removeAttr("href");
+                    $('.tr-dinamicos' + element).removeClass('background-tr-acoes');
                     })
+                    
                 }
             }
             else if (tipo_de_usuario == 'Diretor_escola') {
@@ -125,18 +130,20 @@ $(document).ready(function(){
     
     
 
-        if (tipo_de_usuario == 'Secretaria'){
+        if (tipo_de_usuario == 'Secretaria' || tipo_de_usuario == 'Func_sec'){
 
-            if (situacao_do_plano == 'Em desenvolvimento' || situacao_do_plano == 'Publicado' || situacao_do_plano == 'Corrigido' || situacao_do_plano == 'Aprovado' || situacao_do_plano == 'Concluido'){
+            if (situacao_do_plano == 'Em desenvolvimento' || situacao_do_plano == 'Publicado' || situacao_do_plano == 'Corrigido' || situacao_do_plano == 'Aprovado' || situacao_do_plano == 'Assinado' || situacao_do_plano == 'Inteiramente assinado' || situacao_do_plano == 'Finalizado' || situacao_do_plano == 'Necessita correção'){
                 $(".desabilita-js").removeAttr('href'); // Desabilita alguns links
                 $('.display-none').removeClass("display-none"); // Mostra mensagem que o plano nao pode ser alterado
                 $('.botao-concluir-js').addClass("display-none"); // Esconde botão
                 $('.mensagem-menu-js').addClass("display-none"); // Esconde mensagem
+                $('.aviso-verde-menu-edicao-js').addClass("display-none"); // Esconde mensagem
+                $('.botao-voltar-menu-edicao-js').addClass("display-none"); // Esconde botao
             }
             
         }else if (tipo_de_usuario == 'Diretor_escola'){
 
-            if (situacao_do_plano == 'Pendente' || situacao_do_plano == 'Corrigido pela escola' || situacao_do_plano == 'Aprovado' || situacao_do_plano == 'Concluido'){
+            if (situacao_do_plano == 'Pendente' || situacao_do_plano == 'Corrigido pela escola' || situacao_do_plano == 'Aprovado' || situacao_do_plano == 'Assinado' || situacao_do_plano == 'Finalizado'){
                 $(".desabilita-js").removeAttr('href'); // Desabilita alguns links
                 $('.display-none').removeClass("display-none"); // Mostra mensagens
             }
@@ -147,7 +154,7 @@ $(document).ready(function(){
 
     // SITUAÇÕES EXTRAS
 
-    if (tipo_de_usuario == 'Secretaria'){
+    if (tipo_de_usuario == 'Secretaria' || tipo_de_usuario == 'Func_sec'){
             
     }else if (tipo_de_usuario == 'Diretor_escola'){
 
@@ -187,7 +194,26 @@ $(document).ready(function(){
                     })
                 })
             })
+            
         }
+
+        // TOOLTIP QUESTION MARK DE IMPRESSÃO
+            
+        showContext = $('.question-menu-impressao').hover(function() {
+            var e = window.event;
+        
+            var posX = e.clientX - 15;
+            var posY = e.clientY - 39;
+            var context = document.getElementById("id-tooltip7-menu")
+            context.style.top = posY + "px";
+            context.style.left = posX + "px";
+            context.style.display = "block";
+
+            $('.question-menu-impressao').mouseleave(function(){
+            $('.question-menu-impressao').removeClass('tooltip7-menu'),
+            $('.tooltiptext7-tabela').css("display","none");
+            })
+        })
 
     }else if (tipo_de_usuario == 'Funcionario'){
         

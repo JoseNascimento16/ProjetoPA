@@ -34,6 +34,7 @@
     .box-plano1-2 h5{
         flex: 1;
         margin: 22px 0 5px 0;
+        /* min-width: 139px; configurei in-line pois muda de acordo com o user*/
     }
 
 .box-plano-1-2-compact{
@@ -85,7 +86,7 @@
     }
 
 .box-plano1-3 p{
-    display: flex;
+    /* display: flex; */
     flex-direction: row;
     color: orangered;
     margin: 10px 0 0 10px;
@@ -178,10 +179,12 @@
         flex: 1;
     }
     .p1-itens-cards-planos{
-        min-width: 131px;
+        min-width: 150px;
+        color: rgb(101, 101, 102);
+        margin: 10px 0;
     }
     .p2-itens-cards-planos{
-        /* min-width: 131px; */
+        min-width: 131px;
     }
     .p3-itens-cards-planos{
         min-width: 109px;
@@ -208,6 +211,15 @@
         margin: 0 10px;
         color: rgb(101, 101, 102);
     }
+
+.box-edit-erase-planos{
+    min-width: 111px;
+}
+
+.box-edit-erase-planos-compacto{
+    display: none;
+}
+
 .ul-mensagens{
     list-style: none;
     padding-left: 10px;
