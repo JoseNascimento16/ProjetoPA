@@ -10,22 +10,31 @@ from Escolas.models import Escola
 from logs.logs import *
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
+from django.db.models import Q
 
 def define_planos_coordenador(request):
     planos1 = Plano_de_acao.objects.filter(corretor_plano=request.user).exclude(situacao='Em desenvolvimento').exclude(situacao='Publicado').exclude(situacao='Necessita correção').exclude(situacao='Aprovado').exclude(situacao='Pronto').exclude(situacao='Finalizado')
     planos2 = Plano_de_acao.objects.filter(corretor_plano=None).exclude(situacao='Em desenvolvimento').exclude(situacao='Publicado').exclude(situacao='Necessita correção').exclude(situacao='Aprovado').exclude(situacao='Pronto').exclude(situacao='Finalizado')
-    planos3 = planos1.union(planos2)
-    planos4 = Plano_de_acao.objects.filter(Q(situacao='Assinado') | Q(situacao='Inteiramente assinado')).filter(assinatura_coordenador=False)
-    planos5 = planos3.union(planos4)
+    planos3 = Plano_de_acao.objects.filter(Q(situacao='Assinado') | Q(situacao='Inteiramente assinado')).filter(assinatura_coordenador=False)
     planos_assinados = request.user.classificacao.plano_associado.filter(Q(situacao='Assinado') | Q(situacao='Inteiramente assinado'))
-    planos = planos5.union(planos_assinados).order_by('-data_de_criação')
+    uniao = planos2 | planos1 | planos3 | planos_assinados
+    planos = uniao.order_by('-data_de_criação')
+
+    # planos1 = Plano_de_acao.objects.filter(corretor_plano=request.user).exclude(situacao='Em desenvolvimento').exclude(situacao='Publicado').exclude(situacao='Necessita correção').exclude(situacao='Aprovado').exclude(situacao='Pronto').exclude(situacao='Finalizado')
+    # planos2 = Plano_de_acao.objects.filter(corretor_plano=None).exclude(situacao='Em desenvolvimento').exclude(situacao='Publicado').exclude(situacao='Necessita correção').exclude(situacao='Aprovado').exclude(situacao='Pronto').exclude(situacao='Finalizado')
+    # planos3 = planos1.union(planos2)
+    # planos4 = Plano_de_acao.objects.filter(Q(situacao='Assinado') | Q(situacao='Inteiramente assinado')).filter(assinatura_coordenador=False)
+    # planos5 = planos3.union(planos4)
+    # planos_assinados = request.user.classificacao.plano_associado.filter(Q(situacao='Assinado') | Q(situacao='Inteiramente assinado'))
+    # planos = planos5.union(planos_assinados).order_by('-data_de_criação')
     
     return planos
 
 def define_planos_corretor(request):
     planos1 = Plano_de_acao.objects.filter(corretor_plano=request.user).exclude(alterabilidade='Escola').exclude(situacao='Finalizado')
     planos2 = Plano_de_acao.objects.filter(corretor_plano=None).filter(situacao='Pendente')
-    planos = planos1.union(planos2).order_by('-data_de_criação')
+    uniao = planos1 | planos2
+    planos = uniao.order_by('-data_de_criação')
     
     return planos
 

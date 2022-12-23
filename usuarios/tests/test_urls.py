@@ -125,11 +125,6 @@ class Testurls(SimpleTestCase):
         # print(resolve(url))
         self.assertEquals(resolve(url).func, salva_assinatura)
 
-    def test_cadastra_assinatura_teste_resolve(self):
-        url = reverse('cadastra_assinatura_teste', args=[1,'slug'])
-        # print(resolve(url))
-        self.assertEquals(resolve(url).func, salva_assinatura)
-
     def test_apaga_assinatura_resolve(self):
         url = reverse('apaga_assinatura', args=[1])
         # print(resolve(url))
@@ -169,5 +164,15 @@ class Testurls(SimpleTestCase):
         url = reverse('profile_escola', args=[1])
         # print(resolve(url))
         self.assertEquals(resolve(url).func, profile_escola)
+
+    def test_solicitar_remocao_resolve(self):
+        url = reverse('solicitar_remocao', args=[1])
+        # print(resolve(url))
+        self.assertEquals(resolve(url).func, solicita_remocao)
+
+    def test_cancelar_remocao_resolve(self):
+        url = reverse('cancelar_remocao', args=[1])
+        # print(resolve(url))
+        self.assertEquals(resolve(url).func, cancela_remocao_diretor)
 
     

@@ -2,7 +2,7 @@
 
 <div class="div-confirma-devolve">
     <div class="titulo-modal titulo-modal-devolve">
-        <h4>Excluir diretor</h4>
+        <h2 style="margin: 20px 0;">Excluir diretor</h2>
         <div style="flex: 0.5;" class="fechar-modal">
             <a href="#"><i class="fas fa-times fa-2x fecha-modal"></i></a>
         </div>
@@ -10,9 +10,10 @@
     <div class="classe-form-modal">
         <form class="form-modal" action="{% url 'deletando_funcionario' chave_diretor.classificacao.id %}" method="POST">
             {% csrf_token %}
-            <p style="font-size: 1 em;">"{{chave_solicitante}}" solicitou a exclusão deste usuário de diretor de escola (confirme com o solicitante). Ao clicar em confirmar, o diretor será excluído deste sistema e um novo diretor poderá ser cadastrado para esta escola. Deseja confirmar esta ação?</p>
+            <p class="p-corrige" style="font-size: 1 em;">"{{chave_solicitante}}" solicitou a exclusão deste usuário de diretor de escola (confirme com o solicitante). Ao clicar em confirmar, o diretor será excluído deste sistema e um novo diretor poderá ser cadastrado para esta escola. Deseja confirmar esta ação?</p>
             <div class="linha-submit">
-                <input class="myButton" type="submit" value="Confirmar">
+                <input class="myButton botao-reduzido" style="margin-right: 10px" type="submit" value="Cancelar solicitação" formaction="{% url 'cancelar_remocao' chave_diretor.classificacao.id %}">
+                <input class="myButton botao-reduzido" type="submit" value="Confirmar">
             </div>
         </form>
     </div>

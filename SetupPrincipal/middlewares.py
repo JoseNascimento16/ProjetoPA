@@ -11,11 +11,13 @@ class AuthRequiredMiddleware(MiddlewareMixin):
     def process_request(self, request):
         # REDIRECIONA PARA O INDEX
         # SE O USUÁRIO NÃO ESTIVER AUTENTICADO
-        if request.user.is_authenticated == False:
-            while not (request.path == reverse('fazendo_login')):
-                return redirect(reverse('fazendo_login'))
+        if request.path.startswith('/login/'): # Se estiver no LOGIN, não recebe o redirecionamento de autenticação
+            pass
+        else: # Qualquer outro caminho, recebe o redirecionamento de autenticação
+            if request.user.is_authenticated == False:
+                while not (request.path == reverse('fazendo_login')):
+                    return redirect(reverse('fazendo_login'))
 
-    # def process_request(self, request):
         # MIDDLEWARE QUE ANALISA SE É SUPERUSER
         # ADICIONA AO GRUPO DA SECRETARIA
         # SE NÃO HOUVER GRUPO, CRIA GRUPO SECRETARIA E DEPOIS ASSOCIA
@@ -31,7 +33,6 @@ class AuthRequiredMiddleware(MiddlewareMixin):
                     print('criou grupo Secretaria')
                     # Gerra um SIGNAL que irá criar os outros grupos
 
-    # def process_request(self, request):
         # CRIA MATRIZ (ESCOLAR) "SECRETARIA DA EDUCAÇÃO" CASO AINDA NAO EXISTA
         # CRIA CLASSIFICACAO DO USUARIO "SECRETARIA" CASO AINDA NAO EXISTA
         if request.user.is_superuser:

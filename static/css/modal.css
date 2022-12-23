@@ -52,6 +52,7 @@
 
 .fundo-modal{
     background-color: rgb(255, 255, 255);
+    min-width: 171px;
     width: 60%;
     height: 80%;
     border-radius: 10px;
@@ -60,6 +61,7 @@
 
 .fundo-modal-confirma{
     background-color: rgb(255, 255, 255);
+    min-width: 278px;
     width: 410px;
     height: 30%;
     border-radius: 10px;
@@ -70,6 +72,7 @@
 
 .fundo-modal-correcao{
     background-color: rgb(255, 255, 255);
+    min-width: 202px;
     width: 60%;
     height: 80%;
     border-radius: 10px;
@@ -84,6 +87,18 @@
     border-radius: 10px;
     position: relative;
     overflow-y: auto;
+}
+
+.fundo-modal-assinatura{
+    min-width: 279.59px;
+}
+
+.fundo-modal-assinatura-tecnico{
+    min-width: 279.59px;
+}
+
+.fundo-modal-altera-mail{
+    min-width: 277.8px;
 }
 
 .corpo-modal{
@@ -112,4 +127,3 @@
     flex-direction: row;
     justify-content: flex-end;
 }
-

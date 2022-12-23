@@ -122,7 +122,7 @@ def escola_ja_possui_diretor_ativo(valor, campo, lista_de_erros):
 
 def matriz_ja_possui_diretor_ativo(valor_cargo, escola, campo, lista_de_erros):
     if valor_cargo:
-        if valor_cargo == 'Diretor':
+        if valor_cargo == 'Diretor SUPROT':
             classificacao = Classificacao.objects.filter(usuario_diretor=True).filter(escola=escola).filter(is_active=True)
             if classificacao.exists():
                 lista_de_erros[campo] = 'Já existe um diretor cadastrado e ativo da SUPROT'

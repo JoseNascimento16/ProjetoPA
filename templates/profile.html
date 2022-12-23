@@ -49,7 +49,7 @@
             </div>
             <div class="box-profile1-1-2-1">
                 <h5>Cargo: </h5>
-                {% if user.groups.get.name == 'Func_sec' %}
+                {% if user.groups.get.name == 'Func_sec' or user.groups.get.name == 'Secretaria'%}
                 <p>{{user.last_name}}</p>
                 {% elif user.groups.get.name == 'Diretor_escola' %}
                 <p>Diretor(a)</p>

@@ -15,3 +15,15 @@
 .box-botao-cadastro1 > form,button{
     margin: 5px 0;
 }
+
+.itens-cards-nome-escola{
+    min-width: 283px;
+}
+
+.itens-cards-nome-diretor-escola{
+    min-width: 295px;
+}
+
+.itens-cards-nome-municipio{
+    min-width: 121px;
+}

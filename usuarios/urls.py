@@ -22,6 +22,7 @@ urlpatterns = [
     path('cadastro_funcionarios_escola/<int:user_id>',views.cadastros_escola, name='cadastrar_funcionarios'),
     path('cadastro_funcionarios_escola/<int:user_id>/<slug:mensagem>',views.cadastros_escola, name='cadastrar_funcionarios_mensagem'),
     path('escola/remocao/diretor/<int:user_id>',views.solicita_remocao, name='solicitar_remocao'),
+    path('escola/cancela/remocao/diretor/<int:user_id>',views.cancela_remocao_diretor, name='cancelar_remocao'),
     path('excluir_funcionario/<int:elemento_id>',views.deleta_funcionario, name='deletando_funcionario'),
     path('altera_cargo/<int:elemento_id>',views.altera_cargo, name='abre_altera_cargo'),
     path('altera_cargo/edita/<int:elemento_id>/<slug:edita>',views.altera_cargo, name='altera_cargo'),

@@ -14,7 +14,7 @@
     <div class="classe-form-modal">
         <form class="form-modal" action="{% url 'chamando_atribui_corretor' chave_plano_atribui.id %}" method="POST">
             {% csrf_token %}
-            <p style="font-size: 1 em;">Este plano ainda não possui um funcionário responsável. Ao confirmar, você será o corretor responsável em corrigir este plano de ações!</p>
+            <p class="p-corrige" style="font-size: 1 em;">Este plano ainda não possui um funcionário responsável. Ao confirmar, você será o corretor responsável em corrigir este plano de ações!</p>
             <div class="linha-submit">
                 <input class="myButton" type="submit" value="Confirma">
             </div>

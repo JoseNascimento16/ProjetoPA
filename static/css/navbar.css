@@ -11,7 +11,7 @@
         margin: 5px;
         padding: 0;
         text-align: center;
-        justify-content: space-between;
+        /* justify-content: space-between; */
       }
 
       .classe-navbar li{
@@ -27,6 +27,8 @@
 
       .sub-div-navbar1{
         display: flex;
+        min-width: 163px;
+        flex: 1;
       }
       .sub-div-navbar2{
         display: flex;

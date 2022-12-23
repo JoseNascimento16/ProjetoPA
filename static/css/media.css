@@ -224,6 +224,9 @@
     .search-bar{
         width: 170px;
       }
+    .classe-div-menu-lateral{
+        min-width: 220px;
+      }
     
 }
 
@@ -257,6 +260,15 @@
 }
 
 /* CORPO */
+
+@media only screen and (max-width: 1055px) {
+    .linha-input-row{
+        flex-direction: column !important;
+    }
+    .div-box-1-inseridos{
+        flex-direction: column !important;
+    }
+}
 
 @media only screen and (max-width: 1029px) {
 
@@ -323,6 +335,31 @@
     .box-plano-1-2-compact{
         display: flex !important;
     }
+    .titulo-modal{
+        font-size: 10px !important;
+    }
+    .titulo-modal > h2{
+        margin-bottom: 15px !important;
+    }
+    .fechar-modal{
+        font-size: 10px !important;
+    }
+    .linha-input{
+        font-size: 12px;
+    }
+    .input-input{
+        padding: 5px;
+    }
+    .linha-input3{
+        font-size: 12px;
+    }
+    .p-corrige{
+        font-size: 12px;
+    }
+    .botao-reduzido{
+        font-size: 9px !important;
+    }
+    
 }
 
 /* FORMULARIOS */

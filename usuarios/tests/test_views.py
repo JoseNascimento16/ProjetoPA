@@ -1,8 +1,10 @@
+from datetime import date
 from http import HTTPStatus
 from urllib.parse import urlencode
 from django.test import TestCase, Client, RequestFactory
 from django.urls import reverse
 from Escolas.models import Escola
+from plano_de_acao.models import Plano_de_acao
 from usuarios.forms import FormAlteraMail
 from usuarios.models import Classificacao, Turmas
 from usuarios.views import altera_mail, envia_email
@@ -98,7 +100,14 @@ class TestViews(TestCase):
 ##################################################################################################
 
     def test_dashboard(self):
-        
+        self.group.name = 'Func_sec'
+        self.group.save()
+        self.classificacao.cargo_herdado = 'Coordenador'
+        self.classificacao.save()
+        plano1 = Plano_de_acao.objects.create(ano_referencia='plano1', corretor_plano=self.user, situacao='Pendente', data_de_criação=date(2022,12,23))
+        plano2 = Plano_de_acao.objects.create(ano_referencia='plano2', corretor_plano=None, situacao='Pendente', data_de_criação=date(2022,12,22))
+        plano3 = Plano_de_acao.objects.create(ano_referencia='plano3', corretor_plano=None, situacao='Assinado')
+
         response = self.c.get(reverse('dashboard')) # Usa o nome da URL e atributos
         
         self.assertEqual(response.status_code, 200)
@@ -358,6 +367,8 @@ class TestViews(TestCase):
         
         # TESTE USUARIO LOGADO: DIRETOR ESCOLA
         # DELETA FUNCIONARIO ESCOLA
+        # VERIFICA SE DESATIVOU 1 USUÁRIO
+        # VERIFICA SE REMOVEU 1 MEMBRO DO COLEGIADO DA ESCOLA
         grupos = Group.objects.all()
         self.group.name = 'Diretor_escola'
         self.group.save()
@@ -370,10 +381,17 @@ class TestViews(TestCase):
         self.escola.save()
         self.user2.classificacao.escola = self.escola2
         self.user2.save()
-        # print(len(Classificacao.objects.filter(tipo_de_acesso='Funcionario').filter(escola = self.escola)))
+        
+        quant_membros_menos_1 = self.escola.quant_membro_colegiado - 1
+        ativos_antes = len(User.objects.filter(is_active=True))
 
         response = self.c.get(reverse('deletando_funcionario', kwargs={'elemento_id':self.classificacao2.id}), follow=True) # Usa o nome da URL e atributos
         
+        escola_pos = get_object_or_404(Escola, nome='escola_teste2')
+        self.assertEqual(escola_pos.quant_membro_colegiado, quant_membros_menos_1)
+        ativos_depois = len(User.objects.filter(is_active=True))
+        self.assertEqual(ativos_antes, ativos_depois + 1)
+
         self.assertEqual(response.status_code, 200)
         self.assertRedirects(response, '/cadastro_funcionarios_escola/'+str(self.user.id)+'/Deletou')
         self.assertTemplateUsed(response, 'cadastros.html')
@@ -382,6 +400,7 @@ class TestViews(TestCase):
     def test_deleta_funcionario2(self):
         # TESTE USUARIO LOGADO: FUNC SEC
         # DELETA FUNCIONARIO SECRETARIA
+        # VERIFICA SE DESATIVOU 1 USUÁRIO
         self.group.name = 'Func_sec'
         self.group.save()
         self.classificacao.usuario_diretor=True
@@ -393,14 +412,22 @@ class TestViews(TestCase):
         self.user3.groups.add(group2)
         self.user3.save()
 
+        ativos_antes = len(User.objects.filter(is_active=True))
+
         response = self.c.get(reverse('deletando_funcionario', kwargs={'elemento_id':self.classificacao3.id})) # Usa o nome da URL e atributos
         
+        ativos_depois = len(User.objects.filter(is_active=True))
+        self.assertEqual(ativos_antes, ativos_depois + 1)
+
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, '/cadastros_secretaria/'+str(self.user.id)+'/Sim/Deletou')
 
     def test_deleta_funcionario3(self):
         # TESTE USUARIO LOGADO: FUNC SEC
-        # DELETA DIRETOR ESCOLA
+        # DESATIVA DIRETOR ESCOLA
+        # VERIFICA SE DESATIVOU 1 USUÁRIO
+        # VERIFICA SE escola.diretor É REMOVIDO
+        # VERIFICA SE escola.possui_diretor É REMOVIDO
         self.group.name = 'Func_sec'
         self.group.save()
         self.classificacao.usuario_diretor=True
@@ -410,15 +437,64 @@ class TestViews(TestCase):
         self.user3 = User.objects.create_user(username="test4", email="test3@test.com", password="test")
         self.escola3 = Escola.objects.create(nome='escola_teste4')
         self.escola3.diretor = self.user3
+        self.escola3.possui_diretor = True
         self.escola3.save()
         self.classificacao3 = Classificacao.objects.create(user=self.user3, escola=self.escola3)
         self.user3.groups.add(self.group2)
         self.user3.save()
 
+        ativos_antes = len(User.objects.filter(is_active=True))
+
         response = self.c.get(reverse('deletando_funcionario', kwargs={'elemento_id':self.classificacao3.id})) # Usa o nome da URL e atributos
         
+        ativos_depois = len(User.objects.filter(is_active=True))
+        self.assertEqual(ativos_antes, ativos_depois + 1)
+        escola_depois = get_object_or_404(Escola, pk=self.escola3.pk)
+        self.assertEqual(escola_depois.diretor, None)
+        self.assertEqual(escola_depois.possui_diretor, False)
+
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, '/profile/escola/'+str(self.escola3.id))
+
+    def test_deleta_funcionario4(self):
+        # TESTE USUARIO LOGADO: SECRETARIA
+        # DESATIVA DIRETOR SUPROT
+        # VERIFICA SE DESATIVOU 1 USUÁRIO
+        # VERIFICA SE secretaria.diretor É REMOVIDO
+        # VERIFICA SE secretaria.possui_diretor É REMOVIDO
+        # VERIFICA SE classificacao.usuario_diretor É REMOVIDO
+        # VERIFICA SE classificacao.is_active É REMOVIDO
+        self.group.name = 'Secretaria'
+        self.group.save()
+        self.secretaria = Escola.objects.create(nome='Secretaria da educação')
+        self.secretaria.possui_diretor = True
+        self.secretaria.objeto_suprot = True
+        self.secretaria.save()
+        self.classificacao.tipo_de_acesso = 'Secretaria'
+        self.classificacao.save()
+        group2 = get_object_or_404(Group, name='Func_sec')
+        self.user3 = User.objects.create_user(username="test3", email="test3@test.com", password="test")
+        self.classificacao3 = Classificacao.objects.create(user=self.user3, escola=self.secretaria, usuario_diretor=True, matriz='Secretaria da educação', cargo_herdado='Diretor SUPROT', tipo_de_acesso='Func_sec')
+        self.user3.groups.add(group2)
+        self.user3.save()
+        self.secretaria.diretor = self.user3
+        self.secretaria.save()
+
+        ativos_antes = len(User.objects.filter(is_active=True))
+
+        response = self.c.get(reverse('deletando_funcionario', kwargs={'elemento_id':self.classificacao3.id})) # Usa o nome da URL e atributos
+        
+        ativos_depois = len(User.objects.filter(is_active=True))
+        self.assertEqual(ativos_antes, ativos_depois + 1)
+        secretaria_depois = get_object_or_404(Escola, pk=self.secretaria.pk)
+        self.assertEqual(secretaria_depois.diretor, None)
+        self.assertEqual(secretaria_depois.possui_diretor, False)
+        classificacao_diretor = get_object_or_404(Classificacao, pk=self.classificacao3.pk)
+        self.assertEqual(classificacao_diretor.usuario_diretor, False)
+        self.assertEqual(classificacao_diretor.is_active, False)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, '/cadastros_secretaria/'+str(self.user.id)+'/Sim/Deletou')
 
 ##################################################################################################
 
@@ -628,7 +704,7 @@ class TestViews(TestCase):
 
     def test_solicita_remocao(self):
         # TESTE POST
-        # USUARIO LOGADO: FUNC_SEC
+        # USUARIO LOGADO: DIRETOR FUNC_SEC
         # SOLICITA REMOÇÃO DFE DIRETOR ESCOLAR
         self.group.name = 'Func_sec'
         self.group.save()
@@ -643,3 +719,30 @@ class TestViews(TestCase):
         self.assertRedirects(response, '/profile/escola/'+str(self.escola.id))
         self.assertTemplateUsed(response, 'Profile_escola.html')
         self.assertEquals(response.context['chave_confirma_remocao_diretor'], True)
+
+##################################################################################################
+
+    def test_cancela_remocao_diretor(self):
+        # TESTE POST
+        # USUARIO LOGADO: FUNC_SEC
+        # CANCELA REMOÇÃO DE DIRETOR ESCOLAR
+        # VERIFICA ALTERAÇÕES NA CLASSIFICACAO
+        self.group.name = 'Func_sec'
+        self.group.save()
+        self.classificacao.usuario_diretor = True
+        self.classificacao.save()
+        self.user2 = User.objects.create_user(username="test2", email="test2@test.com", password="test2")
+        self.classificacao2 = Classificacao.objects.create(user=self.user2, escola=self.escola)
+        self.classificacao2.marcado_para_exclusao = True
+        self.classificacao2.remocao_solicitante = self.user.first_name
+        self.classificacao2.save()
+
+        response = self.c.post(reverse('cancelar_remocao', kwargs={'user_id':self.user2.id}), follow=True) # Usa o nome da URL e atributos
+
+        classi_depois = get_object_or_404(Classificacao, pk=self.classificacao2.pk)
+        self.assertEqual(classi_depois.marcado_para_exclusao, False)
+        self.assertEqual(classi_depois.remocao_solicitante, '')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(response, '/profile/escola/'+str(self.escola.id))
+        self.assertTemplateUsed(response, 'Profile_escola.html')

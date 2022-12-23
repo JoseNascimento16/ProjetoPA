@@ -33,6 +33,7 @@ from datetime import date, datetime, time, timezone, timedelta
 
 
 
+
 #### VIEWS TESTADAS #####
 
 def envia_email(request):
@@ -374,6 +375,21 @@ def solicita_remocao(request, **kwargs):
 
     return redirect('dashboard')
 
+def cancela_remocao_diretor(request, **kwargs):
+    # CANCELA A SOLICITAÇÃO DE EXCLUSÃO DE UM USUARIO IMPORTANTE
+    usuario_alvo = get_object_or_404(User, pk=kwargs['user_id'])
+    escola_id = usuario_alvo.classificacao.escola.id
+    
+    if request.user.classificacao.usuario_diretor:
+        if request.method == 'POST':
+            usuario_alvo.classificacao.marcado_para_exclusao = False
+            usuario_alvo.classificacao.remocao_solicitante = ''
+            usuario_alvo.classificacao.save()
+            
+            return redirect('profile_escola', escola_id=escola_id)
+
+    return redirect('dashboard')
+
 def deleta_funcionario(request, **kwargs):
     from .alteracoes import atualiza_cargos_da_matriz_exclusao, atualiza_quant_funcionarios_da_escola
     ja_Existe_usuario = True
@@ -420,17 +436,10 @@ def deleta_funcionario(request, **kwargs):
     
     if tipo_usuario == 'Secretaria' or usuario_logado.classificacao.usuario_diretor or usuario_logado.classificacao.usuario_coordenador :
         
-        # Desativa classificação (Func_sec,diretores,funcionarios)
+        # Captura classificação do funcionario desativado
         objeto_classificacao = get_object_or_404(Classificacao, pk=kwargs['elemento_id'])
-        objeto_classificacao.is_active = False
-        objeto_classificacao.email_ativado = False
-        objeto_classificacao.assina_plano = False
-        objeto_classificacao.usuario_diretor = False
-        objeto_classificacao.usuario_coordenador = False
-        objeto_classificacao.diretor_escolar = False
-        if objeto_classificacao.assinatura:
-            objeto_classificacao.assinatura.delete()
-        objeto_classificacao.save()
+        # Checa a matriz do funcionario desativado
+        matriz = objeto_classificacao.escola
 
         # DESATIVA usuário (Func_sec,diretores,funcionarios)
         funcionario_id = objeto_classificacao.user.id
@@ -438,16 +447,30 @@ def deleta_funcionario(request, **kwargs):
         usuario_objeto.is_active = False
         usuario_objeto.email = ''
         usuario_objeto.username = random_username
+        usuario_objeto.first_name = '(desativado)' + usuario_objeto.first_name
         usuario_objeto.save()
-
-        # Checa a matriz do funcionario desativado
-        matriz = objeto_classificacao.escola
 
         # Se desativou Func_sec, atualiza quant_func da Secretaria
         if objeto_classificacao.user.groups.filter(name='Func_sec').exists():
             quant_func_secs = Classificacao.objects.filter(escola=matriz).filter(is_active=True)
             matriz.quant_funcionarios = len(quant_func_secs)
             matriz.save()
+
+        # Se usuario objeto for diretor da SUPROT
+        if objeto_classificacao.usuario_diretor:
+            matriz.possui_diretor = False
+            matriz.diretor = None
+
+        # Desativa classificação (Func_sec,diretores,funcionarios)
+        if objeto_classificacao.assinatura:
+            objeto_classificacao.assinatura.delete()
+        objeto_classificacao.is_active = False
+        objeto_classificacao.email_ativado = False
+        objeto_classificacao.assina_plano = False
+        objeto_classificacao.usuario_diretor = False
+        objeto_classificacao.usuario_coordenador = False
+        objeto_classificacao.diretor_escolar = False
+        
 
         # Se desativou Diretor_escola, atualiza quant_func e outras informações da Escola
         if objeto_classificacao.user.groups.filter(name='Diretor_escola').exists():
@@ -458,8 +481,12 @@ def deleta_funcionario(request, **kwargs):
             matriz.possui_diretor = False
 
             matriz.save()
+            objeto_classificacao.save()
 
             return redirect('profile_escola', matriz.id)
+
+        matriz.save()
+        objeto_classificacao.save()
 
         return redirect('cadastrar_funcionarios_secretaria_mensagem', user_id=usuario_logado.id, mensagem='Deletou', cad_funcionarios='Sim')
 

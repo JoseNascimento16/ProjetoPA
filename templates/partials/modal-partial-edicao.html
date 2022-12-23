@@ -7,7 +7,15 @@
 {% else %}
 <div class="modelo-modal-edicao" >
 {% endif %}
+    {% if chave_abre_altera_assinatura %}
+    <div class="fundo-modal fundo-modal-assinatura" style="overflow-y: auto;">
+    {% elif chave_abre_altera_assinatura_tecnico %}
+    <div class="fundo-modal fundo-modal-assinatura-tecnico" style="overflow-y: auto;">
+    {% elif chave_abre_altera_mail %}
+    <div class="fundo-modal fundo-modal-altera-mail" style="overflow-y: auto;">
+    {% else %}
     <div class="fundo-modal" style="overflow-y: auto;">
+    {% endif %}
         <div class="corpo-modal">
             <div class="fechar-modal">
                 <a href="#"><i class="fas fa-times fa-2x fecha-modal"></i></a>

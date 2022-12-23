@@ -22,6 +22,13 @@
         <p>Cadastre ao menos 1 (um) usuário de coordenador(a) da SUPROT. <a href="{% url 'cadastrar_funcionarios_secretaria' user.id 'Sim' %}"> aqui!</a></a> </p>
         {% endif %}
     </div>
+    {% elif user.classificacao.cargo_herdado == 'Diretor SUPROT' %}
+    {% tag_nao_existe_coordenador_cadastrado as existe_coordenador %}
+    <div class="titulo-wrapper-laranja box-plano1-3">
+        {% if not existe_coordenador %}
+        <p>Cadastre ao menos 1 (um) usuário de coordenador(a) da SUPROT. <a href="{% url 'cadastrar_funcionarios_secretaria' user.id 'Sim' %}"> aqui!</a></a> </p>
+        {% endif %}
+    </div>
     {% endif %}
     <div class="titulo-wrapper box-noticias1-1">
         <i class="fas fa-newspaper fa-2x margem-icones-menu"></i>
@@ -58,7 +65,7 @@
                                 <div class="sub2-card-noticia">
                                     <h2>{{item.user.first_name}}</h2>
                                     <p>Solicitada exclusão deste diretor(a) escolar</p>
-                                    <p>por: {{item.remocao_solicitante}}</p> <a class="" href="{% url 'profile_escola' item.escola.pk %}" style="font-size: 12px;padding-left: 0;"> (conferir)</a>
+                                    <p>por: {{item.remocao_solicitante}} </p> <a class="" href="{% url 'profile_escola' item.escola.pk %}" style="font-size: 12px;padding-left: 0;">(conferir)</a>
                                 </div>
                             </div>
                         </div>
