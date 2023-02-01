@@ -93,7 +93,7 @@ The most important information and the documents status changes are stored on a 
 The web app uses the Django class based passwordresetview to offer a secure way to change your password.
 
 **<li>Print functionality</li>**
-The print functionality was developed to satisfy some bussiness rules where some part of the document couldn't be apart from others. This feature deals with it by integrating with the brownser print feature.
+The print functionality was developed to satisfy some bussiness rules where some part of the document couldn't be apart from others. This feature deals with it by integrating with the browser print feature.
 <p align="center">
   <img src="https://user-images.githubusercontent.com/110631271/215921785-cd772387-8180-43ec-8b31-9d1615b1a270.gif">
 </p>
